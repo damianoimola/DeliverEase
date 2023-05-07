@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        // because GLANCE is only available as snapshots
+        // so we need to link the dependencies about it
+        maven { url 'https://androidx.dev/snapshots/latest/artifacts/repository' }
+    }
+}
+rootProject.name = "DeliverEase"
+include ':app'
+include ':common-libs'
