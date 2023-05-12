@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -29,7 +30,7 @@ fun CustomBottomAppBar(
             BottomNavigationItem(
                 icon = { Icon(navItem.icon, contentDescription = navItem.title) },
                 label = { Text(text = navItem.title, color = Color.White, maxLines = 1) },
-                selected = selectedItem == navItem,
+                selected = navItem == selectedItem,
                 onClick = { onItemSelected(navItem) },
                 alwaysShowLabel = false,
                 selectedContentColor = Color.White,

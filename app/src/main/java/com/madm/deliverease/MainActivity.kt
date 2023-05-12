@@ -31,7 +31,9 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            var selectedItem by remember { mutableStateOf(CustomNavItem("Home", Icons.Default.Home)) }
+            // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
+            var selectedItem by remember { mutableStateOf(navItems[0]) }
+
             DeliverEaseTheme {
                 Scaffold(
                     content = {
@@ -46,7 +48,7 @@ class MainActivity : ComponentActivity() {
                             onItemSelected = { item -> selectedItem = item },
                             modifier = Modifier.fillMaxWidth()
                         )
-                    },
+                    }
                 )
 
 
