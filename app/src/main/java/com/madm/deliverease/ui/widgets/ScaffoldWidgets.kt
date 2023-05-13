@@ -25,7 +25,7 @@ fun CustomBottomAppBar(
 ) {
     BottomAppBar(
         modifier = modifier,
-        backgroundColor = MaterialTheme.colors.primary
+//        backgroundColor = MaterialTheme.colors.primary
     ) {
         navItems.forEach { navItem : CustomNavItem ->
             BottomNavigationItem(
@@ -35,7 +35,7 @@ fun CustomBottomAppBar(
                 onClick = {
                     onItemSelected(navItem)
                     navItem.function()
-              },
+                },
                 alwaysShowLabel = false,
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.White.copy(alpha = 0.5f),
