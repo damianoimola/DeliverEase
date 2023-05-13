@@ -12,7 +12,8 @@ import androidx.compose.ui.unit.dp
 
 class CustomNavItem(
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val function: () -> Unit
 )
 
 @Composable
@@ -31,7 +32,10 @@ fun CustomBottomAppBar(
                 icon = { Icon(navItem.icon, contentDescription = navItem.title) },
                 label = { Text(text = navItem.title, color = Color.White, maxLines = 1) },
                 selected = navItem == selectedItem,
-                onClick = { onItemSelected(navItem) },
+                onClick = {
+                    onItemSelected(navItem)
+                    navItem.function()
+              },
                 alwaysShowLabel = false,
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.White.copy(alpha = 0.5f),

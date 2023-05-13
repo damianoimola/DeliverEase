@@ -14,6 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.madm.deliverease.ui.screens.CalendarScreen
+import com.madm.deliverease.ui.screens.HomeScreen
+import com.madm.deliverease.ui.screens.MessagesScreen
 import com.madm.deliverease.ui.theme.DeliverEaseTheme
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
@@ -23,22 +29,34 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // bottom navigation bar icons
-        val navItems = listOf(
-            CustomNavItem("Home", Icons.Default.Home),
-            CustomNavItem("Calendar", Icons.Default.DateRange),
-            CustomNavItem("Messages", Icons.Default.Email)
-        )
-
         setContent {
+            // manages the navigation between different destinations
+            val navController = rememberNavController()
+
+
+            // bottom navigation bar icons
+            val navItems = listOf(
+                CustomNavItem("Home", Icons.Default.Home) { navController.navigate("home") },
+                CustomNavItem("Calendar", Icons.Default.DateRange) { navController.navigate("calendar") },
+                CustomNavItem("Messages", Icons.Default.Email) { navController.navigate("messages") }
+            )
+
             // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
             var selectedItem by remember { mutableStateOf(navItems[0]) }
+
 
             DeliverEaseTheme {
                 Scaffold(
                     content = {
                         Box(modifier = Modifier.padding(it)){
-                            DummyComposeFunction()
+                            // navigation host holds all of the navigation destinations within the app
+                            // calling "navController.navigate("home")" you can travel through app
+                            // It can handle parameters.
+                            NavHost(navController = navController, startDestination = "home") {
+                                composable("home") { HomeScreen()  }
+                                composable("calendar") { CalendarScreen() }
+                                composable("messages") { MessagesScreen() }
+                            }
                         }
                     },
                     bottomBar = {
@@ -50,14 +68,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 )
-
-
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colors.background
-//                ) {
-//                    ModalNavigationDrawer()
-//                }
             }
         }
     }
