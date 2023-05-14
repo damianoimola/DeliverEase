@@ -8,9 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,26 +21,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.gilroy
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.thinPadding
+import com.madm.deliverease.ui.theme.*
 
 @Composable
-fun LoginScreen(){
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
+fun LoginScreen(
+    goToRiderHome: () -> Unit,
+    goToAdminHome: () -> Unit,
+){
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(mediumPadding),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -55,6 +48,28 @@ fun LoginScreen(){
             contentScale = ContentScale.FillHeight
         )
 
+        ClassicLogin(goToRiderHome, goToAdminHome)
+
+        Divider(
+            color = Color(0xFFD8D8D8),
+            thickness = 1.dp,
+            modifier = Modifier.padding(largePadding)
+        )
+
+        ThirdPartyLogin()
+    }
+}
+
+
+
+@Composable
+fun ClassicLogin(goToRiderHome: () -> Unit, goToAdminHome: () -> Unit) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    Column {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Username",
@@ -66,8 +81,11 @@ fun LoginScreen(){
         }
         TextField(
             modifier = Modifier
-                .padding(nonePadding, nonePadding, nonePadding, mediumPadding)
-                .border(BorderStroke(2.dp, Color(0xFFD8D8D8)), shape = RoundedCornerShape(50))
+                .padding(bottom = mediumPadding)
+                .border(
+                    BorderStroke(2.dp, Color(0xFFD8D8D8)),
+                    shape = RoundedCornerShape(50)
+                )
                 .clip(RoundedCornerShape(50))
                 .fillMaxWidth(),
             value = username,
@@ -84,7 +102,7 @@ fun LoginScreen(){
                 imeAction = ImeAction.Done // Done, not Enter
             ),
             keyboardActions = KeyboardActions(
-                onDone = {focusManager.clearFocus()},
+                onDone = { focusManager.clearFocus() },
             ),
             onValueChange = { username = it },
             colors = TextFieldDefaults.textFieldColors(
@@ -92,8 +110,10 @@ fun LoginScreen(){
                 backgroundColor = Color.Transparent,
                 cursorColor = Color(0xff131b31),
                 focusedIndicatorColor = Color.Transparent
-            )
+            ),
+            isError = isError,
         )
+
 
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -106,8 +126,11 @@ fun LoginScreen(){
         }
         TextField(
             modifier = Modifier
-                .padding(nonePadding, nonePadding, nonePadding, mediumPadding)
-                .border(BorderStroke(2.dp, Color(0xFFD8D8D8)), shape = RoundedCornerShape(50))
+                .padding(bottom = mediumPadding)
+                .border(
+                    BorderStroke(2.dp, Color(0xFFD8D8D8)),
+                    shape = RoundedCornerShape(50)
+                )
                 .clip(RoundedCornerShape(50))
                 .fillMaxWidth(),
             value = password,
@@ -124,7 +147,7 @@ fun LoginScreen(){
                 imeAction = ImeAction.Done // Done, not Enter
             ),
             keyboardActions = KeyboardActions(
-                onDone = {focusManager.clearFocus()},
+                onDone = { focusManager.clearFocus() },
             ),
             onValueChange = { password = it },
             colors = TextFieldDefaults.textFieldColors(
@@ -136,35 +159,48 @@ fun LoginScreen(){
         )
 
         Button(
-            onClick = { },
+            onClick = {
+                /* TODO: dummy */
+                if (username == "rider")
+                    goToRiderHome()
+                else if (username == "admin")
+                    goToAdminHome()
+                else
+                    isError = true
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = mediumPadding, end = mediumPadding, bottom = mediumPadding)
+                .padding(top = smallPadding)
                 .clip(RoundedCornerShape(50))
-                .border(BorderStroke(2.dp, Color(0xFFD8D8D8)), shape = RoundedCornerShape(50)),
+                .border(
+                    BorderStroke(2.dp, Color(0xFFD8D8D8)),
+                    shape = RoundedCornerShape(50)
+                ),
             shape = RoundedCornerShape(6.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
                 contentColor = Color(0xff131b31)
             ),
-            elevation = ButtonDefaults.elevation(0.dp,0.dp),
-            enabled = username.isNotBlank() && password.isNotBlank()
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp),
+            enabled = username.isNotBlank() && password.isNotBlank(),
         ) {
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(text = "Login", modifier = Modifier.padding(6.dp))
                 Icon(Icons.Default.ArrowForward, contentDescription = "Continue")
             }
         }
+    }
+}
 
-        Divider(
-            color = Color(0xFFD8D8D8),
-            thickness = 1.dp,
-            modifier = Modifier.padding(mediumPadding)
-        )
 
+
+
+@Composable
+fun ThirdPartyLogin(){
+    Column {
         Button(
             onClick = { },
             modifier = Modifier
@@ -176,8 +212,8 @@ fun LoginScreen(){
                 backgroundColor = Color.Transparent,
                 contentColor = Color(0xff131b31),
 
-            ),
-            elevation = ButtonDefaults.elevation(0.dp,0.dp)
+                ),
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.google),
@@ -199,7 +235,7 @@ fun LoginScreen(){
                 contentColor = Color(0xff131b31),
 
                 ),
-            elevation = ButtonDefaults.elevation(0.dp,0.dp)
+            elevation = ButtonDefaults.elevation(0.dp, 0.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.google),
