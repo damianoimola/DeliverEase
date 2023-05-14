@@ -24,8 +24,7 @@ fun CustomBottomAppBar(
     modifier: Modifier = Modifier
 ) {
     BottomAppBar(
-        modifier = modifier,
-//        backgroundColor = MaterialTheme.colors.primary
+        modifier = modifier
     ) {
         navItems.forEach { navItem : CustomNavItem ->
             BottomNavigationItem(

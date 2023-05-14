@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,7 +50,10 @@ class MainActivity : ComponentActivity() {
             DeliverEaseTheme {
                 Scaffold(
                     content = {
-                        Box(modifier = Modifier.padding(it).background(MaterialTheme.colors.primary)){
+                        Box(modifier = Modifier
+                            .padding(it)
+                            .background(Color(0xffffffff))
+                        ){
                             // navigation host holds all of the navigation destinations within the app
                             // calling "navController.navigate("home")" you can travel through app
                             // It can handle parameters.
