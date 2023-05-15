@@ -6,4 +6,21 @@ import androidx.compose.runtime.Composable
 @Composable
 fun MessagesScreen() {
     Text(text = "RIDERS Messages section")
+    // richieste cambi
+
+    // messages
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
