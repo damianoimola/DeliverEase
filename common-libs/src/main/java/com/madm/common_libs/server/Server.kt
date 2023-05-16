@@ -1,89 +1,81 @@
 package com.madm.common_libs.server
 
-import com.github.kittinunf.fuel.core.isServerError
+import android.content.Context
+import android.content.res.Resources
 import com.github.kittinunf.fuel.core.isSuccessful
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.onError
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.parcelize.IgnoredOnParcel
-import java.io.File
-import java.io.FileInputStream
-import java.util.*
+import com.google.gson.reflect.TypeToken
+import com.madm.common_libs.R
 
 
-class Server () {
+class Server (context : Context) {
     var serverBaseUrl : String
 
     // MANAGE KIND OF REQUESTS
-    enum class RequestKind { MESSAGES, CHANGES, USERS}
+    enum class RequestKind { MESSAGES, CHANGES, USERS, CALENDAR }
 
     val requestsMap = mapOf<RequestKind, String>(
-        RequestKind.MESSAGES to "/message",
+        RequestKind.MESSAGES to "/messages",
         RequestKind.CHANGES to "/changes",
+        RequestKind.CALENDAR to "/calendar",
         RequestKind.USERS to "/users",
     )
 
     // CONSTRUCTOR
     init {
-        val file = File("java/com/madm/common_libs/server/server.properties")
-
-        this.serverBaseUrl = ""
-        val prop = Properties()
-        FileInputStream(file).use { prop.load(it) }
-
-        // Print all properties
-        prop.stringPropertyNames()
-            .associateWith { prop.getProperty(it) }
-            .forEach {
-                if (it.key == "SERVER_BASE_URL")
-                    serverBaseUrl = it.value
-            }
+//        this.serverBaseUrl = getResources().getString(R.string.base_url);
+//        this.serverBaseUrl = Resources.getSystem().getText(R.string.base_server_url).toString()
+        this.serverBaseUrl = context.getString(R.string.base_server_url)
     }
 
 
     // BUILD POST REQUESTS
     fun <T> makePostRequest(objectToSend : T, kind : RequestKind) {
-        val body = Gson().toJson(objectToSend)
+        val requestBody = Gson().toJson(objectToSend)
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
-        CoroutineScope(Dispatchers.IO).launch {
-            serverCompleteUrl.httpPost().body(body).responseString { _, response, result ->
-                if(response.isSuccessful){
-                    val data = result.get()
-                    println(data)
-                } else {
-                    result.onError {
-                        println("Request failed: ${it.exception}")
-                    }
-                }
+        serverCompleteUrl.httpPost().body(requestBody).responseString { _, response, result ->
+            if(!response.isSuccessful){
+                result.onError { println("Request failed: ${it.exception}") }
             }
         }
     }
 
 
     // BUILD GET REQUESTS
-    inline fun <reified T> makeGetRequest(kind : RequestKind): T? {
+    inline fun <reified T> makeGetRequest(kind : RequestKind, crossinline callbackFunction: (T) -> Unit){
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
-        var returnObject : T? = null
 
-        CoroutineScope(Dispatchers.IO).launch {
-            serverCompleteUrl.httpGet().responseString { _, response, result ->
-                if(response.isSuccessful){
-                    val data = result.get()
-                    returnObject = Gson().fromJson(data, T::class.java)
-                } else {
-                    result.onError {
-                        println("Request failed: ${it.exception}")
-                    }
-                }
+        serverCompleteUrl.httpGet().responseString { _, response, result ->
+            if(response.isSuccessful){
+                val data = result.get()
+                callbackFunction(Gson().fromJson(data, T::class.java))
+            } else {
+                result.onError { println("Request failed: ${it.exception}") }
             }
         }
-
-        return returnObject
     }
 
+
+
+    // BUILD GET REQUESTS FOR LISTS
+    inline fun <reified T> makeListsGetRequest(
+        kind : RequestKind,
+        crossinline callbackFunction: (List<T>) -> Unit
+    ) {
+        val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
+
+        serverCompleteUrl.httpGet().responseString { _, response, result ->
+            if(response.isSuccessful){
+                val data = result.get()
+                val itemType = object : TypeToken<List<T>>() {}.type
+                callbackFunction(Gson().fromJson(data, itemType))
+            } else {
+                result.onError { println("Request failed: ${it.exception}") }
+            }
+        }
+    }
 }
