@@ -42,9 +42,9 @@ val gilroy = FontFamily(
 
 val Typography = Typography(
     defaultFontFamily = gilroy,
-//    body1 = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 16.sp
-//    ),
+    body1 = TextStyle(
+        fontFamily = gilroy,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    ),
 )

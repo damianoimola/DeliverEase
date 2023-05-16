@@ -1,4 +1,4 @@
-package com.madm.common_libs
+package com.madm.common_libs.persistency
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

@@ -1,4 +1,4 @@
-package com.madm.common_libs
+package com.madm.common_libs.persistency
 
 import android.content.Context
 import androidx.room.Database
@@ -12,7 +12,7 @@ abstract class DatabaseSingleton : RoomDatabase() {
     companion object{
         private var db : DatabaseSingleton? = null
 
-        public fun getInstance (context : Context) : DatabaseSingleton{
+        public fun getInstance (context : Context) : DatabaseSingleton {
             if(db == null){
                 db = databaseBuilder(
                     context,
