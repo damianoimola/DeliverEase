@@ -102,7 +102,8 @@ fun ClassicLogin(goToRiderHome: () -> Unit, goToAdminHome: () -> Unit) {
                     goToAdminHome()
                 else
                     isError.value = true
-            })
+            }
+        )
     }
 }
 
