@@ -4,6 +4,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun MessagesScreen() {
-    Text(text = "ADMIN Messages section")
+fun SettingScreen() {
+    Text(text = "ADMIN Setting section")
 }

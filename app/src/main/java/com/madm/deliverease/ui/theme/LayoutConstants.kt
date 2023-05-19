@@ -7,3 +7,6 @@ var nonePadding = 0.dp
 var smallPadding = 8.dp
 var mediumPadding = 16.dp
 var largePadding = 24.dp
+
+var smallCardElevation = 4.dp
+var mediumCardElevation = 8.dp

@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.widgets
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -24,7 +23,7 @@ fun CustomBottomAppBar(
     modifier: Modifier = Modifier
 ) {
     BottomAppBar(
-        modifier = modifier
+        modifier = modifier,
     ) {
         navItems.forEach { navItem : CustomNavItem ->
             BottomNavigationItem(
@@ -38,7 +37,7 @@ fun CustomBottomAppBar(
                 alwaysShowLabel = false,
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.White.copy(alpha = 0.5f),
-                modifier = Modifier.padding(vertical = 0.dp)
+                modifier = Modifier.padding(vertical = 0.dp),
             )
         }
     }
