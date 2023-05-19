@@ -16,15 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
@@ -110,7 +107,8 @@ fun MyOutlinedTextField(
 fun MyButton(
     onClick: () -> Unit = {},
     text: String,
-    imgId: Int){
+    imgId: Int
+){
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -167,6 +165,174 @@ fun LoginButton(
         ) {
             Text(text = "Login", modifier = Modifier.padding(6.dp))
             Icon(Icons.Default.ArrowForward, contentDescription = stringResource(R.string._continue))
+        }
+    }
+}
+
+@Preview
+@Composable
+fun NewsCard(/* TODO: add parameters to pass news */) {
+    val list = listOf("A", "B", "C", "D", "E")
+
+    val showTextField = remember { mutableStateOf(false) }
+    val textFieldValue = remember { mutableStateOf("") }
+
+    Card(
+        elevation = mediumCardElevation,
+        shape = Shapes.medium,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(nonePadding, smallPadding)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(smallPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Communications",
+                    style = TextStyle(fontSize = 22.sp),
+                    textAlign = TextAlign.Center
+                )
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(onClick = { showTextField.value = !showTextField.value }) {
+                        if(!showTextField.value) Icon(Icons.Default.Add, "Add")
+                        else Icon(ImageVector.vectorResource(id = R.drawable.remove),"Remove")
+                    }
+                }
+            }
+
+            if(showTextField.value) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(smallPadding, nonePadding)
+                ) {
+                    TextField(
+                        value = textFieldValue.value,
+                        onValueChange = { textFieldValue.value = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(onClick = { /*TODO: action send new communication to everyone */
+                            /* TODO: Dummy */
+                            textFieldValue.value = ""
+                            showTextField.value = !showTextField.value
+                        }) {
+                            Text(stringResource(R.string.send))
+                        }
+                        Spacer(Modifier.width(4.dp))
+                        Button(onClick = {
+                            /* TODO: Dummy */
+                            textFieldValue.value = ""
+                            showTextField.value = !showTextField.value
+                        }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    }
+                }
+            }
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(1),
+                content = {
+                    items(list) { item ->
+                        Card(Modifier.padding(smallPadding)) {
+                            CustomNewsRow("News! I have read published calendar letter $item")
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun CustomNewsRow(
+    text: String,
+    date: String /* TODO: check date with format on the server*/ = "19/05/2023"
+) {
+    Column(
+        modifier = Modifier
+            .clip(Shapes.small)
+            .fillMaxWidth()
+            .padding(smallPadding)
+    ) {
+        Text(text)
+        Spacer(modifier = Modifier.height(2.dp))
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Published on: $date")
+        }
+    }
+}
+
+@Composable
+fun RidersCard(/* TODO: add params to add list of riders */) {
+    val list = listOf("A", "B", "C", "D", "E")
+
+    Card(
+        elevation = mediumCardElevation,
+        shape = Shapes.medium,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(nonePadding, smallPadding)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(stringResource(R.string.todays_rider), style = TextStyle(fontSize = 22.sp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                content = {
+                    items(list) {item ->
+                        Card(Modifier.padding(smallPadding)) {
+                            CustomRiderRow("Name $item", "Surname $item")
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun CustomRiderRow(
+    name: String = "Name",
+    surname: String = "Surname",
+    //backGroundColor: Color = Color.White /* TODO: check if really needed or use only Theme colors to set it */
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(Shapes.medium)
+            //.background(backGroundColor) /* TODO: check if really needed or use only Theme colors to set it */
+            .padding(mediumPadding)
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.rider),
+            contentDescription = "rider",
+            Modifier.size(30.dp)
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(name)
+            Text(surname)
         }
     }
 }

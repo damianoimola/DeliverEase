@@ -5,4 +5,7 @@
     <string name="google_login">"Login with Google"</string>
     <string name="apple_login">"Login with Apple"</string>
     <string name="_continue">"Continue"</string>
+    <string name="todays_rider">Today\'s Rider</string>
+    <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
 </resources>
