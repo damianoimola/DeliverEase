@@ -256,7 +256,7 @@ fun NewsCard(/* TODO: add parameters to pass news */) {
                 content = {
                     items(list) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            CustomNewsRow("News! I have read published calendar letter $item")
+                            CustomCommunication("News! I have read published calendar letter $item")
                         }
                     }
                 }
@@ -266,9 +266,9 @@ fun NewsCard(/* TODO: add parameters to pass news */) {
 }
 
 @Composable
-fun CustomNewsRow(
-    text: String,
-    date: String /* TODO: check date with format on the server*/ = "19/05/2023"
+fun CustomCommunication(
+    noticeText: String = "Notice!",
+    publishDate: String = "19/05/2023"
 ) {
     Column(
         modifier = Modifier
@@ -276,13 +276,13 @@ fun CustomNewsRow(
             .fillMaxWidth()
             .padding(smallPadding)
     ) {
-        Text(text)
+        Text(noticeText)
         Spacer(modifier = Modifier.height(2.dp))
         Row(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Published on: $date")
+            Text("Published on: $publishDate")
         }
     }
 }
@@ -298,8 +298,9 @@ fun RidersCard(/* TODO: add params to add list of riders */) {
             .fillMaxWidth()
             .padding(nonePadding, smallPadding)
     ) {
+        /* TODO: set max column height */
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(stringResource(R.string.todays_rider), style = TextStyle(fontSize = 22.sp))
 
@@ -320,15 +321,13 @@ fun RidersCard(/* TODO: add params to add list of riders */) {
 @Composable
 fun CustomRiderRow(
     name: String = "Name",
-    surname: String = "Surname",
-    //backGroundColor: Color = Color.White /* TODO: check if really needed or use only Theme colors to set it */
+    surname: String = "Surname"
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clip(Shapes.medium)
-            //.background(backGroundColor) /* TODO: check if really needed or use only Theme colors to set it */
             .padding(mediumPadding)
     ) {
         Icon(

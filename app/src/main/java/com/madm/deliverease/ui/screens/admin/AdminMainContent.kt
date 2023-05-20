@@ -33,6 +33,7 @@ fun AdminsMainContent(){
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home) { navController.navigate("home") },
         CustomNavItem("Shifts", ImageVector.vectorResource(id = R.drawable.newshifts)) { navController.navigate("shift") },
+        CustomNavItem("Riders", ImageVector.vectorResource(id = R.drawable.rider)) { navController.navigate("riders") },
         CustomNavItem("Settings", Icons.Default.Settings) { navController.navigate("settings") }
     )
 
@@ -55,6 +56,7 @@ fun AdminsMainContent(){
                 ) {
                     composable("home") { HomeScreen() }
                     composable("shift") { ShiftsScreen() }
+                    composable("riders") { RidersScreen() }
                     composable("settings") { SettingScreen() }
                 }
             }
