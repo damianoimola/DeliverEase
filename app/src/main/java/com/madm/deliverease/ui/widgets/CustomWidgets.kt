@@ -4,9 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -250,8 +252,7 @@ fun NewsCard(/* TODO: add parameters to pass news */) {
                 }
             }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(1),
+            LazyColumn(
                 content = {
                     items(list) { item ->
                         Card(Modifier.padding(smallPadding)) {
