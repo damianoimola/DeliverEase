@@ -4,30 +4,39 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.gilroy
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.*
 
 @Composable
 fun MyPageHeader(){
@@ -169,7 +178,6 @@ fun LoginButton(
     }
 }
 
-@Preview
 @Composable
 fun NewsCard(/* TODO: add parameters to pass news */) {
     val list = listOf("A", "B", "C", "D", "E")
@@ -280,7 +288,7 @@ fun CustomNewsRow(
 
 @Composable
 fun RidersCard(/* TODO: add params to add list of riders */) {
-    val list = listOf("A", "B", "C", "D", "E")
+    val list = listOf("A", "B", "C", "D")
 
     Card(
         elevation = mediumCardElevation,
