@@ -30,7 +30,7 @@ fun HomeScreen(){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
 
         MyPageHeader()
@@ -38,7 +38,8 @@ fun HomeScreen(){
         Card(
             elevation = 10.dp,
             modifier = Modifier
-                .padding(smallPadding)){
+                .padding(smallPadding)
+        ){
 
 
             Column(

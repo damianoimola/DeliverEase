@@ -37,7 +37,20 @@ val MonthMap = mapOf(
     11 to "December"
 )
 
-
+val ReverseMonthMap = mapOf(
+     "January" to 0,
+     "February" to 1,
+     "March" to 2,
+     "April" to 3,
+     "May" to 4,
+     "June" to 5,
+     "July" to 6,
+     "August" to 7,
+     "September" to 8,
+     "October" to 9,
+     "November" to 10,
+     "December" to 11,
+)
 data class Day(val number: Int, val name: String)
 
 fun getWeekDays(year: Int, month: Int, week: Int): List<Day> {
@@ -92,33 +105,53 @@ fun CalendarScreen(){
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-    val months = (currentMonth..currentMonth + 12)
+    val months = (currentMonth..currentMonth + 11)
         .toList()
         .toIntArray()
         .map { i -> MonthMap[i%12]!! }
     var selectedMonth by remember { mutableStateOf(months[0]) }
+    var selectedYear by remember { mutableStateOf(currentYear) }
 
 
     Column(){
-        MonthSelector(months, selectedMonth) { item: String -> selectedMonth = item }
-        WeeksList(currentMonth, currentYear) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
-        WeekShifts(indexOfSelectedWeek, currentMonth, currentYear)
+        MonthSelector(months, selectedMonth, currentYear) { month: String, isNextYear: Boolean ->
+            println("########## NEXT YEAR $isNextYear")
+            selectedYear = if (isNextYear)
+                currentYear + 1
+            else currentYear
+            selectedMonth = month
+        }
+        WeeksList(ReverseMonthMap[selectedMonth]!!, selectedYear) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
+        WeekShifts(indexOfSelectedWeek, ReverseMonthMap[selectedMonth]!!, selectedYear)
     }
 }
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MonthSelector(months: List<String>, selectedMonth: String, function: (String) -> Unit){
+fun MonthSelector(
+    months: List<String>,
+    selectedMonth: String,
+    currentYear: Int,
+    function: (String, Boolean) -> Unit
+){
     var expanded by remember { mutableStateOf(false) }
+    var isNextYear = false
+    var isNextYearSelected by remember {
+        mutableStateOf(false)
+    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded}
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier.width(IntrinsicSize.Min)
     ) {
         TextField(
-            value = "$selectedMonth",
-            onValueChange = {},
+            value = if(!isNextYearSelected)
+                "$selectedMonth $currentYear"
+            else
+                "$selectedMonth ${currentYear + 1}",
+            onValueChange = { },
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = TextFieldDefaults.textFieldColors(
@@ -131,18 +164,26 @@ fun MonthSelector(months: List<String>, selectedMonth: String, function: (String
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.width(IntrinsicSize.Min)
         ) {
-            months.forEach { selectedOption ->
+            months.forEach { option ->
                 // menu item
                 DropdownMenuItem(
                     onClick = {
-                        function(selectedOption)
+                        isNextYearSelected = ReverseMonthMap[option]!! < ReverseMonthMap[months[0]]!!
+                        function(option, isNextYearSelected)
                         expanded = false
                     }
                 ) {
-                    Text(text = selectedOption)
+                    if(!isNextYear)
+                        Text(text = "$option $currentYear")
+                    else
+                        Text(text = "$option ${currentYear + 1}")
                 }
+
+                if(option == "December")
+                    isNextYear = true
             }
         }
     }
@@ -151,22 +192,27 @@ fun MonthSelector(months: List<String>, selectedMonth: String, function: (String
 
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
-    var weekNumber = 1
+    // retrieve the list of all mondays
     val mondayList = getMondays(selectedYear, selectedMonth+1)
 
-    val weeks = mondayList
+    // list of strings in this format: "01 January"
+    val weeksList = mondayList
         .toList()
         .toIntArray()
-        .map {
-            i -> "${i.integerToTwoDigit()} ${MonthMap[selectedMonth]!!}"
-        }
+        .map { i -> "${i.integerToTwoDigit()} ${MonthMap[selectedMonth]!!}" }
 
-    var selectedWeek by remember { mutableStateOf(weeks[0]) }
+    // retrieve the selected week
+    var selectedWeek by remember { mutableStateOf(weeksList[0]) }
+
+
+    // retrieve the last day (number) of the selected week
     var lastDayOfWeek by remember { mutableStateOf(
             (Integer.parseInt(selectedWeek.subSequence(0..1) as String) + 6).toString()
         )
     }
-    val remainderString by remember {
+
+    // retrieve the month (string) of the selected week
+    val monthOfWeek by remember {
         mutableStateOf(selectedWeek.subSequence(2 until selectedWeek.length))
     }
 
@@ -175,13 +221,12 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
     ){
-        weeks.forEach {
+        weeksList.forEach {
             Button(
                 onClick = {
-                    function(weekNumber)
+                    function(weeksList.indexOf(it) + 1)
                     selectedWeek = it
                     lastDayOfWeek = (Integer.parseInt(it.subSequence(0..1) as String) + 6).toString()
-                    weekNumber += 1
                 },
                 elevation = ButtonDefaults.elevation(
                     defaultElevation = 6.dp,
@@ -203,6 +248,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
                     color = Color.White
                 )
             }
+
         }
     }
 
@@ -218,7 +264,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
             )
         )
         Text(
-            text = "$selectedWeek - $lastDayOfWeek $remainderString",
+            text = "$selectedWeek - $lastDayOfWeek $monthOfWeek",
             style = TextStyle(
                 fontSize = 25.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -243,7 +289,6 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
 
 @Composable
 fun WeekShifts(weekNumber: Int, selectedMonth: Int, selectedYear: Int){
-    println("####### $selectedYear $selectedMonth")
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
 
     Column(
