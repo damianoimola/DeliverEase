@@ -27,3 +27,12 @@ val otherTextColor = Color(0xFF003049)
 val otherEnhancedTextColor = Color(0xFF669bbc)
 val otherDetails = Color(0xFF780000)
 val otherEnhancedDetails = Color(0xFFc1121f)
+
+//figma theme
+val red = Color(0xBF3604)
+val darkRed = Color(0x960F03)
+val whiteBackground= Color(0xF4F4F4)
+val witheCard = Color(0xFFF7F7)
+val darkWritingAndIcons = Color(0x263330)
+val lightRed = Color(0xBF3604)
+val lightGrey = Color(0x263330)

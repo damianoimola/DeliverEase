@@ -8,4 +8,8 @@
     <string name="todays_rider">Today\'s Rider</string>
     <string name="cancel">Cancel</string>
     <string name="send">Send</string>
+    <string name="shift_yes">Ci sono</string>
+    <string name="shift_no">Non ci sono</string>
+    <string name="shift_maybe">Preferisco di no</string>
+    <string name="remember_choise">Ricorda la mia scelta</string>
 </resources>
