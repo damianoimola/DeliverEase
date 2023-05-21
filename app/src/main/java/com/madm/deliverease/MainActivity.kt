@@ -3,8 +3,6 @@ package com.madm.deliverease
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,8 +10,6 @@ import com.madm.deliverease.ui.screens.access.LoginScreen
 import com.madm.deliverease.ui.screens.admin.AdminsMainContent
 import com.madm.deliverease.ui.screens.riders.RidersMainContent
 import com.madm.deliverease.ui.theme.DeliverEaseTheme
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.nonePadding
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

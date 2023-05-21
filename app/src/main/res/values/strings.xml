@@ -8,4 +8,7 @@
     <string name="todays_rider">Today\'s Rider</string>
     <string name="cancel">Cancel</string>
     <string name="send">Send</string>
+    <string name="no_riders_today">No rider\'s for today</string>
+    <string name="communication_title">Communications</string>
+    <string name="no_communications">No communications to read</string>
 </resources>
