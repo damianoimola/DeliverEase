@@ -40,6 +40,6 @@ fun HomeScreen() {
     ) {
         MyPageHeader()
         RidersCard(riderList)
-        NewsCard(communicationList) {text: String -> println(text) }
+        CommunicationCard(communicationList) { text: String -> println(text) }
     }
 }

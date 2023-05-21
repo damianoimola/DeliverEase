@@ -28,7 +28,7 @@ import com.madm.deliverease.ui.theme.smallPadding
 data class Communication(val text: String, val data: String)
 
 @Composable
-fun NewsCard(
+fun CommunicationCard(
     communicationList: MutableList<Communication>,
     sendCommunication: (String) -> Unit = {},
 ) {
