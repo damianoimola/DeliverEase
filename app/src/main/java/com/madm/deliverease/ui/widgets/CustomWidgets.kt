@@ -43,24 +43,26 @@ import com.madm.deliverease.ui.theme.*
 @Composable
 fun MyPageHeader(){
     Box(
-        modifier = Modifier
-            .fillMaxWidth()){
+        modifier = Modifier.fillMaxWidth().padding(bottom = smallPadding),
+    ){
         Image(
             painter = painterResource(id = R.drawable.logo_dark_icon),
-            contentDescription = "logo",
+            contentDescription = stringResource(R.string.logo),
             modifier = Modifier
-                .size((LocalConfiguration.current.screenWidthDp.dp), 60.dp)
+                .size((LocalConfiguration.current.screenWidthDp.dp), 50.dp)
                 .padding(0.dp),
             contentScale = ContentScale.FillHeight,
-            alignment = Alignment.CenterStart
+            alignment = Alignment.CenterStart,
         )
         Text(
             text = stringResource(R.string.app_name),
-            modifier = Modifier
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            fontSize = 30.sp,
-            fontFamily = gilroy
+            modifier = Modifier.fillMaxWidth(),
+            style = TextStyle(
+                textAlign = TextAlign.Center,
+                fontSize = 35.sp,
+                fontFamily = gilroy,
+                fontWeight = FontWeight.Normal
+            )
         )
     }
 }

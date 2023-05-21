@@ -38,7 +38,7 @@ fun HomeScreen(){
         Card(
             elevation = 10.dp,
             modifier = Modifier
-                .padding(mediumPadding)
+                .padding(smallPadding)
         ){
 
 
