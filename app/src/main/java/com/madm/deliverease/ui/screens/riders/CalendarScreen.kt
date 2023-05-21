@@ -113,7 +113,7 @@ fun CalendarScreen(){
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
-    Column(){
+    Column {
         MonthSelector(months, selectedMonth, currentYear) { month: String, isNextYear: Boolean ->
             println("########## NEXT YEAR $isNextYear")
             selectedYear = if (isNextYear)
