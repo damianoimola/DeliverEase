@@ -42,7 +42,7 @@ fun PreferenceScreen(){
     var selectedMonth by remember { mutableStateOf(months[0]) }
 
     Column{
-        MonthSelector(months, selectedMonth) { item: String -> selectedMonth = item }
+        MonthSelector(months, selectedMonth, currentYear) { item: String, _: Boolean -> selectedMonth = item }
         DaysList(currentDay, currentMonth, currentYear) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
         WeekPreferences(indexOfSelectedWeek, currentMonth, currentYear)
     }
@@ -80,7 +80,7 @@ fun WeekPreferences(indexOfSelectedWeek: Int, currentMonth: Int, currentYear: In
 @Preview
 @Composable
 fun ShiftOptions(){
-    val radioOptions = listOf(R.string.shift_yes, R.string.shift_no, R.string.shift_maybe, R.string.remember_choise)
+    val radioOptions = listOf("Yes", "No", "Maybe", "Remember choice")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
     val checkedState = remember { mutableStateOf(false) }
 
@@ -101,7 +101,7 @@ fun ShiftOptions(){
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (text != R.string.remember_choise) {
+                            if (text != "Remember choice") {
                                 RadioButton(
                                     selected = (text == selectedOption),
                                     onClick = { onOptionSelected(text) },
@@ -117,7 +117,7 @@ fun ShiftOptions(){
                             }
 
                             Text(
-                                text = stringResource(id = text),
+                                text = text,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         }

@@ -37,7 +37,7 @@ fun MyPageHeader(){
     ){
         Image(
             painter = painterResource(id = R.drawable.logo_dark_icon),
-            contentDescription = stringResource(R.string.logo),
+            contentDescription = "Logo",//stringResource(R.string.logo),
             modifier = Modifier
                 .size((LocalConfiguration.current.screenWidthDp.dp), 50.dp)
                 .padding(0.dp),
