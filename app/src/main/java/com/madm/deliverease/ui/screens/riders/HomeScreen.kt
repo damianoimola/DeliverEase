@@ -30,7 +30,7 @@ fun HomeScreen(){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
 
         MyPageHeader()
