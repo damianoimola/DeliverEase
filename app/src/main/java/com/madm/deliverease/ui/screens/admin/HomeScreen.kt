@@ -11,18 +11,6 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
-    /*
-    val riderList = remember { mutableListOf(
-        Rider("Name1", "Surname1"),
-        Rider("Name2", "Surname2"),
-        Rider("Name3", "Surname3"),
-        Rider("Name4", "Surname4"),
-        Rider("Name5", "Surname5"),
-        Rider("Name6", "Surname6"),
-        Rider("Name7", "Surname7"),
-        Rider("Name8", "Surname8"),)
-    } */
-
     val riderList = remember { mutableStateListOf(
         Rider("Name1", "Surname1"),
         Rider("Name2", "Surname2"),
@@ -61,6 +49,6 @@ fun HomeScreen() {
     ) {
         MyPageHeader()
         TodayRidersCard(riderList)
-        CommunicationCard(mutableListOf()) { text: String -> println(text) }
+        CommunicationCard(communicationList) { text: String -> println(text) }
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,11 +27,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.gilroy
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.*
 import kotlin.math.roundToInt
 
-/** Dialog to hire a new rider */
+
 @Composable
 fun HireNewRiderDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
@@ -55,7 +53,7 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
             shape = MaterialTheme.shapes.large
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-
+                // DialogBox title
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Hire new Rider",
@@ -96,35 +94,29 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                     modifier = Modifier.padding(smallPadding)
                 )
 
+                // Buttons
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Button(
                         onClick = { onDismiss() },
-                        Modifier
+                        content = { Text(text = "Close") },
+                        modifier = Modifier
                             .weight(.5f)
                             .padding(8.dp)
-                    ) {
-                        Text(text = "Close")
-                    }
-
+                    )
                     Button(
                         onClick = { Toast.makeText(context, "CLICKED ON HIRE", Toast.LENGTH_SHORT).show() },
-                        Modifier
+                        content = { Text(text = "Hire") },
+                        modifier = Modifier
                             .weight(.5f)
                             .padding(8.dp)
-                    ) {
-                        Text(text = "Hire")
-                    }
+                    )
                 }
             }
         }
     }
 }
 
-fun Float.dp(): Float = this * density + 0.5f
 
-val density: Float get() = Resources.getSystem().displayMetrics.density
-
-/** Custom list of swipable object with two buttons below */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SwipeToRevealRiderList(
@@ -142,18 +134,13 @@ fun SwipeToRevealRiderList(
 
                 ActionsRow(
                     actionIconSize = 56.dp,
-                    onDelete = {
-                        isRevealed = false
-                        riderList.remove(rider)
-                    },
-                    onEdit = { /*TODO*/ },
+                    onDelete = { isRevealed = false; riderList.remove(rider) },
+                    onEdit = { /* TODO */ },
                 )
 
                 DroppableListItemCard(
                     rider = rider,
                     isRevealed = isRevealed,
-                    cardHeight = 56.dp,
-                    cardOffset = 120f.dp(),
                     onExpand = {isRevealed = true},
                     onCollapse = { isRevealed = false }
                 ) {
@@ -169,10 +156,11 @@ fun ActionsRow(
     actionIconSize: Dp,
     onDelete: () -> Unit,
     onEdit: () -> Unit,
+    iconColor: Color = Color.Gray /* TODO: Use theme */
 ) {
     Row(
         Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp) /* TODO: Padding*/
+            .padding(horizontal = mediumPadding, vertical = smallPadding)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
@@ -181,8 +169,8 @@ fun ActionsRow(
             onClick = onDelete,
             content = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_bin),
-                    tint = Color.Gray,
+                    painter = painterResource(R.drawable.ic_bin),
+                    tint = iconColor,
                     contentDescription = "delete action",
                 )
             }
@@ -192,8 +180,8 @@ fun ActionsRow(
             onClick = onEdit,
             content = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
-                    tint = Color.Gray,
+                    painter = painterResource(R.drawable.ic_edit),
+                    tint = iconColor,
                     contentDescription = "edit action",
                 )
             },
@@ -201,26 +189,25 @@ fun ActionsRow(
     }
 }
 
+fun Float.dp(): Float = this * density + 0.5f
+val density: Float get() = Resources.getSystem().displayMetrics.density
+
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun DroppableListItemCard(
     rider: Rider,
-    cardHeight: Dp,
     isRevealed: Boolean,
-    cardOffset: Float,
     onExpand: () -> Unit,
     onCollapse: () -> Unit,
+    cardHeight: Dp = 56.dp,
+    cardOffset: Float = 120f.dp(),
     minDragAmount: Int = 6,
-    colorBackgroundExpanded: Color = Color(0xFFD1A3FF),
-    colorBackgroundCollapsed: Color = Color(0xFFBDE7EC),
+    colorBackgroundExpanded: Color = Color(0xFFD1A3FF), /* TODO: Set color theme */
+    colorBackgroundCollapsed: Color = Color(0xFFBDE7EC), /* TODO: Set color theme */
     animationDuration: Int = 200,
     content: @Composable (Rider) -> Unit,
 ) {
-    val transitionState = remember {
-        MutableTransitionState(isRevealed).apply {
-            targetState = !isRevealed
-        }
-    }
+    val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed } }
     val transition = updateTransition(transitionState, "cardTransition")
     val cardBgColor by transition.animateColor(
         label = "cardBgColorTransition",
@@ -239,13 +226,13 @@ fun DroppableListItemCard(
     val cardElevation by transition.animateDp(
         label = "cardElevation",
         transitionSpec = { tween(durationMillis = animationDuration) },
-        targetValueByState = { if (isRevealed) 40.dp else 2.dp }
+        targetValueByState = { if (isRevealed) overCardElevation else smallCardElevation }
     )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp) /* TODO:set padding value */
+            .padding(horizontal = nonePadding, vertical = smallPadding)
             .height(cardHeight)
             .offset { IntOffset(offsetTransition.roundToInt(), 0) }
             .pointerInput(Unit) {
@@ -257,12 +244,8 @@ fun DroppableListItemCard(
                 }
             },
         backgroundColor = cardBgColor,
-        shape = remember {
-            RoundedCornerShape(8.dp)
-        },
+        shape = remember { Shapes.small },
         elevation = cardElevation,
-        content = {
-            content(rider)
-        }
+        content = { content(rider) }
     )
 }

@@ -10,3 +10,4 @@ var largePadding = 24.dp
 
 var smallCardElevation = 4.dp
 var mediumCardElevation = 8.dp
+var overCardElevation = 40.dp
