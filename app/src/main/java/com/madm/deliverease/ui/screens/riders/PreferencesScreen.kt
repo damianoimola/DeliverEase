@@ -204,6 +204,7 @@ fun ShiftOptions(){
     LazyVerticalGrid(
         userScrollEnabled = true,
         columns = GridCells.Fixed(2),
+        modifier = Modifier.height(100.dp),
         content = {
 
             items(radioOptions) { text ->
