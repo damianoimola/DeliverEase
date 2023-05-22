@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.widgets.MyPageHeader
 import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -101,6 +102,7 @@ fun CalendarScreen(){
 
 
     Column {
+        MyPageHeader()
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
                 currentYear + 1

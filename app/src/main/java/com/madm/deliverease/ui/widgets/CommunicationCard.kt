@@ -1,5 +1,7 @@
 package com.madm.deliverease.ui.widgets
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -32,6 +35,7 @@ fun CommunicationCard(
     communicationList: MutableList<Communication>,
     sendCommunication: (String) -> Unit = {},
 ) {
+    val density = LocalDensity.current
     val showTextField = remember { mutableStateOf(false) }
     val textFieldValue = remember { mutableStateOf("") }
 
@@ -64,8 +68,19 @@ fun CommunicationCard(
                     }
                 }
             }
-
-            if(showTextField.value) {
+            AnimatedVisibility(
+                visible = showTextField.value,
+                enter = slideInVertically {
+                    // Slide in from 40 dp from the top.
+                    with(density) { -40.dp.roundToPx() }
+                } + expandVertically(
+                    // Expand from the top.
+                    expandFrom = Alignment.Top
+                ) + fadeIn(
+                    // Fade in with the initial alpha of 0.3f.
+                    initialAlpha = 0.3f
+                ),
+                exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
