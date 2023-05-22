@@ -51,8 +51,10 @@ fun MyPageHeader(){
                 textAlign = TextAlign.Center,
                 fontSize = 35.sp,
                 fontFamily = gilroy,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
             )
+
         )
     }
 }
