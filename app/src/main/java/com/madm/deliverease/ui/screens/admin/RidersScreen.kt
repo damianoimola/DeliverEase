@@ -69,7 +69,7 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
 
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Hire a Rider",
+                        text = "Hire new Rider",
                         style = TextStyle(
                             fontFamily = gilroy,
                             fontWeight = FontWeight.Bold,
