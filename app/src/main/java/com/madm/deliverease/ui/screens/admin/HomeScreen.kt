@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.screens.admin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
@@ -10,16 +11,36 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
+    /*
     val riderList = remember { mutableListOf(
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),
-        Rider("Name", "Surname"),)
-    }
+        Rider("Name1", "Surname1"),
+        Rider("Name2", "Surname2"),
+        Rider("Name3", "Surname3"),
+        Rider("Name4", "Surname4"),
+        Rider("Name5", "Surname5"),
+        Rider("Name6", "Surname6"),
+        Rider("Name7", "Surname7"),
+        Rider("Name8", "Surname8"),)
+    } */
+
+    val riderList = remember { mutableStateListOf(
+        Rider("Name1", "Surname1"),
+        Rider("Name2", "Surname2"),
+        Rider("Name3", "Surname3"),
+        Rider("Name4", "Surname4"),
+        Rider("Name5", "Surname5"),
+        Rider("Name6", "Surname6"),
+        Rider("Name7", "Surname7"),
+        Rider("Name8", "Surname8"),
+        Rider("Name9", "Surname9"),
+        Rider("Name10", "Surname10"),
+        Rider("Name11", "Surname11"),
+        Rider("Name12", "Surname12"),
+        Rider("Name13", "Surname13"),
+        Rider("Name14", "Surname14"),
+        Rider("Name15", "Surname15"),
+        Rider("Name16", "Surname16"),
+    ) }
 
     val communicationList = remember {
         mutableListOf(
@@ -39,7 +60,7 @@ fun HomeScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MyPageHeader()
-        RidersCard(riderList)
-        CommunicationCard(communicationList) { text: String -> println(text) }
+        TodayRidersCard(riderList)
+        CommunicationCard(mutableListOf()) { text: String -> println(text) }
     }
 }

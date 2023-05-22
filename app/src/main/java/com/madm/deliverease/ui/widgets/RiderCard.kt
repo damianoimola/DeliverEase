@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import com.madm.deliverease.ui.theme.*
 data class Rider(val riderName: String, val riderSurname: String)
 
 @Composable
-fun RidersCard(
+fun TodayRidersCard(
     riderList: MutableList<Rider>,
     columns: Int = 2,
 ) {
@@ -46,9 +47,9 @@ fun RidersCard(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),
                 content = {
-                    items(riderList) {item ->
+                    items(riderList) {rider ->
                         Card(Modifier.padding(smallPadding)) {
-                            CustomRiderWidget(item.riderName, item.riderSurname)
+                            RiderRow(rider)
                         }
                     }
                 }
@@ -58,9 +59,8 @@ fun RidersCard(
 }
 
 @Composable
-fun CustomRiderWidget(
-    riderName: String = "Rider Name",
-    riderSurname: String = "Rider Surname",
+fun RiderRow(
+    rider: Rider,
     inLine: Boolean = false // Let you switch name from Column to Row structure
 ) {
     Row(
@@ -80,16 +80,18 @@ fun CustomRiderWidget(
                 horizontalArrangement = Arrangement.Start,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(riderName)
-                Text(riderSurname)
+                Divider(Modifier.width(smallPadding))
+                Text(rider.riderName)
+                Divider(Modifier.width(smallPadding))
+                Text(rider.riderSurname)
             }
         else
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(riderName)
-                Text(riderSurname)
+                Text(rider.riderName)
+                Text(rider.riderSurname)
             }
     }
 }
