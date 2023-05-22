@@ -40,21 +40,6 @@ val MonthMap = mapOf(
     11 to "December"
 )
 
-val ReverseMonthMap = mapOf(
-     "January" to 0,
-     "February" to 1,
-     "March" to 2,
-     "April" to 3,
-     "May" to 4,
-     "June" to 5,
-     "July" to 6,
-     "August" to 7,
-     "September" to 8,
-     "October" to 9,
-     "November" to 10,
-     "December" to 11,
-)
-
 @Parcelize
 data class Day(val number: Int, val name: String) : Parcelable
 
@@ -110,23 +95,20 @@ fun CalendarScreen(){
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-    val months = (currentMonth..currentMonth + 11)
-        .toList()
-        .toIntArray()
-        .map { i -> MonthMap[i%12]!! }
+    val months = (currentMonth..currentMonth + 11).toList().toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
     Column {
-        MonthSelector(months, selectedMonth, currentYear) { month: String, isNextYear: Boolean ->
+        MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
                 currentYear + 1
             else currentYear
             selectedMonth = month
         }
-        WeeksList(ReverseMonthMap[selectedMonth]!!, selectedYear) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
-        WeekShifts(indexOfSelectedWeek, ReverseMonthMap[selectedMonth]!!, selectedYear)
+        WeeksList(selectedMonth, selectedYear) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
+        WeekShifts(indexOfSelectedWeek, selectedMonth, selectedYear)
     }
 }
 
@@ -134,10 +116,10 @@ fun CalendarScreen(){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MonthSelector(
-    months: List<String>,
-    selectedMonth: String,
+    months: IntArray,
+    selectedMonth: Int,
     currentYear: Int,
-    function: (String, Boolean) -> Unit
+    function: (Int, Boolean) -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
     var isNextYear = false
@@ -152,9 +134,9 @@ fun MonthSelector(
     ) {
         TextField(
             value = if(!isNextYearSelected)
-                "$selectedMonth $currentYear"
+                "${MonthMap[selectedMonth]} $currentYear"
             else
-                "$selectedMonth ${currentYear + 1}",
+                "${MonthMap[selectedMonth]} ${currentYear + 1}",
             onValueChange = { },
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -175,18 +157,18 @@ fun MonthSelector(
                 // menu item
                 DropdownMenuItem(
                     onClick = {
-                        isNextYearSelected = ReverseMonthMap[option]!! < ReverseMonthMap[months[0]]!!
+                        isNextYearSelected = MonthMap[option]!! < MonthMap[months[0]]!!
                         function(option, isNextYearSelected)
                         expanded = false
                     }
                 ) {
                     if(!isNextYear)
-                        Text(text = "$option $currentYear")
+                        Text(text = "${MonthMap[option]} $currentYear")
                     else
-                        Text(text = "$option ${currentYear + 1}")
+                        Text(text = "${MonthMap[option]} ${currentYear + 1}")
                 }
 
-                if(option == "December")
+                if(option == 11) // DECEMBER
                     isNextYear = true
             }
         }
@@ -259,105 +241,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
             )
         )
         Text(
-            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[selectedMonth + 1] else MonthMap[selectedMonth]}",
-            style = TextStyle(
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFF9800)
-            )
-        )
-    }
-
-    Row {
-        Text(text = "You have")
-        Text(
-            text = " 3 ",
-            style = TextStyle(
-                color = Color(0xFFFF9800),
-                fontWeight = FontWeight.Bold
-            ),
-        )
-        Text(text = " shifts assigned")
-    }
-}
-
-
-
-@Composable
-fun WeeksListV1(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
-    // retrieve the list of all mondays
-    val mondayList = getMondays(selectedYear, selectedMonth+1)
-
-    // list of strings in this format: "01 January"
-    val weeksList = mondayList
-        .toList()
-        .toIntArray()
-        .map { i -> "${i.integerToTwoDigit()} ${MonthMap[selectedMonth]!!}" }
-
-    // retrieve the selected week
-    var selectedWeek by remember { mutableStateOf(weeksList[0]) }
-
-
-    // retrieve the last day (number) of the selected week
-    var lastDayOfWeek by remember { mutableStateOf(
-        (Integer.parseInt(selectedWeek.subSequence(0..1) as String) + 6).toString()
-    )
-    }
-
-    // retrieve the month (string) of the selected week
-    val monthOfWeek by remember {
-        mutableStateOf(selectedWeek.subSequence(2 until selectedWeek.length))
-    }
-
-    Row (
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-    ){
-        weeksList.forEach {
-            Button(
-                onClick = {
-                    function(weeksList.indexOf(it) + 1)
-                    selectedWeek = it
-                    lastDayOfWeek = (Integer.parseInt(it.subSequence(0..1) as String) + 6).toString()
-                },
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 2.dp
-                ),
-                modifier = Modifier
-                    .padding(smallPadding, smallPadding)
-                    .clip(shape = RoundedCornerShape(20)),
-                colors = ButtonDefaults.buttonColors(
-                    if (selectedWeek == it) Color(0xFFFF9800)
-                    else Color(0xFFFF5722)
-                ),
-                border = BorderStroke(width = 1.dp, color = Color.Red),
-                shape = RoundedCornerShape(20)
-            ) {
-                Text(
-                    text = it,
-                    color = Color.White
-                )
-            }
-
-        }
-    }
-
-    Row (
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Start
-    ){
-        Text(
-            text = "Week: ",
-            style = TextStyle(
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Normal
-            )
-        )
-        Text(
-            text = "$selectedWeek - $lastDayOfWeek $monthOfWeek",
+            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
             style = TextStyle(
                 fontSize = 25.sp,
                 fontWeight = FontWeight.SemiBold,

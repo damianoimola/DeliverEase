@@ -3,14 +3,18 @@ package com.madm.deliverease.ui.screens.riders
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,133 +29,73 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import java.util.*
 
 
 @Preview
 @Composable
 fun PreferenceScreen(){
     var indexOfSelectedWeek : Int by remember { mutableStateOf(1) }
-    val currentDay = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH)
-    val currentMonth = java.util.Calendar.getInstance().get(java.util.Calendar.MONTH)
-    val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+    val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-    val months = (currentMonth..currentMonth + 12)
-        .toList()
-        .toIntArray()
-        .map { i -> MonthMap[i%12]!! }
+    val months = (currentMonth..currentMonth + 12).toList().toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
+    var selectedYear by remember { mutableStateOf(currentYear) }
 
-    Column{
-        MonthSelector(months, selectedMonth, currentYear) { item: String, _: Boolean -> selectedMonth = item }
+    Column {
+        MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+            selectedYear = if (isNextYear)
+                currentYear + 1
+            else currentYear
+            selectedMonth = month
+        }
         DaysList(currentDay, currentMonth, currentYear) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
         WeekPreferences(indexOfSelectedWeek, currentMonth, currentYear)
     }
 }
 
 @Composable
-fun WeekPreferences(indexOfSelectedWeek: Int, currentMonth: Int, currentYear: Int) {
-    val days = getWeekDays(currentYear, currentMonth+1, indexOfSelectedWeek)
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier
-            .padding(top = mediumPadding)
-            .fillMaxHeight()
-    ) {
-        days.forEach {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(nonePadding, smallPadding)
-            ) {
-                Text(text = "${it.number} ${it.name}")
-               Divider(modifier = Modifier
-                    .fillMaxWidth()
-                    .width(2.dp)
-                    .padding(start = smallPadding))
-            }
-
-                ShiftOptions()
-
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ShiftOptions(){
-    val radioOptions = listOf("Yes", "No", "Maybe", "Remember choice")
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
-    val checkedState = remember { mutableStateOf(false) }
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            content = {
-                items(radioOptions) { text ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = (text == selectedOption),
-                                    onClick = {
-                                        onOptionSelected(text)
-                                    }
-                                )
-                                .padding(horizontal = 4.dp),
-                            horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (text != "Remember choice") {
-                                RadioButton(
-                                    selected = (text == selectedOption),
-                                    onClick = { onOptionSelected(text) },
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-                            }else{
-                                Checkbox(
-                                    checked = checkedState.value,
-                                    onCheckedChange = { checkedState.value = it },
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-
-                            }
-
-                            Text(
-                                text = text,
-                                modifier = Modifier.padding(start = 4.dp)
-                            )
-                        }
-                    }
-            }
-        )
-
-}
-
-
-@Composable
 fun DaysList(currentDay: Int, selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
-    var weekNumber = 1
-    val mondayList = getMondays(selectedYear, selectedMonth+1)
+    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
 
-    val weeks = mondayList
+    // list of all mondays (first day of week) of the selected month
+    val mondaysList = getMondays(selectedYear, selectedMonth+1)
         .toList()
         .toIntArray()
-        .filter {
-           i -> i >= currentDay
-        }
-        .map {
-                i -> "${i.integerToTwoDigit()} ${MonthMap[selectedMonth]!!}"
-        }
+        .map { i -> i.integerToTwoDigit() }
+
+    // list of all days of the selected week
+    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, currentWeek)) }
+
+    // the selected week
+    var selectedWeek by rememberSaveable { mutableStateOf(mondaysList[0]) }
 
 
-    var selectedWeek by remember { mutableStateOf(weeks[0]) }
-    var lastDayOfWeek by remember { mutableStateOf(
-        (Integer.parseInt(selectedWeek.subSequence(0..1) as String) + 6).toString()
-    )
-    }
-    val remainderString by remember {
-        mutableStateOf(selectedWeek.subSequence(2 until selectedWeek.length))
-    }
+//
+//    var weekNumber = 1
+//    val mondayList = getMondays(selectedYear, selectedMonth+1)
+//
+//    val weeks = mondayList
+//        .toList()
+//        .toIntArray()
+//        .filter {
+//                i -> i >= currentDay
+//        }
+//        .map {
+//                i -> "${i.integerToTwoDigit()} ${MonthMap[selectedMonth]!!}"
+//        }
+//
+//
+//    var selectedWeek by remember { mutableStateOf(weeks[0]) }
+//    var lastDayOfWeek by remember { mutableStateOf(
+//        (Integer.parseInt(selectedWeek.subSequence(0..1) as String) + 6).toString()
+//    )
+//    }
+//    val remainderString by remember {
+//        mutableStateOf(selectedWeek.subSequence(2 until selectedWeek.length))
+//    }
 
     Row (
         modifier = Modifier
@@ -159,13 +103,17 @@ fun DaysList(currentDay: Int, selectedMonth: Int, selectedYear: Int, function: (
             .horizontalScroll(rememberScrollState())
 
     ){
-        weeks.forEach {
+        mondaysList.forEach {
             Button(
                 onClick = {
-                    function(weekNumber)
+                    function(mondaysList.indexOf(it) + 1)
                     selectedWeek = it
-                    lastDayOfWeek = (Integer.parseInt(it.subSequence(0..1) as String) + 6).toString()
-                    weekNumber += 1
+                    // update the list of days of the selected week
+                    daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
+
+//                    function(weekNumber)
+//                    selectedWeek = it
+//                    weekNumber += 1
                 },
                 elevation = ButtonDefaults.elevation(
                     defaultElevation = 6.dp,
@@ -202,7 +150,7 @@ fun DaysList(currentDay: Int, selectedMonth: Int, selectedYear: Int, function: (
             )
         )
         Text(
-            text = "$selectedWeek - $lastDayOfWeek $remainderString",
+            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
             style = TextStyle(
                 fontSize = 25.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -211,3 +159,142 @@ fun DaysList(currentDay: Int, selectedMonth: Int, selectedYear: Int, function: (
         )
     }
 }
+
+@Composable
+fun WeekPreferences(indexOfSelectedWeek: Int, currentMonth: Int, currentYear: Int) {
+    val days = getWeekDays(currentYear, currentMonth+1, indexOfSelectedWeek)
+
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
+        modifier = Modifier.padding(top = mediumPadding)
+    ) {
+        items(days){
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(nonePadding, smallPadding)
+            ) {
+                Text(text = "${it.number} ${it.name}")
+                Divider(modifier = Modifier
+                    .fillMaxWidth()
+                    .width(2.dp)
+                    .padding(start = smallPadding))
+            }
+
+            ShiftOptions()
+        }
+    }
+}
+
+
+
+
+
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ShiftOptions(){
+    val radioOptions = listOf(stringResource(R.string.shift_yes), stringResource(R.string.shift_no), stringResource(
+            R.string.shift_maybe), stringResource(R.string.shift_remember)
+                )
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
+    val checkedState = remember { mutableStateOf(false) }
+
+
+    LazyVerticalGrid(
+        userScrollEnabled = true,
+        columns = GridCells.Fixed(2),
+        content = {
+
+            items(radioOptions) { text ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = {
+                                onOptionSelected(text)
+                            }
+                        )
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (text != "Remember choice") {
+                        RadioButton(
+                            selected = (text == selectedOption),
+                            onClick = { onOptionSelected(text) },
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    } else {
+                        Checkbox(
+                            checked = checkedState.value,
+                            onCheckedChange = { checkedState.value = it },
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+
+                    }
+
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+        }
+    )
+}
+
+
+
+
+@Preview
+@Composable
+fun ShiftOptionsV1(){
+    val radioOptions = listOf("Yes", "No", "Maybe", "Remember choice")
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
+    val checkedState = remember { mutableStateOf(false) }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        content = {
+            items(radioOptions) { text ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = {
+                                onOptionSelected(text)
+                            }
+                        )
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (text != "Remember choice") {
+                        RadioButton(
+                            selected = (text == selectedOption),
+                            onClick = { onOptionSelected(text) },
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }else{
+                        Checkbox(
+                            checked = checkedState.value,
+                            onCheckedChange = { checkedState.value = it },
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+
+                    }
+
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+        }
+    )
+
+}
+

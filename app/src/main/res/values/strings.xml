@@ -11,4 +11,8 @@
     <string name="no_riders_today">No rider\'s for today</string>
     <string name="communication_title">Communications</string>
     <string name="no_communications">No communications to read</string>
+    <string name="shift_yes">I\'m in</string>
+    <string name="shift_no">I\'m not in</string>
+    <string name="shift_maybe">I\'d like no</string>
+    <string name="shift_remember">Remember choice</string>
 </resources>
