@@ -1,10 +1,12 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.os.Parcelable
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -51,7 +54,9 @@ val ReverseMonthMap = mapOf(
      "November" to 10,
      "December" to 11,
 )
-data class Day(val number: Int, val name: String)
+
+@Parcelize
+data class Day(val number: Int, val name: String) : Parcelable
 
 fun getWeekDays(year: Int, month: Int, week: Int): List<Day> {
     val firstDayOfMonth = LocalDate.of(year, month, 1)
@@ -115,7 +120,6 @@ fun CalendarScreen(){
 
     Column {
         MonthSelector(months, selectedMonth, currentYear) { month: String, isNextYear: Boolean ->
-            println("########## NEXT YEAR $isNextYear")
             selectedYear = if (isNextYear)
                 currentYear + 1
             else currentYear
@@ -192,6 +196,95 @@ fun MonthSelector(
 
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
+    // list of all mondays (first day of week) of the selected month
+    val mondaysList = getMondays(selectedYear, selectedMonth+1)
+        .toList()
+        .toIntArray()
+        .map { i -> i.integerToTwoDigit() }
+
+    // list of all days of the selected week
+    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, 1)) }
+
+    // the selected week
+    var selectedWeek by rememberSaveable { mutableStateOf(mondaysList[0]) }
+
+
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+    ){
+        mondaysList.forEach {
+            Button(
+                onClick = {
+                    // function that updates other widgets bases on the selected week
+                    function(mondaysList.indexOf(it) + 1)
+                    selectedWeek = it
+                    // update the list of days of the selected week
+                    daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
+                },
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 8.dp,
+                    disabledElevation = 2.dp
+                ),
+                modifier = Modifier
+                    .padding(smallPadding, smallPadding)
+                    .clip(shape = RoundedCornerShape(20)),
+                colors = ButtonDefaults.buttonColors(
+                    if (selectedWeek == it) Color(0xFFFF9800)
+                    else Color(0xFFFF5722)
+                ),
+                border = BorderStroke(width = 1.dp, color = Color.Red),
+                shape = RoundedCornerShape(20)
+            ) {
+                Text(
+                    text = "$it ${MonthMap[selectedMonth]}",
+                    color = Color.White
+                )
+            }
+
+        }
+    }
+
+    Row (
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.Start
+    ){
+        Text(
+            text = "Week: ",
+            style = TextStyle(
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Normal
+            )
+        )
+        Text(
+            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[selectedMonth + 1] else MonthMap[selectedMonth]}",
+            style = TextStyle(
+                fontSize = 25.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFFFF9800)
+            )
+        )
+    }
+
+    Row {
+        Text(text = "You have")
+        Text(
+            text = " 3 ",
+            style = TextStyle(
+                color = Color(0xFFFF9800),
+                fontWeight = FontWeight.Bold
+            ),
+        )
+        Text(text = " shifts assigned")
+    }
+}
+
+
+
+@Composable
+fun WeeksListV1(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
     // retrieve the list of all mondays
     val mondayList = getMondays(selectedYear, selectedMonth+1)
 
@@ -207,8 +300,8 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
 
     // retrieve the last day (number) of the selected week
     var lastDayOfWeek by remember { mutableStateOf(
-            (Integer.parseInt(selectedWeek.subSequence(0..1) as String) + 6).toString()
-        )
+        (Integer.parseInt(selectedWeek.subSequence(0..1) as String) + 6).toString()
+    )
     }
 
     // retrieve the month (string) of the selected week
@@ -285,6 +378,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
         Text(text = " shifts assigned")
     }
 }
+
 
 
 @Composable
