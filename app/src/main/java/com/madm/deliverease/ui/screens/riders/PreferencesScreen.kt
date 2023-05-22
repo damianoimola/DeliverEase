@@ -29,6 +29,7 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.widgets.MyPageHeader
 import java.util.*
 
 
@@ -45,6 +46,7 @@ fun PreferenceScreen(){
     var selectedYear by remember { mutableStateOf(currentYear) }
 
     Column {
+        MyPageHeader()
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
                 currentYear + 1

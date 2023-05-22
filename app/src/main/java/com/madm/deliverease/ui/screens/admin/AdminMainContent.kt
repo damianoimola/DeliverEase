@@ -1,5 +1,8 @@
 package com.madm.deliverease.ui.screens.admin
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,18 +19,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AdminsMainContent(){
     // manages the navigation between different destinations
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
 
     // bottom navigation bar icons
     val navItems = listOf(
@@ -49,10 +54,16 @@ fun AdminsMainContent(){
                 // navigation host holds all of the navigation destinations within the app
                 // calling "navController.navigate("home")" you can travel through app
                 // It can handle parameters.
-                NavHost(
+                AnimatedNavHost(
                     navController = navController,
                     startDestination = "home",
-                    modifier = Modifier.padding(mediumPadding)
+                    modifier = Modifier.padding(mediumPadding),
+                    enterTransition = {
+                        slideIntoContainer(
+                            towards = AnimatedContentScope.SlideDirection.Left,
+                            animationSpec = tween(700)
+                        )
+                    }
                 ) {
                     composable("home") { HomeScreen() }
                     composable("shift") { ShiftsScreen() }
