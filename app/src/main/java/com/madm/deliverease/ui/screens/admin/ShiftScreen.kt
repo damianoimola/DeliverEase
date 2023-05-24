@@ -25,6 +25,7 @@ import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.widgets.*
 import java.util.*
 
 val ridersAvailable = listOf("Massimo Buniy", "Damiano Imola", "Alessandro Finocchi", "Martina Lupini")
@@ -37,16 +38,11 @@ fun ShiftsScreen() {
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
     val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
-    val months = (currentMonth..currentMonth + 11).toList().toIntArray()
+    val months = (currentMonth..currentMonth + 11).map{i -> i%12}.toList().toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
-    // ########################################################
-    // ########################################################
-    // MARTINA'S THINGS
-    // ########################################################
-    // ########################################################
     Column {
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
@@ -54,19 +50,10 @@ fun ShiftsScreen() {
             else currentYear
             selectedMonth = month
         }
-        WeeksListUpdated(selectedMonth, selectedYear) { daySelected: Int ->
+        WeeksList(selectedMonth, selectedYear, false) { daySelected: Int ->
             selectedDate = daySelected
         }
 
-        /*
-
-    if(currentDay < selectedDate){
-        ridersAvailabilities()
-    }else{
-        ridersPastShift()
-    }
-
-     */
         RidersAvailabilities()
     }
 
@@ -152,44 +139,15 @@ fun RidersAvailabilities(){
             }
         }}
 
-        item{MaxMinShift()}
-
         item{ButtonDraftAndSubmit()}
     }
 }
 
 
-@Composable
-fun MaxMinShift(){
-    Card(
-        elevation = mediumCardElevation,
-        shape = Shapes.medium,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(nonePadding, smallPadding)
-    ) {
-        Text("Number of riders")
-        Row(horizontalArrangement = Arrangement.spacedBy(32.dp)){
-            Column(modifier = Modifier
-                .weight(1f)
-                .padding(32.dp)) {
-                Text(text = "Minumum:")
-                AdjustingButtons()
-            }
-            Column(modifier = Modifier
-                .weight(1f)
-                .padding(32.dp)) {
-                Text(text= "Maximum:")
-                AdjustingButtons()
-            }
-        }
-    }
-}
-
 @Preview
 @Composable
 fun AdjustingButtons(){
-    var value =  0
+    val value =  0
 
     Row{
         Button(onClick = {
@@ -244,88 +202,6 @@ fun ButtonDraftAndSubmit() {
     }
 }
 
-
-@Composable
-fun RidersPastShift(){
-
-}
-
-@Composable
-fun WeeksListUpdated(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
-    // list of all mondays (first day of week) of the selected month
-    val mondaysList = getMondays(selectedYear, selectedMonth+1)
-        .toList()
-        .toIntArray()
-        .map { i -> i.integerToTwoDigit() }
-
-    // list of all days of the selected week
-    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, 1)) }
-
-    // the selected week
-    var selectedWeek by rememberSaveable { mutableStateOf(mondaysList[0]) }
-
-
-    Row (
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
-    ){
-        mondaysList.forEach {
-            Button(
-                onClick = {
-                    // function that updates other widgets bases on the selected week
-                    function(it.toInt())
-                    selectedWeek = it
-                    // update the list of days of the selected week
-                    daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
-                },
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 2.dp
-                ),
-                modifier = Modifier
-                    .padding(smallPadding, smallPadding)
-                    .clip(shape = RoundedCornerShape(20)),
-                colors = ButtonDefaults.buttonColors(
-                    if (selectedWeek == it) Color(0xFFFF9800)
-                    else Color(0xFFFF5722)
-                ),
-                border = BorderStroke(width = 1.dp, color = Color.Red),
-                shape = RoundedCornerShape(20)
-            ) {
-                Text(
-                    text = "$it ${MonthMap[selectedMonth]}",
-                    color = Color.White
-                )
-            }
-
-        }
-    }
-
-    Row (
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Start
-    ){
-        Text(
-            text = "Week: ",
-            style = TextStyle(
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Normal
-            )
-        )
-        Text(
-            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
-            style = TextStyle(
-                fontSize = 25.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFF9800)
-            )
-        )
-    }
-
-
-}
 
 
 
