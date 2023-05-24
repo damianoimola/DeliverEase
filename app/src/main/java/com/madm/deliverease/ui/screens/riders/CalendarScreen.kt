@@ -96,7 +96,7 @@ fun CalendarScreen(){
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-    val months = (currentMonth..currentMonth + 11).toList().toIntArray()
+    val months = (currentMonth..currentMonth + 11).toList().map{i-> i%12}.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
@@ -124,10 +124,7 @@ fun MonthSelector(
     function: (Int, Boolean) -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
-    var isNextYear = false
-    var isNextYearSelected by remember {
-        mutableStateOf(false)
-    }
+    var isNextYearSelected by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -159,19 +156,18 @@ fun MonthSelector(
                 // menu item
                 DropdownMenuItem(
                     onClick = {
-                        isNextYearSelected = MonthMap[option]!! < MonthMap[months[0]]!!
+                        isNextYearSelected = option < months[0]
                         function(option, isNextYearSelected)
                         expanded = false
                     }
                 ) {
-                    if(!isNextYear)
-                        Text(text = "${MonthMap[option]} $currentYear")
-                    else
+                    if(option < months[0]) {
                         Text(text = "${MonthMap[option]} ${currentYear + 1}")
+                    }
+                    else {
+                        Text(text = "${MonthMap[option]} $currentYear")
+                    }
                 }
-
-                if(option == 11) // DECEMBER
-                    isNextYear = true
             }
         }
     }

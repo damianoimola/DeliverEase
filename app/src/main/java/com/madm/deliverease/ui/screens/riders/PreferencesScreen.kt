@@ -139,6 +139,9 @@ fun DaysList(selectedMonth: Int, selectedYear: Int, function: (Int) -> Unit) {
     }
 }
 
+
+
+
 /*
 This composable function regards the lower layer of the interface
  */
@@ -167,6 +170,8 @@ fun WeekPreferences(indexOfSelectedWeek: Int, currentMonth: Int, currentYear: In
         }
     }
 }
+
+
 
 
 /*
@@ -225,6 +230,9 @@ fun ShiftOptions(){
         }
     )
 }
+
+
+
 
 /*
 This function is used to calculate the mondays after the current date (modification of getMonday by Damiano)
