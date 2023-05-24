@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -46,15 +47,18 @@ fun ShiftsScreen() {
     // MARTINA'S THINGS
     // ########################################################
     // ########################################################
-    MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
-        selectedYear = if (isNextYear)
-            currentYear + 1
-        else currentYear
-        selectedMonth = month
-    }
-    WeeksListUpdated(selectedMonth, selectedYear) {daySelected: Int -> selectedDate = daySelected }
+    Column {
+        MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+            selectedYear = if (isNextYear)
+                currentYear + 1
+            else currentYear
+            selectedMonth = month
+        }
+        WeeksListUpdated(selectedMonth, selectedYear) { daySelected: Int ->
+            selectedDate = daySelected
+        }
 
-    /*
+        /*
 
     if(currentDay < selectedDate){
         ridersAvailabilities()
@@ -63,7 +67,8 @@ fun ShiftsScreen() {
     }
 
      */
-    RidersAvailabilities()
+        RidersAvailabilities()
+    }
 
 }
 
@@ -71,8 +76,8 @@ fun ShiftsScreen() {
 @Composable
 fun RidersAvailabilities(){
 
-    Column{
-        Row(
+    LazyColumn{
+        item{Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(nonePadding, smallPadding)
         ) {
@@ -81,8 +86,8 @@ fun RidersAvailabilities(){
                 .fillMaxWidth()
                 .width(2.dp)
                 .padding(start = smallPadding))
-        }
-        Row(
+        }}
+        item{Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(20))
                 .background(color = Color.LightGray)
@@ -106,8 +111,8 @@ fun RidersAvailabilities(){
                     }
                 }
             }
-        }
-        Row(
+        }}
+        item{Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(nonePadding, smallPadding)
         ) {
@@ -116,8 +121,8 @@ fun RidersAvailabilities(){
                 .fillMaxWidth()
                 .width(2.dp)
                 .padding(start = smallPadding))
-        }
-        Row(
+        }}
+        item{Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(20))
                 .background(color = Color.LightGray)
@@ -145,11 +150,11 @@ fun RidersAvailabilities(){
                     }
                 }
             }
-        }
+        }}
 
-        MaxMinShift()
+        item{MaxMinShift()}
 
-        ButtonDraftAndSubmit()
+        item{ButtonDraftAndSubmit()}
     }
 }
 
@@ -210,7 +215,7 @@ fun AdjustingButtons(){
 @Preview
 @Composable
 fun ButtonDraftAndSubmit() {
-    Row( horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+    Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Button(
             onClick = {},
             shape = RoundedCornerShape(30),
