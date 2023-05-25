@@ -2,7 +2,6 @@ package com.madm.deliverease.ui.widgets
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import android.widget.Toast
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -11,111 +10,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 import kotlin.math.roundToInt
 
-
-@Composable
-fun HireNewRiderDialog(onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    var riderName by rememberSaveable { mutableStateOf("") }
-    var riderSurname by rememberSaveable { mutableStateOf("") }
-    var riderUsername by rememberSaveable { mutableStateOf("") }
-    var riderPassword by rememberSaveable { mutableStateOf("") }
-
-    Dialog(
-        onDismissRequest = { onDismiss() },
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = false
-        )
-    ) {
-        Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                // DialogBox title
-                Row (modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Hire new Rider",
-                        style = TextStyle(
-                            fontFamily = gilroy,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                }
-
-                TextField(
-                    value = riderName,
-                    onValueChange = { riderName = it },
-                    placeholder = { Text(text = "Name") },
-                    modifier = Modifier.padding(smallPadding)
-                )
-
-                TextField(
-                    value = riderSurname,
-                    onValueChange = { riderSurname = it },
-                    placeholder = { Text(text = "Surname") },
-                    modifier = Modifier.padding(smallPadding)
-                )
-
-                TextField(
-                    value = riderUsername,
-                    onValueChange = { riderUsername = it },
-                    placeholder = { Text(text = "Username") },
-                    modifier = Modifier.padding(smallPadding)
-                )
-
-                TextField(
-                    value = riderPassword,
-                    onValueChange = { riderPassword = it },
-                    placeholder = { Text(text = "Password") },
-                    modifier = Modifier.padding(smallPadding)
-                )
-
-                // Buttons
-                Row (modifier = Modifier.fillMaxWidth()) {
-                    Button(
-                        onClick = { onDismiss() },
-                        content = { Text(text = "Close") },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(8.dp)
-                    )
-                    Button(
-                        onClick = { Toast.makeText(context, "CLICKED ON HIRE", Toast.LENGTH_SHORT).show() },
-                        content = { Text(text = "Hire") },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(8.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
+fun Float.dp(): Float = this * density + 0.5f
+val density: Float get() = Resources.getSystem().displayMetrics.density
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -151,47 +58,6 @@ fun SwipeToRevealRiderList(
         }
     }
 }
-
-@Composable
-fun ActionsRow(
-    actionIconSize: Dp,
-    onDelete: () -> Unit,
-    onEdit: () -> Unit,
-    iconColor: Color = Color.Gray /* TODO: Use theme */
-) {
-    Row(
-        Modifier
-            .padding(horizontal = nonePadding, vertical = smallPadding)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        IconButton(
-            modifier = Modifier.size(actionIconSize),
-            onClick = onDelete,
-            content = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_bin),
-                    tint = iconColor,
-                    contentDescription = "delete action",
-                )
-            }
-        )
-        IconButton(
-            modifier = Modifier.size(actionIconSize),
-            onClick = onEdit,
-            content = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_edit),
-                    tint = iconColor,
-                    contentDescription = "edit action",
-                )
-            },
-        )
-    }
-}
-
-fun Float.dp(): Float = this * density + 0.5f
-val density: Float get() = Resources.getSystem().displayMetrics.density
 
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
@@ -249,4 +115,42 @@ fun DroppableListItemCard(
         elevation = cardElevation,
         content = { content(rider) }
     )
+}
+
+@Composable
+fun ActionsRow(
+    actionIconSize: Dp,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit,
+    iconColor: Color = Color.Gray /* TODO: Use theme */
+) {
+    Row(
+        Modifier
+            .padding(horizontal = nonePadding, vertical = smallPadding)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        IconButton(
+            modifier = Modifier.size(actionIconSize),
+            onClick = onDelete,
+            content = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_bin),
+                    tint = iconColor,
+                    contentDescription = "delete action",
+                )
+            }
+        )
+        IconButton(
+            modifier = Modifier.size(actionIconSize),
+            onClick = onEdit,
+            content = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_edit),
+                    tint = iconColor,
+                    contentDescription = "edit action",
+                )
+            },
+        )
+    }
 }

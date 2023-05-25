@@ -1,7 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,21 +31,25 @@ data class Communication(val text: String, val data: String)
 
 @Composable
 fun CommunicationCard(
-    communicationList: MutableList<Communication>,
+    communicationList: List<Communication>,
+    showAddButton: Boolean,
+    modifier: Modifier = Modifier,
     sendCommunication: (String) -> Unit = {},
 ) {
-    val density = LocalDensity.current
     val showTextField = remember { mutableStateOf(false) }
     val textFieldValue = remember { mutableStateOf("") }
+
+    val density = LocalDensity.current
 
     Card(
         elevation = mediumCardElevation,
         shape = Shapes.medium,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(nonePadding, smallPadding)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Top card bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -58,16 +61,20 @@ fun CommunicationCard(
                     style = TextStyle(fontSize = 22.sp), /* TODO: set to typography */
                     textAlign = TextAlign.Center
                 )
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(onClick = { showTextField.value = !showTextField.value }) {
-                        if(!showTextField.value) Icon(Icons.Default.Add, "Add")
-                        else Icon(ImageVector.vectorResource(id = R.drawable.remove),"Remove")
+                if(showAddButton) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(onClick = { showTextField.value = !showTextField.value }) {
+                            if(!showTextField.value) Icon(Icons.Default.Add, "Add")
+                            else Icon(ImageVector.vectorResource(id = R.drawable.remove),"Remove")
+                        }
                     }
                 }
             }
+
+            // Text Field animated
             AnimatedVisibility(
                 visible = showTextField.value,
                 enter = slideInVertically {
@@ -80,7 +87,8 @@ fun CommunicationCard(
                     // Fade in with the initial alpha of 0.3f.
                     initialAlpha = 0.3f
                 ),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
+                exit = slideOutVertically() + shrinkVertically() + fadeOut()
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -101,22 +109,20 @@ fun CommunicationCard(
                             sendCommunication(textFieldValue.value)
                             textFieldValue.value = ""
                             showTextField.value = !showTextField.value
-                        }) {
-                            Text(stringResource(R.string.send))
-                        }
+                        }) { Text(stringResource(R.string.send)) }
                         Spacer(Modifier.width(4.dp))
                         Button(onClick = {
                             textFieldValue.value = ""
                             showTextField.value = !showTextField.value
-                        }) {
-                            Text(stringResource(R.string.cancel))
-                        }
+                        }) { Text(stringResource(R.string.cancel)) }
                     }
                 }
             }
 
+            // Text if have not any notification
             if(communicationList.isEmpty()) Text(stringResource(R.string.no_communications), style = TextStyle(fontSize = 18.sp))
 
+            // CommunicationList
             LazyColumn(
                 content = {
                     items(communicationList) { item ->
