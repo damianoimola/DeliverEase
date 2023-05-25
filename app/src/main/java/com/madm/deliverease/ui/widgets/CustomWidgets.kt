@@ -4,8 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,9 +30,9 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 
 @Composable
-fun MyPageHeader(){
+fun MyPageHeader(modifier: Modifier = Modifier){
     Box(
-        modifier = Modifier.fillMaxWidth().padding(bottom = smallPadding),
+        modifier = modifier.fillMaxWidth().padding(bottom = smallPadding),
     ){
         Image(
             painter = painterResource(id = R.drawable.logo_dark_icon),

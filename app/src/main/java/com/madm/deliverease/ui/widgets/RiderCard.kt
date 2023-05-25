@@ -27,14 +27,14 @@ data class Rider(val riderName: String, val riderSurname: String)
 fun TodayRidersCard(
     riderList: MutableList<Rider>,
     columns: Int = 2,
+    modifier: Modifier = Modifier
 ) {
     Card(
         elevation = mediumCardElevation,
         shape = Shapes.medium,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(nonePadding, smallPadding)
-            .heightIn(0.dp, 305.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

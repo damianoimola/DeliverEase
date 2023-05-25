@@ -16,4 +16,5 @@
     <string name="shift_maybe">I\'d like no</string>
     <string name="shift_remember">Remember choice</string>
     <string name="settings_constraints">Constraints</string>
+    <string name="shiftChangeOffers">Shift Change Offers</string>
 </resources>
