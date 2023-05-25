@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.common_libs.model.Message
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
@@ -31,7 +32,7 @@ data class Communication(val text: String, val data: String)
 
 @Composable
 fun CommunicationCard(
-    communicationList: List<Communication>,
+    communicationList: List<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
     sendCommunication: (String) -> Unit = {},
@@ -127,7 +128,7 @@ fun CommunicationCard(
                 content = {
                     items(communicationList) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            CustomCommunication(item.text,item.data)
+                            CustomCommunication(item.body!!, item.date!!.toString())
                         }
                     }
                 }

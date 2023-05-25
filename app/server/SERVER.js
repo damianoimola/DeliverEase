@@ -114,6 +114,7 @@ fastify.post("/messages", (req, res) => {
     receiverID: parsedData.receiverID,
     body: parsedData.body,
     type: parsedData.type,
+    date: parsedData.date,
   };
 
   // Add the new entry to the data object
@@ -211,7 +212,7 @@ fastify.get("/calendar", (req, res) => {
 });
 
 // POST -> add days
-fastify.post("/messages", (req, res) => {
+fastify.post("/calendar", (req, res) => {
   const parsedData = JSON.parse(req.body);
   
   // Read the existing JSON file

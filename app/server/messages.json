@@ -4,31 +4,36 @@
       "senderID": "1",
       "receiverID": "0",
       "body": "<DATA>",
-      "type": "REQUEST"
+      "type": "REQUEST",
+      "date": "2023-05-25T00:00:00.000Z"
     },
     {
       "senderID": "2",
       "receiverID": "1",
       "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION"
+      "type": "NOTIFICATION",
+      "date": "2023-05-25T00:00:00.000Z"
     },
     {
       "senderID": "1",
       "receiverID": "0",
       "body": "<DATA>",
-      "type": "ACCEPTANCE"
+      "type": "ACCEPTANCE",
+      "date": "2023-05-25T00:00:00.000Z"
     },
     {
       "senderID": "1",
       "receiverID": "3",
       "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION"
+      "type": "NOTIFICATION",
+      "date": "2023-05-25T00:00:00.000Z"
     },
     {
       "senderID": "1",
       "receiverID": "3",
       "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION"
+      "type": "NOTIFICATION",
+      "date": "2023-05-25T00:00:00.000Z"
     }
   ]
 }

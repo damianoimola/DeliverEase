@@ -50,9 +50,9 @@ fun testHandleMsgs(
     // send msg
     Message("1", "2", "PRIMO").send(context)
 
-    val messagesHandler : MessagesHandler = MessagesHandler("2", context)
+    val messagesManager : MessagesManager = MessagesManager("2", context)
 
-    messagesHandler.getReceivedMessages{ receivedMessagesCallback(it) }
+    messagesManager.getReceivedMessages{ receivedMessagesCallback(it) }
 }
 
 

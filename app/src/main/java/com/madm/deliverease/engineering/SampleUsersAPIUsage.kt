@@ -18,10 +18,7 @@ fun DummyComposeFunctionForUsers(){
     Button(
         onClick = {
             testHandleUsers(
-                { list ->
-                    users = list
-                    println("########## DONE")
-                },
+                { list -> users = list },
                 context
             )
         }

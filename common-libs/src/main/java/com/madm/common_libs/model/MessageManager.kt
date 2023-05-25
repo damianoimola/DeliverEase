@@ -5,9 +5,10 @@ import android.os.Parcelable
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 
-data class MessagesHandler(var receiverId : String, var context: Context){
+data class MessagesManager(var receiverId : String, var context: Context){
     private var messageList: MessageList? = null
     private val s: Server = Server(context)
 
@@ -54,18 +55,20 @@ data class Message(
     @IgnoredOnParcel var senderID: String? = null,
     @IgnoredOnParcel var receiverID: String? = null,
     @IgnoredOnParcel var body: String? = null,
-    @IgnoredOnParcel var messageType: MessageType? = null
+    @IgnoredOnParcel var date: Date? = null,
+    @IgnoredOnParcel private var type: String? = null,
 ) : Parcelable {
-    enum class MessageType { REQUEST, NOTIFICATION, ACCEPTANCE }
+    enum class MessageType { REQUEST, NOTIFICATION, ACCEPTANCE, ERROR }
+
 
     @IgnoredOnParcel
-    private val type: String
-    get() = when(this.messageType){
-        MessageType.REQUEST -> "REQUEST"
-        MessageType.NOTIFICATION -> "NOTIFICATION"
-        MessageType.ACCEPTANCE -> "ACCEPTANCE"
-        else -> "ERROR"
-    }
+    val messageType: MessageType?
+        get() = when(this.type){
+            "REQUEST" -> MessageType.REQUEST
+            "NOTIFICATION" -> MessageType.NOTIFICATION
+            "ACCEPTANCE" -> MessageType.ACCEPTANCE
+            else -> MessageType.ERROR
+        }
 
     fun send(context : Context){
         val s : Server = Server(context)

@@ -3,27 +3,27 @@ package com.madm.deliverease.ui.screens.access
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.madm.common_libs.model.User
+import com.madm.common_libs.model.UserManager
 import com.madm.deliverease.R
-import com.madm.deliverease.engineering.DummyComposeFunctionForCalendar
-import com.madm.deliverease.engineering.DummyComposeFunctionForMessages
 import com.madm.deliverease.ui.theme.largePadding
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.LoginButton
 import com.madm.deliverease.ui.widgets.MyButton
 import com.madm.deliverease.ui.widgets.MyOutlinedTextField
+import com.madm.deliverease.globalUser
 
 @Composable
 fun LoginScreen(
@@ -65,6 +65,16 @@ fun ClassicLogin(goToRiderHome: () -> Unit, goToAdminHome: () -> Unit) {
     val password = remember { mutableStateOf("") }
     val isError = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    var users: List<User> by remember { mutableStateOf(listOf()) }
+
+    if(users.isNotEmpty() && users.count() == 1){
+        globalUser = users.first()
+        when (globalUser!!.id) {
+            "0" -> goToAdminHome()
+            else -> goToRiderHome()
+        }
+    }
 
     Column {
         MyOutlinedTextField(
@@ -86,13 +96,27 @@ fun ClassicLogin(goToRiderHome: () -> Unit, goToAdminHome: () -> Unit) {
             goToRiderHome = goToRiderHome,
             goToAdminHome = goToAdminHome,
             onClick = {
-                /* TODO: dummy */
-                if (username.value == "rider")
-                    goToRiderHome()
-                else if (username.value == "admin")
-                    goToAdminHome()
-                else
-                    isError.value = true
+                val userManager : UserManager = UserManager(context)
+                userManager.getUsers{ list ->
+                    users = list.filter { user -> (user.email == username.value) && (user.password == password.value) }
+                }
+
+
+//                userManager.getUsers{ list ->
+//
+//                    val filteredList = list.filter { user -> (user.email == username.value) && (user.password == password.value)}
+//
+//                    println("############ LISTA $filteredList")
+//                    if (filteredList.count() == 1) {
+//
+//                        println("############ DETAILS ${filteredList.count()} ${filteredList.first().id}")
+//                        when (filteredList.first().id) {
+//                            "0" -> goToAdminHome()
+//                            else -> goToRiderHome()
+//                        }
+//                    }
+//                    else isError.value = true
+//                }
             }
         )
     }
