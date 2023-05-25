@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -32,7 +34,9 @@ import com.madm.deliverease.ui.theme.*
 @Composable
 fun MyPageHeader(modifier: Modifier = Modifier){
     Box(
-        modifier = modifier.fillMaxWidth().padding(bottom = smallPadding),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = smallPadding),
     ){
         Image(
             painter = painterResource(id = R.drawable.logo_dark_icon),
@@ -119,16 +123,15 @@ fun MyButton(
             .fillMaxWidth()
             .padding(start = mediumPadding, end = mediumPadding, bottom = mediumPadding)
             .border(BorderStroke(2.dp, Color(0xFFD8D8D8)), shape = RoundedCornerShape(50)),
-        shape = RoundedCornerShape(6.dp),
+        shape = Shapes.medium,//RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
             contentColor = Color(0xff131b31),
-
-            ),
+        ),
         elevation = ButtonDefaults.elevation(0.dp, 0.dp)
     ) {
-        Image(
-            painter = painterResource(id = imgId),
+        Icon(
+            imageVector = ImageVector.vectorResource(id = imgId),
             contentDescription = text,
             modifier = Modifier.size(20.dp)
         )

@@ -110,7 +110,7 @@ fun ThirdPartyLogin(){
         MyButton(
             onClick = {},
             text = stringResource(R.string.apple_login),
-            imgId = R.drawable.google
+            imgId = R.drawable.apple
         )
     }
 }
