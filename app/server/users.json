@@ -1,0 +1,67 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Damiano",
+      "surname": "Imola",
+      "email": "damiano.imola@deliverease.it",
+      "password": "prova",
+      "permanentConstraints": [
+        {
+          "dayOfWeek": 1,
+          "type": "light"
+        },
+        {
+          "dayOfWeek": 5,
+          "type": "heavy"
+        }
+      ],
+      "nonPermanentConstraints": [
+        {
+          "date": "2023-05-25T00:00:00.000Z",
+          "type": "light"
+        },
+        {
+          "date": "2023-05-30T00:00:00.000Z",
+          "type": "heavy"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Martina",
+      "surname": "Lupini",
+      "email": "martina.lupini@deliverease.it",
+      "password": "prova",
+      "permanentConstraints": [],
+      "nonPermanentConstraints": []
+    },
+    {
+      "id": "3",
+      "name": "Massimo",
+      "surname": "Buniy",
+      "email": "massimo.buniy@deliverease.it",
+      "password": "prova",
+      "permanentConstraints": [],
+      "nonPermanentConstraints": []
+    },
+    {
+      "id": "4",
+      "name": "Alessandro",
+      "surname": "Finocchi",
+      "email": "alessandro.finocchi@deliverease.it",
+      "password": "prova",
+      "permanentConstraints": [],
+      "nonPermanentConstraints": []
+    },
+    {
+      "id": "99",
+      "name": "John",
+      "surname": "Doe",
+      "email": "john.doe@example.com",
+      "password": "JohnDoePassword123",
+      "permanentConstraints": [],
+      "nonPermanentConstraints": []
+    }
+  ]
+}
