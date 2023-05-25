@@ -56,8 +56,6 @@ fun LoginScreen(
         )
 
         ThirdPartyLogin()
-
-        DummyComposeFunctionForMessages()
     }
 }
 
