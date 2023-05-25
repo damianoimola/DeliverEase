@@ -15,11 +15,10 @@ class Server (context : Context) {
     var serverBaseUrl : String
 
     // MANAGE KIND OF REQUESTS
-    enum class RequestKind { MESSAGES, CHANGES, USERS, CALENDAR }
+    enum class RequestKind { MESSAGES, USERS, CALENDAR }
 
     val requestsMap = mapOf<RequestKind, String>(
         RequestKind.MESSAGES to "/messages",
-        RequestKind.CHANGES to "/changes",
         RequestKind.CALENDAR to "/calendar",
         RequestKind.USERS to "/users",
     )

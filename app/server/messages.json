@@ -1,0 +1,34 @@
+{
+  "messages": [
+    {
+      "senderID": "1",
+      "receiverID": "0",
+      "body": "<DATA>",
+      "type": "REQUEST"
+    },
+    {
+      "senderID": "2",
+      "receiverID": "1",
+      "body": "Ciao un nuovo calendario è stato pubblicato",
+      "type": "NOTIFICATION"
+    },
+    {
+      "senderID": "1",
+      "receiverID": "0",
+      "body": "<DATA>",
+      "type": "ACCEPTANCE"
+    },
+    {
+      "senderID": "1",
+      "receiverID": "3",
+      "body": "Ciao un nuovo calendario è stato pubblicato",
+      "type": "NOTIFICATION"
+    },
+    {
+      "senderID": "1",
+      "receiverID": "3",
+      "body": "Ciao un nuovo calendario è stato pubblicato",
+      "type": "NOTIFICATION"
+    }
+  ]
+}
