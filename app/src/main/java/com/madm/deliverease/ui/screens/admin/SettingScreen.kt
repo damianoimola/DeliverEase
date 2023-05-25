@@ -6,43 +6,39 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.mediumPadding
+import com.madm.deliverease.ui.widgets.MyPageHeader
+import com.madm.deliverease.ui.widgets.PreferencesSetting
 
+@Preview
 @Composable
 fun SettingScreen() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState()).padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SettingSection(stringResource(R.string.settings_constraints))
+        MyPageHeader()
         SettingCard(){
-            SettingItem("Number of rider per week", false){ RidersPerWeekConstraint() }
-            SettingItem("Number of rider per Day", false){ RidersPerDayConstraint() }
+            SettingItem("Number of riders per week", false){ RidersPerDayConstraint() }
+            SettingItem("Number of riders per day", false){ RidersPerWeekConstraint() }
         }
 
+        PreferencesSetting()
 
-        SettingSection("Ciccio pasticcio")
-        SettingCard(){
-            SettingItem("Number of rider per week", false){ RidersPerWeekConstraint() }
-            SettingItem("Number of rider per Day", false){ RidersPerDayConstraint() }
-        }
     }
 }
 
@@ -71,7 +67,8 @@ fun SettingCard(content: @Composable () -> Unit){
             .background(
                 color = Color(0xFFFFF3F3),
                 shape = RoundedCornerShape(topEndPercent = 5, bottomStartPercent = 5)
-            )
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         content()
     }
@@ -92,8 +89,8 @@ fun SettingItem(itemName: String, inline: Boolean, content: @Composable () -> Un
                 text = itemName,
                 style = TextStyle(
                     fontFamily = gilroy,
-                    fontSize = 25.sp,
-                    textAlign = TextAlign.Start,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -102,7 +99,7 @@ fun SettingItem(itemName: String, inline: Boolean, content: @Composable () -> Un
     } else {
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(mediumPadding)
@@ -111,8 +108,8 @@ fun SettingItem(itemName: String, inline: Boolean, content: @Composable () -> Un
                 text = itemName,
                 style = TextStyle(
                     fontFamily = gilroy,
-                    fontSize = 25.sp,
-                    textAlign = TextAlign.Start,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -133,7 +130,7 @@ fun RidersPerWeekConstraint(){
         Button(
             onClick = { /*TODO*/ },
         ) {
-            Text(text = "-")
+            Text(text = "-", Modifier.size(4.dp))
         }
 
         Column(

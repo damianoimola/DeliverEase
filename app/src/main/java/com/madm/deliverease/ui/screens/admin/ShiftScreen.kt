@@ -2,27 +2,18 @@ package com.madm.deliverease.ui.screens.admin
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.madm.deliverease.ui.screens.riders.*
-import com.madm.deliverease.ui.theme.Shapes
-import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
@@ -31,12 +22,12 @@ import java.util.*
 val ridersAvailable = listOf("Massimo Buniy", "Damiano Imola", "Alessandro Finocchi", "Martina Lupini")
 val ridersIfNeeded = listOf("Napoleone", "Giulio Cesare", "Matteo Giustini", "Topolino", "Falcao")
 
+@Preview
 @Composable
 fun ShiftsScreen() {
     var selectedDate = 0
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-    val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
     val months = (currentMonth..currentMonth + 11).map{i -> i%12}.toList().toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
@@ -44,6 +35,7 @@ fun ShiftsScreen() {
 
 
     Column {
+        MyPageHeader()
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
                 currentYear + 1
@@ -79,17 +71,23 @@ fun RidersAvailabilities(){
                 .clip(RoundedCornerShape(20))
                 .background(color = Color.LightGray)
                 .fillMaxWidth()
-                .padding(smallPadding)
         ){
-            Column{
+            Column(
+                modifier = Modifier.padding(smallPadding),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ){
                 ridersAvailable.forEach{
                     val checkedState = remember { mutableStateOf(false) }
 
-                    Row(verticalAlignment = Alignment.CenterVertically){
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp)
+                            .height(20.dp)){
                         Checkbox(
                             checked = checkedState.value,
                             onCheckedChange = { checkedState.value = it },
-                            modifier = Modifier.padding(start = 4.dp)
+                            modifier = Modifier.padding(start = 0.dp)
                         )
                         Text(
                             text = it,
@@ -109,26 +107,26 @@ fun RidersAvailabilities(){
                 .width(2.dp)
                 .padding(start = smallPadding))
         }}
-        item{Row(
+        item{ Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(20))
                 .background(color = Color.LightGray)
                 .fillMaxWidth()
-                .padding(smallPadding)
         ){
-            Column{
+            Column(modifier = Modifier.padding(smallPadding),
+                verticalArrangement = Arrangement.spacedBy(0.dp)){
                 ridersIfNeeded.forEach{
                     val checkedState = remember { mutableStateOf(false) }
 
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
-                        horizontalArrangement = Arrangement.Start,
+                        .padding(5.dp)
+                        .height(20.dp),
                         verticalAlignment = Alignment.CenterVertically){
                         Checkbox(
                             checked = checkedState.value,
                             onCheckedChange = { checkedState.value = it },
-                            modifier = Modifier.padding(start = 4.dp)
+                            modifier = Modifier.padding(start = 0.dp)
                         )
                         Text(
                             text = it,
