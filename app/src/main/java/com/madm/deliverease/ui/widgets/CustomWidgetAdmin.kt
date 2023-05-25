@@ -141,6 +141,7 @@ fun SwipeToRevealRiderList(
                 DroppableListItemCard(
                     rider = rider,
                     isRevealed = isRevealed,
+                    minDragAmount = 16,
                     onExpand = {isRevealed = true},
                     onCollapse = { isRevealed = false }
                 ) {
@@ -160,7 +161,7 @@ fun ActionsRow(
 ) {
     Row(
         Modifier
-            .padding(horizontal = mediumPadding, vertical = smallPadding)
+            .padding(horizontal = nonePadding, vertical = smallPadding)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
@@ -201,7 +202,7 @@ fun DroppableListItemCard(
     onCollapse: () -> Unit,
     cardHeight: Dp = 56.dp,
     cardOffset: Float = 120f.dp(),
-    minDragAmount: Int = 6,
+    minDragAmount: Int = 10,
     colorBackgroundExpanded: Color = Color(0xFFD1A3FF), /* TODO: Set color theme */
     colorBackgroundCollapsed: Color = Color(0xFFBDE7EC), /* TODO: Set color theme */
     animationDuration: Int = 200,

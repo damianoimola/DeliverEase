@@ -2,32 +2,20 @@ package com.madm.deliverease.ui.screens.admin
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.madm.deliverease.ui.screens.riders.*
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
-import com.madm.deliverease.ui.widgets.HireNewRiderDialog
-import com.madm.deliverease.ui.widgets.MyPageHeader
-import com.madm.deliverease.ui.widgets.Rider
-import com.madm.deliverease.ui.widgets.SwipeToRevealRiderList
-import java.util.*
+import com.madm.deliverease.ui.widgets.*
 
 @Preview
 @Composable
@@ -82,11 +70,11 @@ fun RidersScreen() {
                     .weight(1f)
             ) {
                 Text("List of your riders", style = TextStyle(fontSize = 20.sp))
-                SwipeToRevealRiderList(riderList = riderList, 520.dp)
+                SwipeToRevealRiderList(riderList, 520.dp)
             }
         }
 
-        Row(){
+        Row {
             Button(
                 onClick = { showCustomDialog = !showCustomDialog },
                 modifier = Modifier

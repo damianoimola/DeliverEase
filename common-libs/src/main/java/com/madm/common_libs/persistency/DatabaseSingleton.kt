@@ -12,7 +12,7 @@ abstract class DatabaseSingleton : RoomDatabase() {
     companion object{
         private var db : DatabaseSingleton? = null
 
-        public fun getInstance (context : Context) : DatabaseSingleton {
+        fun getInstance (context : Context) : DatabaseSingleton {
             if(db == null){
                 db = databaseBuilder(
                     context,
