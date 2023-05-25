@@ -87,7 +87,8 @@ fun CommunicationCard(
                     // Fade in with the initial alpha of 0.3f.
                     initialAlpha = 0.3f
                 ),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
+                exit = slideOutVertically() + shrinkVertically() + fadeOut()
+            ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
