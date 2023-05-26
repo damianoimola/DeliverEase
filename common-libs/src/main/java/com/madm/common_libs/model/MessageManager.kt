@@ -12,6 +12,14 @@ data class MessagesManager(var receiverId : String, var context: Context){
     private var messageList: MessageList? = null
     private val s: Server = Server(context)
 
+
+    fun getAllMessages(callbackFunction: (List<Message>) -> Unit) {
+        s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
+            this.messageList = ret
+            callbackFunction(this.messageList!!.messages)
+        }
+    }
+
     fun getReceivedMessages(callbackFunction: (List<Message>) -> Unit) {
         s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
             this.messageList = ret

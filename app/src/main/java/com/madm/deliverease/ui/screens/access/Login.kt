@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.User
 import com.madm.common_libs.model.UserManager
 import com.madm.deliverease.R
+import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.ui.theme.largePadding
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.LoginButton
@@ -99,6 +100,7 @@ fun ClassicLogin(goToRiderHome: () -> Unit, goToAdminHome: () -> Unit) {
                 val userManager : UserManager = UserManager(context)
                 userManager.getUsers{ list ->
                     users = list.filter { user -> (user.email == username.value) && (user.password == password.value) }
+                    globalAllUsers = list
                 }
 
 

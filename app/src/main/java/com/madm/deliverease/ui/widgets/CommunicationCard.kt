@@ -27,6 +27,10 @@ import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 data class Communication(val text: String, val data: String)
 
@@ -128,7 +132,14 @@ fun CommunicationCard(
                 content = {
                     items(communicationList) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            CustomCommunication(item.body!!, item.date!!.toString())
+                            val inputDateString = item.date!!.toString()
+                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+                            val date: Date = inputDateFormat.parse(inputDateString)!!
+                            val outputDateString: String = outputDateFormat.format(date)
+
+                            CustomCommunication(item.body!!, outputDateString)
                         }
                     }
                 }

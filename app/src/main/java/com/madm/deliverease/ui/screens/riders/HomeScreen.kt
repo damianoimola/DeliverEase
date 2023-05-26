@@ -2,9 +2,7 @@ package com.madm.deliverease.ui.screens.riders
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -32,26 +30,31 @@ fun HomeScreen() {
 //        Communication("News 9! I have published calendar 9", "13/05/2023"),
 //    )
 
-    val shiftRequestList = remember {
-        mutableStateListOf(
-            ShiftRequest("Mario Rossi", "23/12/2023", "22/12/2023"),
-            ShiftRequest("Merlin Mango", "23/12/2023", "22/12/2023"),
-            ShiftRequest("Giulia Schiff", "23/12/2023", "22/12/2023"),
-            ShiftRequest("Nome Cognomen", "23/12/2023", "22/12/2023"),
-            ShiftRequest("Azzo Corri", "23/12/2023", "22/12/2023"),
-            ShiftRequest("Paracetamol Palazzo", "23/12/2023", "22/12/2023"),
-            ShiftRequest("Francesco Virgolino", "23/12/2023", "22/12/2023"),
-        )
-    }
+//    val shiftRequestList = remember {
+//        mutableStateListOf(
+//            ShiftRequest("Mario Rossi", "23/12/2023", "22/12/2023"),
+//            ShiftRequest("Merlin Mango", "23/12/2023", "22/12/2023"),
+//            ShiftRequest("Giulia Schiff", "23/12/2023", "22/12/2023"),
+//            ShiftRequest("Nome Cognomen", "23/12/2023", "22/12/2023"),
+//            ShiftRequest("Azzo Corri", "23/12/2023", "22/12/2023"),
+//            ShiftRequest("Paracetamol Palazzo", "23/12/2023", "22/12/2023"),
+//            ShiftRequest("Francesco Virgolino", "23/12/2023", "22/12/2023"),
+//        )
+//    }
 
 
 
     var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 
     val messagesManager : MessagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
         communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }
+    }
+
+    messagesManager.getReceivedMessages{ list: List<Message> ->
+        shiftRequestList = list.filter { it.messageType == Message.MessageType.REQUEST }
     }
 
 
