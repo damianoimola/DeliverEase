@@ -66,10 +66,10 @@ fun CalendarScreen(){
                     var selectedDate: LocalDate? = null
 
                     // create a date from selected day
-                    selectedDate = if (weekDay.number < 7 && indexOfSelectedWeek != 0 && indexOfSelectedWeek != 1)
-                        LocalDate.of(selectedYear, selectedMonth + 2, weekDay.number)
+                    selectedDate = if (weekDay.number < 7 && indexOfSelectedWeek != 0)
+                        LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
                     else
-                        LocalDate.of(selectedYear, selectedMonth + 1, weekDay.number)
+                        LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
 
                     // converting API date
                     val inputDateString = it.date.toString()

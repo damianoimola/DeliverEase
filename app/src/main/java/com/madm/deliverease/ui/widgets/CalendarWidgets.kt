@@ -251,14 +251,14 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
         Text(
             text = "Week: ",
             style = TextStyle(
-                fontSize = 25.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Normal
             )
         )
         Text(
             text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
             style = TextStyle(
-                fontSize = 25.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFFFF9800)
             )
