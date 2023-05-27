@@ -64,7 +64,7 @@ fun RidersMainContent(){
                 ) {
                     composable("home") { HomeScreen() }
                     composable("calendar") { CalendarScreen() }
-                    composable("preferences") { PreferenceScreen()}
+                    composable("preferences") { ShiftPreferenceScreen()}
                     composable("settings") { SettingScreenRider()}
                 }
             }
