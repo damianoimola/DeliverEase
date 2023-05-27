@@ -66,17 +66,18 @@ data class Message(
     @IgnoredOnParcel var date: Date? = null,
     @IgnoredOnParcel private var type: String? = null,
 ) : Parcelable {
-    enum class MessageType { REQUEST, NOTIFICATION, ACCEPTANCE, ERROR }
-
+    enum class MessageType (val displayName: String) {
+        REQUEST("REQUEST"),
+        NOTIFICATION("NOTIFICATION"),
+        ACCEPTANCE("ACCEPTANCE")
+    }
 
     @IgnoredOnParcel
-    val messageType: MessageType?
-        get() = when(this.type){
-            "REQUEST" -> MessageType.REQUEST
-            "NOTIFICATION" -> MessageType.NOTIFICATION
-            "ACCEPTANCE" -> MessageType.ACCEPTANCE
-            else -> MessageType.ERROR
-        }
+    var id: String? = null
+
+    @IgnoredOnParcel
+    val messageType: MessageType
+        get() = MessageType.valueOf(this.type!!)
 
     fun send(context : Context){
         val s : Server = Server(context)

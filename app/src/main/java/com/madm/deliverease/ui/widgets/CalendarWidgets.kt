@@ -45,24 +45,24 @@ val MonthMap = mapOf(
 )
 
 @Parcelize
-data class Day(val number: Int, val name: String) : Parcelable
+data class WeekDay(val number: Int, val name: String) : Parcelable
 
-fun getWeekDays(year: Int, month: Int, week: Int): List<Day> {
+fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     val firstDayOfMonth = LocalDate.of(year, month, 1)
     val firstDayOfWeek = firstDayOfMonth.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
         .plusWeeks(week.toLong() - 1)
 
-    val days = mutableListOf<Day>()
+    val weekDays = mutableListOf<WeekDay>()
     var currentDate = firstDayOfWeek
 
     for (i in 0 until 7) {
         val dayNumber = currentDate.dayOfMonth
         val dayName = currentDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        days.add(Day(dayNumber, dayName))
+        weekDays.add(WeekDay(dayNumber, dayName))
         currentDate = currentDate.plusDays(1)
     }
 
-    return days
+    return weekDays
 }
 
 fun Int.integerToTwoDigit() : String {
@@ -158,7 +158,7 @@ fun MonthSelector(
 
 
 @Composable
-fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable () -> Unit){
+fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit){
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
 
     LazyColumn(
@@ -168,19 +168,19 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
             .padding(top = mediumPadding)
             .fillMaxHeight()
     ) {
-        itemsIndexed(days){_, days ->
+        itemsIndexed(days){_, day ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(nonePadding, smallPadding)
             ) {
-                Text(text = "${days.number} ${days.name}")
+                Text(text = "${day.number} ${day.name}")
                 Divider(modifier = Modifier
                     .fillMaxWidth()
                     .width(2.dp)
                     .padding(start = smallPadding))
             }
 
-            content()
+            content(day)
         }
     }
 }

@@ -22,7 +22,11 @@ import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.Message
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 data class ShiftRequest(var changerName: String, var offeredDay: String, var wantedDay: String)
 
@@ -31,6 +35,8 @@ fun ShiftChangeCard(
     shiftsList: List<Message>,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Card(
         elevation = mediumCardElevation,
         shape = Shapes.medium,
@@ -56,7 +62,16 @@ fun ShiftChangeCard(
                 shiftsList.forEach { shift ->
                     Card(Modifier.padding(nonePadding, smallPadding)) {
                         CustomShiftChangeRequest(shift) {
-                            //TODO: invia accettazione
+                            val currentDateTime: Date = Date()
+                            val currentTimestamp: Long = currentDateTime.time
+
+                            Message(
+                                shift.receiverID,
+                                shift.senderID,
+                                shift.id,
+                                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                                Message.MessageType.ACCEPTANCE.displayName
+                            ).send(context)
                         }
                     }
                 }
@@ -71,7 +86,6 @@ fun CustomShiftChangeRequest(
     onAccept: () -> Unit = {}
 ) {
     val (offeredDay, wantedDay) = shiftRequest.body!!.split("#");
-    println("############### ${globalAllUsers.count()}")
 
     val requestingUserFullName = with(
         globalAllUsers.first { user ->
