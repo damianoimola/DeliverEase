@@ -47,7 +47,9 @@ fastify.post("/users", (req, res) => {
     name: parsedData.name,
     surname: parsedData.surname,
     email: parsedData.email,
-    password: parsedData.password
+    password: parsedData.password,
+    permanentConstraints: parsedData.permanentConstraints,
+    nonPermanentConstraints: parsedData.nonPermanentConstraints
   };
   
   console.log('JSON data:', data);
@@ -86,6 +88,131 @@ fastify.get("/users", (req, res) => {
       console.error('Error parsing JSON:', error);
     }
   });
+});
+
+
+
+
+
+
+
+
+
+// #######################################
+// CONSTRAINT
+// #######################################
+// POST -> create new user permanent constraint
+fastify.post("/userPermanentConstraint", (req, res) => {
+  const parsedData = JSON.parse(req.body);
+
+  // Create a new entry
+  const newEntry = {
+    dayOfWeek: parsedData.dayOfWeek,
+    type: parsedData.type
+  };
+
+
+  // Read the JSON file
+  fs.readFile('users.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading JSON file:', err);
+      return;
+    }
+
+    try {
+      // Parse the JSON data
+      const jsonData = JSON.parse(data);
+
+      // Filter messages by receiverID
+      const filteredUsers = jsonData.users.filter(
+        (user) => user.id === parsedData.id
+      );
+
+      filteredUsers.permanentConstraints.push(newEntry);
+
+      jsonData.users.filter( (user) => user.id === parsedData.id ) = filteredUsers;
+
+      // Convert the updated data object back to JSON
+      const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+      // Write the JSON data back to the file
+      fs.writeFileSync('users.json', updatedJsonData, 'utf8');
+
+      res.send(filteredMessages);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+    }
+  });
+
+
+
+
+  // Add the new entry to the data object
+  data.users.push(newEntry);
+
+  // Convert the updated data object back to JSON
+  const updatedJsonData = JSON.stringify(data, null, 2);
+  console.log('NEW JSON data:', updatedJsonData);
+
+  // Write the JSON data back to the file
+  fs.writeFileSync('users.json', updatedJsonData, 'utf8');
+});
+
+// POST -> create new user NON permanent constraint
+fastify.post("/userNonPermanentConstraint", (req, res) => {
+  const parsedData = JSON.parse(req.body);
+
+  // Create a new entry
+  const newEntry = {
+    date: parsedData.date,
+    type: parsedData.type
+  };
+
+
+  // Read the JSON file
+  fs.readFile('users.json', 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading JSON file:', err);
+      return;
+    }
+
+    try {
+      // Parse the JSON data
+      const jsonData = JSON.parse(data);
+
+      // Filter messages by receiverID
+      const filteredUsers = jsonData.users.filter(
+        (user) => user.id === parsedData.id
+      );
+
+      filteredUsers.nonPermanentConstraints.push(newEntry);
+
+      jsonData.users.filter( (user) => user.id === parsedData.id ) = filteredUsers;
+      
+      // Convert the updated data object back to JSON
+      const updatedJsonData = JSON.stringify(jsonData, null, 2);
+
+      // Write the JSON data back to the file
+      fs.writeFileSync('users.json', updatedJsonData, 'utf8');
+
+      res.send(filteredMessages);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+    }
+  });
+
+
+
+
+  // Add the new entry to the data object
+  data.users.push(newEntry);
+
+  // Convert the updated data object back to JSON
+  const updatedJsonData = JSON.stringify(data, null, 2);
+  console.log('NEW JSON data:', updatedJsonData);
+
+  // Write the JSON data back to the file
+  fs.writeFileSync('users.json', updatedJsonData, 'utf8');
 });
 
 
