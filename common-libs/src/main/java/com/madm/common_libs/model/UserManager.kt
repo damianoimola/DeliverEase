@@ -41,9 +41,14 @@ data class User(
     @IgnoredOnParcel var surname: String? = null,
     @IgnoredOnParcel var email: String? = null,
     @IgnoredOnParcel var password: String? = null,
-    @IgnoredOnParcel var permanentConstraints: List<PermanentConstraint> = listOf(),
-    @IgnoredOnParcel var nonPermanentConstraints: List<NonPermanentConstraint> = listOf()
-) : Parcelable
+    @IgnoredOnParcel var permanentConstraints: ArrayList<PermanentConstraint> = arrayListOf(),
+    @IgnoredOnParcel var nonPermanentConstraints: ArrayList<NonPermanentConstraint> = arrayListOf()
+) : Parcelable {
+    fun registerOrUpdate(context : Context){
+        val s : Server = Server(context)
+        s.makePostRequest<User>(this, Server.RequestKind.USERS)
+    }
+}
 
 
 

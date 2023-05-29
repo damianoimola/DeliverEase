@@ -98,7 +98,7 @@ fun ClassicLogin(goToRiderHome: () -> Unit, goToAdminHome: () -> Unit) {
             goToAdminHome = goToAdminHome,
             onClick = {
                 val userManager : UserManager = UserManager(context)
-                userManager.getUsers{ list ->
+                userManager.getUsers { list ->
                     users = list.filter { user -> (user.email == username.value) && (user.password == password.value) }
                     globalAllUsers = list
                 }
