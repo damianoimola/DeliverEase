@@ -10,26 +10,19 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.NonPermanentConstraint
 import com.madm.common_libs.model.PermanentConstraint
-import com.madm.common_libs.model.UserManager
 import com.madm.deliverease.R
-import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.widgets.*
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.ZoneId
-import java.time.temporal.WeekFields
 import java.util.*
 
 
@@ -50,7 +43,7 @@ val ReverseShiftOptionMap = mapOf(
 
 @Composable
 fun ShiftPreferenceScreen(){
-    var indexOfSelectedWeek : Int by remember { mutableStateOf(1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -73,10 +66,10 @@ fun ShiftPreferenceScreen(){
             else currentYear
             selectedMonth = month
         }
-        WeeksList(selectedMonth, selectedYear, false) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
-        WeekContent(indexOfSelectedWeek, selectedMonth, selectedYear) {
+        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+        WeekContent(selectedWeek, selectedMonth, selectedYear) {
             // retrieve the selected date in a full format
-            val selectedDateFormatted = if (it.number < 7 && indexOfSelectedWeek != 0)
+            val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
             else
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())

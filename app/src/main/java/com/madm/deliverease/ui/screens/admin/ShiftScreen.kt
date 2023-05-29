@@ -25,6 +25,7 @@ val ridersIfNeeded = listOf("Napoleone", "Giulio Cesare", "Matteo Giustini", "To
 @Preview
 @Composable
 fun ShiftsScreen() {
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     var selectedDate = 0
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -42,7 +43,7 @@ fun ShiftsScreen() {
             else currentYear
             selectedMonth = month
         }
-        WeeksList(selectedMonth, selectedYear, false) { daySelected: Int ->
+        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { daySelected: Int ->
             selectedDate = daySelected
         }
 

@@ -187,13 +187,13 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
 
 
 @Composable
-fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
-    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
+fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
+//    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
 
     // list of all mondays (first day of week) of the selected month
     val mondaysList = getMondays(
         selectedYear,
-        selectedMonth + 1,
+        (selectedMonth + 1)%12,
         afterCurrentDay
     )
         .toList()
@@ -201,10 +201,10 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
         .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, currentWeek)) }
+    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
 
     // the selected week
-    var selectedWeek by rememberSaveable { mutableStateOf(mondaysList[0]) }
+    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek]) }
 
     Row (
         modifier = Modifier
@@ -216,7 +216,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
             Button(
                 onClick = {
                     function(mondaysList.indexOf(it) + 1)
-                    selectedWeek = it
+                    selectedWeekString = it
                     // update the list of days of the selected week
                     daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
 
@@ -230,7 +230,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
                     .padding(smallPadding, smallPadding)
                     .clip(shape = RoundedCornerShape(20)),
                 colors = ButtonDefaults.buttonColors(
-                    if (selectedWeek == it) Color(0xFFFF9800)
+                    if (selectedWeekString == it) Color(0xFFFF9800)
                     else Color(0xFFFF5722)
                 ),
                 border = BorderStroke(width = 1.dp, color = Color.Red),

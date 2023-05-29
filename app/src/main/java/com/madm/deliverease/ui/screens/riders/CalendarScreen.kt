@@ -21,7 +21,6 @@ import com.madm.deliverease.ui.widgets.WeekContent
 import com.madm.deliverease.ui.widgets.WeeksList
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 
@@ -32,7 +31,7 @@ import java.util.*
 
 @Composable
 fun CalendarScreen(){
-    var indexOfSelectedWeek : Int by remember { mutableStateOf(1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -59,14 +58,14 @@ fun CalendarScreen(){
             else currentYear
             selectedMonth = month
         }
-        WeeksList(selectedMonth, selectedYear, false) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
-        WeekContent(indexOfSelectedWeek, selectedMonth, selectedYear) { weekDay ->
+        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+        WeekContent(selectedWeek, selectedMonth, selectedYear) { weekDay ->
             ShiftRow(
                 shiftList.any {
                     var selectedDate: LocalDate? = null
 
                     // create a date from selected day
-                    selectedDate = if (weekDay.number < 7 && indexOfSelectedWeek != 0)
+                    selectedDate = if (weekDay.number < 7 && selectedWeek != 0)
                         LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
                     else
                         LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
