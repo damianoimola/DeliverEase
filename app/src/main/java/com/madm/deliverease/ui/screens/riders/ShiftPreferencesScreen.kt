@@ -63,7 +63,7 @@ fun ShiftPreferenceScreen(){
 
     val context = LocalContext.current
 
-    println("PERMANENT $permanentConstraints \n NON PERMANENT $nonPermanentConstraints")
+    println("PERMANENT $permanentConstraints \nNON PERMANENT $nonPermanentConstraints")
 
     Column {
         MyPageHeader()
@@ -149,10 +149,13 @@ fun ShiftOptions(
         ShiftOptionMap[nonPermanentConstraint.type]!!
     else 0
 
-    val actualOption = if(nonPermanentConstraint != null)
-        nonPermanentPreferenceKind
-    else permanentPreferenceKind
-
+    var actualOption by remember{
+        mutableStateOf(
+            if(nonPermanentConstraint != null)
+                nonPermanentPreferenceKind
+            else permanentPreferenceKind
+        )
+    }
     println("########### ACTUAL $actualOption")
     println("########### PERMA $permanentPreferenceKind, ${permanentConstraint?.type}, ${ShiftOptionMap[permanentConstraint?.type]} $permanentConstraint")
     println("########### NON PERMA $nonPermanentPreferenceKind, ${nonPermanentConstraint?.type}, ${ShiftOptionMap[nonPermanentConstraint?.type]}, $nonPermanentConstraint")
@@ -184,7 +187,7 @@ fun ShiftOptions(
                             selected = (text == selectedOption),
                             onClick = {
                                 onOptionSelected(text)
-                                onComplete(radioOptions.indexOf(text), checkedState)
+                                actualOption = radioOptions.indexOf(text)
                             },
                             modifier = Modifier.padding(start = 4.dp)
                         )
@@ -193,7 +196,6 @@ fun ShiftOptions(
                             checked = checkedState,
                             onCheckedChange = {
                                 checkedState = it
-                                onComplete(radioOptions.indexOf(text), checkedState)
                             },
                             modifier = Modifier.padding(start = 4.dp)
                         )
