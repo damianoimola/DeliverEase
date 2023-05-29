@@ -1,6 +1,15 @@
 {
   "users": [
     {
+      "id": "0",
+      "name": "Adolf",
+      "surname": "Hurwitz Hitler",
+      "email": "adolf",
+      "password": "a",
+      "permanentConstraints": [],
+      "nonPermanentConstraints": []
+    },
+    {
       "id": "1",
       "name": "Damiano",
       "surname": "Imola",
@@ -18,15 +27,15 @@
       ],
       "nonPermanentConstraints": [
         {
-          "date": "2023-05-25",
+          "date": "May 25, 2023 12:00:00 AM",
           "type": "light"
         },
         {
-          "date": "2023-05-30",
+          "date": "May 30, 2023 12:00:00 AM",
           "type": "heavy"
         },
         {
-          "date": "2023-06-01",
+          "date": "Jun 1, 2023 12:00:00 AM",
           "type": "heavy"
         }
       ]

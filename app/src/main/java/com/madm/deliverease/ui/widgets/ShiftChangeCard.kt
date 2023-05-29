@@ -19,7 +19,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.madm.common_libs.model.Message
+import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
@@ -69,7 +69,9 @@ fun ShiftChangeCard(
                                 shift.receiverID,
                                 shift.senderID,
                                 shift.id,
-                                Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                                Date.from(
+                                    LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                ),
                                 Message.MessageType.ACCEPTANCE.displayName
                             ).send(context)
                         }

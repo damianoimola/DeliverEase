@@ -11,8 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import com.madm.common_libs.model.CalendarManager
-import com.madm.common_libs.model.Day
+import com.madm.common_libs.model.*
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.MonthSelector
@@ -22,16 +21,12 @@ import com.madm.deliverease.ui.widgets.WeeksList
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
-
-
-
-
-
+import java.util.Calendar
 
 
 @Composable
 fun CalendarScreen(){
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -43,7 +38,8 @@ fun CalendarScreen(){
     // getting API data
     var shiftList : List<Day> by rememberSaveable { mutableStateOf(listOf()) }
 
-    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
+    val calendarManager : CalendarManager =
+        CalendarManager(LocalContext.current)
 
     calendarManager.getDays{ list: List<Day> ->
         shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }

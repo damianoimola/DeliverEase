@@ -16,15 +16,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.madm.common_libs.model.NonPermanentConstraint
-import com.madm.common_libs.model.PermanentConstraint
+import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.widgets.*
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
-
+import java.util.Calendar
 
 
 val ShiftOptionMap = mapOf(
@@ -56,8 +55,6 @@ fun ShiftPreferenceScreen(){
 
     val context = LocalContext.current
 
-    println("PERMANENT $permanentConstraints \nNON PERMANENT $nonPermanentConstraints")
-
     Column {
         MyPageHeader()
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
@@ -76,12 +73,8 @@ fun ShiftPreferenceScreen(){
 
             ShiftOptions(
                 permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == (it.number)%7 },
-                nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c ->
-                    // println("######### C DATE ${c.date}, LIST DATE ${Date.from(LocalDate.of(selectedYear, selectedMonth+1, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())}")
-                    c.date == selectedDateFormatted
-                },
+                nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.date == selectedDateFormatted },
                 onComplete = { kind: Int, permanent: Boolean ->
-                    println("######### KIND: $kind, PERMANENT: $permanent")
                     if(permanent) {
                         val tmpConstraint =
                             permanentConstraints.firstOrNull { c -> c.dayOfWeek == (it.number) % 7 }
@@ -89,7 +82,7 @@ fun ShiftPreferenceScreen(){
                         if(tmpConstraint == null)
                             globalUser!!.permanentConstraints.add(
                                 PermanentConstraint(
-                                    (it.number)%7,
+                                    (it.number) % 7,
                                     ReverseShiftOptionMap[kind]
                                 )
                             )

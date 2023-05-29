@@ -204,7 +204,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
     var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
 
     // the selected week
-    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek]) }
+    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek-1]) }
 
     Row (
         modifier = Modifier

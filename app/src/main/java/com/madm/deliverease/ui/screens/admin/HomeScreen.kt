@@ -7,8 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.madm.common_libs.model.Message
-import com.madm.common_libs.model.MessagesManager
+import com.madm.common_libs.model.*
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.widgets.*
 
@@ -48,7 +47,8 @@ fun HomeScreen() {
 
     var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 
-    val messagesManager : MessagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
+    val messagesManager : MessagesManager =
+        MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
         communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }
