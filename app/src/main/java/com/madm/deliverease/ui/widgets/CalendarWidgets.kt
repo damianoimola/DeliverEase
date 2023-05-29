@@ -201,6 +201,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
         .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
+    // TODO: secondo me serve il %12 (DAMIANO)
     var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
 
     // the selected week

@@ -4,28 +4,55 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 val ridersAvailable = listOf("Massimo Buniy", "Damiano Imola", "Alessandro Finocchi", "Martina Lupini")
 val ridersIfNeeded = listOf("Napoleone", "Giulio Cesare", "Matteo Giustini", "Topolino", "Falcao")
 
-@Preview
+
+
+fun getNext90Days(): List<LocalDate> {
+    val currentDate = LocalDate.now()
+    val next90Days: ArrayList<LocalDate> = arrayListOf()
+
+    for (i in 0 until 90) {
+        val date = currentDate.plusDays(i.toLong())
+        next90Days.add(date)
+    }
+
+    return next90Days.toList()
+}
+
+
+
+
+
 @Composable
 fun ShiftsScreen() {
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
+    var selectedDay : Int by remember { mutableStateOf(0) }
     var selectedDate = 0
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -35,21 +62,60 @@ fun ShiftsScreen() {
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxHeight()
+    ) {
         MyPageHeader()
-        MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
-            selectedYear = if (isNextYear)
-                currentYear + 1
-            else currentYear
-            selectedMonth = month
-        }
-        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { daySelected: Int ->
-            selectedDate = daySelected
-        }
+
+        DaysList(selectedDay){ dayNumber -> selectedDay = dayNumber}
 
         RidersAvailabilities()
     }
 
+}
+
+@Composable
+fun DaysList(selectedDay: Int, function: (Int) -> Unit) {
+    val days = getNext90Days()
+    var selectedDayString by rememberSaveable { mutableStateOf(days[selectedDay]) }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        itemsIndexed(days){ _, it ->
+            val month = it.month
+            val dayNumber = it.dayOfMonth
+            val dayName = it.dayOfWeek
+
+            Button(
+                onClick = {
+                    function(days.indexOf(it) + 1)
+                    selectedDayString = it
+                },
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 8.dp,
+                    disabledElevation = 2.dp
+                ),
+                modifier = Modifier
+                    .padding(smallPadding, smallPadding)
+                    .clip(shape = RoundedCornerShape(20)),
+                colors = ButtonDefaults.buttonColors(
+                    if (selectedDayString == it) Color(0xFFFF9800)
+                    else Color(0xFFFF5722)
+                ),
+                border = BorderStroke(width = 1.dp, color = Color.Red),
+                shape = RoundedCornerShape(20)
+            ) {
+                Text(
+                    text = "$month\n$dayNumber ${dayName.toString().subSequence(0..2)}",
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
 }
 
 
@@ -61,7 +127,7 @@ fun RidersAvailabilities(){
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(nonePadding, smallPadding)
         ) {
-            Text(text = "Availabile")
+            Text(text = stringResource(R.string.available))
             Divider(modifier = Modifier
                 .fillMaxWidth()
                 .width(2.dp)

@@ -18,4 +18,5 @@
     <string name="settings_constraints">Constraints</string>
     <string name="shiftChangeOffers">Shift Change Offers</string>
     <string name="save_your_preference">Save your preference</string>
+    <string name="available">Available</string>
 </resources>

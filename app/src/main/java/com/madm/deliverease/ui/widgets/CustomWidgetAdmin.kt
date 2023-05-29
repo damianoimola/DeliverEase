@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.widgets
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.widget.Toast
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -13,10 +14,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.madm.common_libs.model.User
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 import kotlin.math.roundToInt
@@ -27,9 +30,10 @@ val density: Float get() = Resources.getSystem().displayMetrics.density
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SwipeToRevealRiderList(
-    riderList: MutableList<Rider>,
+    riderList: ArrayList<User>,
     maxHeight: Dp
 ) {
+    val context = LocalContext.current
     LazyColumn(
         Modifier
             .padding(smallPadding)
@@ -42,7 +46,7 @@ fun SwipeToRevealRiderList(
                 ActionsRow(
                     actionIconSize = 56.dp,
                     onDelete = { isRevealed = false; riderList.remove(rider) },
-                    onEdit = { /* TODO */ },
+                    onEdit = { Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show() },
                 )
 
                 DroppableListItemCard(
@@ -62,7 +66,7 @@ fun SwipeToRevealRiderList(
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
 fun DroppableListItemCard(
-    rider: Rider,
+    rider: User,
     isRevealed: Boolean,
     onExpand: () -> Unit,
     onCollapse: () -> Unit,
@@ -72,7 +76,7 @@ fun DroppableListItemCard(
     colorBackgroundExpanded: Color = Color(0xFFD1A3FF), /* TODO: Set color theme */
     colorBackgroundCollapsed: Color = Color(0xFFBDE7EC), /* TODO: Set color theme */
     animationDuration: Int = 200,
-    content: @Composable (Rider) -> Unit,
+    content: @Composable (User) -> Unit,
 ) {
     val transitionState = remember { MutableTransitionState(isRevealed).apply { targetState = !isRevealed } }
     val transition = updateTransition(transitionState, "cardTransition")

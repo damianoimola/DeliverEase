@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.madm.common_libs.model.User
+import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.smallPadding
 
@@ -25,8 +27,14 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
     var riderName by rememberSaveable { mutableStateOf("") }
     var riderSurname by rememberSaveable { mutableStateOf("") }
-    var riderUsername by rememberSaveable { mutableStateOf("") }
+    var riderEmail by rememberSaveable { mutableStateOf("") }
     var riderPassword by rememberSaveable { mutableStateOf("") }
+
+    var isNameError by rememberSaveable { mutableStateOf(false) }
+    var isSurnameError by rememberSaveable { mutableStateOf(false) }
+    var isEmailError by rememberSaveable { mutableStateOf(false) }
+    var isPasswordError by rememberSaveable { mutableStateOf(false) }
+
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -58,29 +66,33 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                 TextField(
                     value = riderName,
                     onValueChange = { riderName = it },
-                    placeholder = { Text(text = "Name") },
-                    modifier = Modifier.padding(smallPadding)
+                    placeholder = { Text(text = "Name*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isNameError
                 )
 
                 TextField(
                     value = riderSurname,
                     onValueChange = { riderSurname = it },
-                    placeholder = { Text(text = "Surname") },
-                    modifier = Modifier.padding(smallPadding)
+                    placeholder = { Text(text = "Surname*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isSurnameError
                 )
 
                 TextField(
-                    value = riderUsername,
-                    onValueChange = { riderUsername = it },
-                    placeholder = { Text(text = "Username") },
-                    modifier = Modifier.padding(smallPadding)
+                    value = riderEmail,
+                    onValueChange = { riderEmail = it },
+                    placeholder = { Text(text = "E-mail*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isEmailError
                 )
 
                 TextField(
                     value = riderPassword,
                     onValueChange = { riderPassword = it },
-                    placeholder = { Text(text = "Password") },
-                    modifier = Modifier.padding(smallPadding)
+                    placeholder = { Text(text = "Password*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isPasswordError
                 )
 
                 // Buttons
@@ -93,7 +105,30 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                             .padding(8.dp)
                     )
                     Button(
-                        onClick = { Toast.makeText(context, "CLICKED ON HIRE", Toast.LENGTH_SHORT).show() },
+                        onClick = {
+                            isNameError = riderName.isEmpty()
+                            isSurnameError = riderSurname.isEmpty()
+                            isEmailError = riderEmail.isEmpty()
+                            isPasswordError = riderPassword.isEmpty()
+
+                            if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
+                                User(
+                                    id = (globalAllUsers.maxOf { (it.id)!!.toInt() } + 1).toString(),
+                                    name = riderName,
+                                    surname = riderSurname,
+                                    email = riderEmail,
+                                    password = riderPassword,
+                                    permanentConstraints = ArrayList(),
+                                    nonPermanentConstraints = ArrayList()
+                                ).registerOrUpdate(context)
+
+                                onDismiss()
+
+                                Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
+                            }
+                            else
+                                Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
+                        },
                         content = { Text(text = "Hire") },
                         modifier = Modifier
                             .weight(.5f)
