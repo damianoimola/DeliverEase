@@ -29,6 +29,8 @@ fun PreferencesSetting(){
         Divider("General")
         ReportBug()
         TermsAndConditions()
+        Row(Modifier.height(10.dp)){}
+        LogOut()
     }
 }
 
@@ -77,13 +79,17 @@ fun Language(){
             ))
 
 
-        Box(modifier = Modifier.align(Alignment.CenterEnd)
+        Box(modifier = Modifier
+            .align(Alignment.CenterEnd)
             .width(100.dp)
             .padding(end = 10.dp, top = 8.dp))
         {
             Text(items[selectedIndex],
-                modifier = Modifier.fillMaxWidth().clickable(onClick = { expanded = true })
-                    .background(Color.LightGray).padding(start = 20.dp))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = { expanded = true })
+                    .background(Color.LightGray)
+                    .padding(start = 20.dp))
 
             DropdownMenu(
                 expanded = expanded,
@@ -140,7 +146,7 @@ fun DarkMode(){
 fun ReportBug(){
     Box(modifier = Modifier
         .fillMaxWidth()
-        .height(40.dp)){
+        .height(40.dp).clickable { /*TODO*/ }){
         Icon(painter = painterResource(id = R.drawable.bug), contentDescription = "bug",
             modifier = Modifier
                 .padding(start = 8.dp, top = 1.dp)
@@ -168,7 +174,7 @@ fun ReportBug(){
 fun TermsAndConditions(){
     Box(modifier = Modifier
         .fillMaxWidth()
-        .height(40.dp)){
+        .height(40.dp).clickable { /*TODO*/ }){
         Icon(painter = painterResource(id = R.drawable.terms_and_conditions), contentDescription = "terms and conditions",
             modifier = Modifier
                 .padding(start = 12.dp, top = 1.dp)
@@ -189,6 +195,38 @@ fun TermsAndConditions(){
                 .padding(end = 4.dp, top = 10.dp)
                 .size(44.dp)
                 .align(Alignment.CenterEnd))
+    }
+}
+
+@Composable
+fun LogOut() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .background(Color.Red).clickable { /*TODO*/ }
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.log_out),
+            contentDescription = "logout",
+            modifier = Modifier
+                .padding(start = 140.dp, top = 1.dp)
+                .size(28.dp)
+                .align(Alignment.CenterStart),
+            tint = Color.White
+        )
+        Text(
+            "Logout", modifier = Modifier
+                .padding(start = 180.dp, top = 0.dp)
+                .align(Alignment.CenterStart),
+            style = TextStyle(
+                fontFamily = gilroy,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Start,
+                fontWeight = FontWeight.SemiBold
+            ),
+            color = Color.White
+        )
     }
 }
 
