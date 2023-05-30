@@ -124,6 +124,8 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
 
                                 onDismiss()
 
+                                //TODO: add rider to globalUsersList (Damiano)
+
                                 Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
                             }
                             else

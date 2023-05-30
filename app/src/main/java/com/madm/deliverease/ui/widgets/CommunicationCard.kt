@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -23,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -45,6 +48,7 @@ fun CommunicationCard(
     val textFieldValue = remember { mutableStateOf("") }
 
     val density = LocalDensity.current
+    val context = LocalContext.current
 
     Card(
         elevation = mediumCardElevation,
@@ -110,11 +114,21 @@ fun CommunicationCard(
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(onClick = {
-                            sendCommunication(textFieldValue.value)
-                            textFieldValue.value = ""
-                            showTextField.value = !showTextField.value
-                        }) { Text(stringResource(R.string.send)) }
+                        Button(
+                            onClick = {
+                                sendCommunication(textFieldValue.value)
+                                textFieldValue.value = ""
+                                showTextField.value = !showTextField.value
+
+                                Message(
+                                    globalUser!!.id,
+                                    "0",
+                                    textFieldValue.value,
+                                    Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                                    Message.MessageType.NOTIFICATION.displayName
+                                ).send(context)
+                            }
+                        ) { Text(stringResource(R.string.send)) }
                         Spacer(Modifier.width(4.dp))
                         Button(onClick = {
                             textFieldValue.value = ""

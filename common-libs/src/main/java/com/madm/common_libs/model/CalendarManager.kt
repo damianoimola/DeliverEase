@@ -29,6 +29,7 @@ data class Calendar(
 )
 
 
+// TODO: refactor in WorkDay
 @Parcelize
 data class Day(
     @IgnoredOnParcel var date: Date? = null,
