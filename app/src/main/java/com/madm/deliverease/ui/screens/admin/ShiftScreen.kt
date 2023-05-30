@@ -1,7 +1,9 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.os.Parcelable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.madm.common_libs.model.CalendarManager
 import com.madm.common_libs.model.Day
 import com.madm.common_libs.model.User
 import com.madm.deliverease.R
@@ -26,9 +30,12 @@ import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import kotlin.collections.ArrayList
 
 //val ridersAvailable = listOf("Massimo Buniy", "Damiano Imola", "Alessandro Finocchi", "Martina Lupini")
 //val ridersIfNeeded = listOf("Napoleone", "Giulio Cesare", "Matteo Giustini", "Topolino", "Falcao")
@@ -56,9 +63,10 @@ fun getNext90Days(): List<LocalDate> {
 fun ShiftsScreen() {
     var selectedDay : Int by rememberSaveable { mutableStateOf(0) }
     var selectedDate : Date by rememberSaveable { mutableStateOf(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant())) }
-    var selectedWorkDay : Day by rememberSaveable { mutableStateOf(Day()) }
+
     var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
+
 
 
     // filter all users that are available
@@ -76,8 +84,6 @@ fun ShiftsScreen() {
     }
 
 
-
-
     // filter all users that if needed will come
     ifNeededRidersList = globalAllUsers.filter {  user ->
         val permanent = user.permanentConstraints.firstOrNull {
@@ -93,6 +99,10 @@ fun ShiftsScreen() {
         (permanent || nonPermanent) && user.id != "0"
     }
 
+
+
+
+
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
@@ -103,7 +113,7 @@ fun ShiftsScreen() {
             selectedDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
         }
 
-        RidersAvailabilities(availableRidersList, ifNeededRidersList)
+        RidersAvailabilities(availableRidersList, ifNeededRidersList, selectedDate)
     }
 
 }
@@ -153,11 +163,43 @@ fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
 }
 
 
-@Composable
-fun RidersAvailabilities(availableRidersList: List<User>, ifNeededRidersList: List<User>) {
-    LazyColumn{
 
-        if(availableRidersList.isEmpty()) {
+@Parcelize
+class CheckBoxItem(val user: User, val isAllocated : Boolean) : Parcelable{
+    @IgnoredOnParcel
+    var isChecked: Boolean by mutableStateOf(isAllocated)
+}
+
+@Composable
+fun RidersAvailabilities(
+    availableRidersList: List<User>,
+    ifNeededRidersList: List<User>,
+    selectedDate: Date
+) {
+    var selectedWorkDay : Day? by rememberSaveable { mutableStateOf(Day()) }
+    var allocatedRiderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
+    var availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
+    var ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
+    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
+
+    calendarManager.getDays{ list: List<Day> ->
+        selectedWorkDay = list.firstOrNull { it.date == selectedDate }
+
+        if(selectedWorkDay != null)
+            allocatedRiderList = globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
+
+        availableRidersCheckboxList = availableRidersList.map {
+            CheckBoxItem(it, it in allocatedRiderList)
+        }
+
+        ifNeededRidersCheckboxList = ifNeededRidersList.map {
+            CheckBoxItem(it, it in allocatedRiderList)
+        }
+    }
+
+
+    LazyColumn{
+        if(availableRidersCheckboxList.isNotEmpty()) {
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -183,23 +225,22 @@ fun RidersAvailabilities(availableRidersList: List<User>, ifNeededRidersList: Li
                         modifier = Modifier.padding(smallPadding),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     ) {
-                        availableRidersList.forEach {
-                            val checkedState = remember { mutableStateOf(false) }
-
+                        availableRidersCheckboxList.forEach {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(5.dp)
                                     .height(20.dp)
+                                    .clickable { it.isChecked = !it.isChecked },
                             ) {
                                 Checkbox(
-                                    checked = checkedState.value,
-                                    onCheckedChange = { checkedState.value = it },
+                                    checked = it.isChecked,
+                                    onCheckedChange = { isChecked -> it.isChecked = isChecked },
                                     modifier = Modifier.padding(start = 0.dp)
                                 )
                                 Text(
-                                    text = "${it.name} ${it.surname}",
+                                    text = "${it.user.name} ${it.user.surname}",
                                     modifier = Modifier.padding(start = 4.dp)
                                 )
                             }
@@ -209,7 +250,7 @@ fun RidersAvailabilities(availableRidersList: List<User>, ifNeededRidersList: Li
             }
         }
 
-        if(ifNeededRidersList.isEmpty()) {
+        if(ifNeededRidersCheckboxList.isNotEmpty()) {
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -235,23 +276,22 @@ fun RidersAvailabilities(availableRidersList: List<User>, ifNeededRidersList: Li
                         modifier = Modifier.padding(smallPadding),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     ) {
-                        ifNeededRidersList.forEach {
-                            val checkedState = remember { mutableStateOf(false) }
-
+                        ifNeededRidersCheckboxList.forEach {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(5.dp)
-                                    .height(20.dp),
+                                    .height(20.dp)
+                                    .clickable { it.isChecked = !it.isChecked },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Checkbox(
-                                    checked = checkedState.value,
-                                    onCheckedChange = { checkedState.value = it },
+                                    checked = it.isChecked,
+                                    onCheckedChange = { isChecked -> it.isChecked = isChecked },
                                     modifier = Modifier.padding(start = 0.dp)
                                 )
                                 Text(
-                                    text = "${it.name} ${it.surname}",
+                                    text = "${it.user.name} ${it.user.surname}",
                                     modifier = Modifier.padding(start = 4.dp)
                                 )
                             }

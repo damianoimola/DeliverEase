@@ -18,7 +18,6 @@ data class CalendarManager (
     fun getDays(callbackFunction: (List<Day>) -> Unit) {
         s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
             this.calendar = ret
-            println("DATA ${this.calendar!!.days}")
             callbackFunction(this.calendar!!.days)
         }
     }
