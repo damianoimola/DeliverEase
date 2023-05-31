@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,13 +24,12 @@ fun HomeScreen() {
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
     var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 
-    val messagesManager : MessagesManager =
-        MessagesManager(globalUser!!.id!!, LocalContext.current)
+    val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
-    val calendarManager : CalendarManager =
-        CalendarManager(LocalContext.current)
+    val calendarManager = CalendarManager(LocalContext.current)
 
     messagesManager.getAllMessages{ list: List<Message> ->
+        Log.i("DELIVEREASE-MESS", "$list")
         communicationList = list
             .filter { it.messageType == Message.MessageType.NOTIFICATION }
             .sortedByDescending { it.date }

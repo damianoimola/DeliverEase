@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.widgets
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,12 +16,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 import java.time.LocalDate
 import java.time.ZoneId

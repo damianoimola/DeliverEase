@@ -48,7 +48,6 @@ fun RidersMainContent(){
         content = {
             Box(modifier = Modifier
                 .padding(it)
-                .background(Color(0xffffffff))
             ){
                 // navigation host holds all of the navigation destinations within the app
                 // calling "navController.navigate("home")" you can travel through app

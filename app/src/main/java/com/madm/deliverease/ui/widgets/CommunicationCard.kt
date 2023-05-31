@@ -33,10 +33,7 @@ import com.madm.deliverease.ui.theme.smallPadding
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
-
-data class Communication(val text: String, val data: String)
 
 @Composable
 fun CommunicationCard(
@@ -52,7 +49,7 @@ fun CommunicationCard(
 
     Card(
         elevation = mediumCardElevation,
-        shape = Shapes.medium,
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxSize()
             .padding(nonePadding, smallPadding)
@@ -67,7 +64,7 @@ fun CommunicationCard(
             ) {
                 Text(
                     stringResource(R.string.communication_title),
-                    style = TextStyle(fontSize = 22.sp), /* TODO: set to typography */
+                    style = TextStyle(fontSize = 22.sp), // TODO Ralisin: set text style
                     textAlign = TextAlign.Center
                 )
                 if(showAddButton) {
@@ -76,8 +73,8 @@ fun CommunicationCard(
                         horizontalArrangement = Arrangement.End
                     ) {
                         IconButton(onClick = { showTextField.value = !showTextField.value }) {
-                            if(!showTextField.value) Icon(Icons.Default.Add, "Add")
-                            else Icon(ImageVector.vectorResource(id = R.drawable.remove),"Remove")
+                            if(!showTextField.value) Icon(Icons.Default.Add, "Add") // TODO Ralisin: set iconButton theme color
+                            else Icon(ImageVector.vectorResource(id = R.drawable.remove),"Remove") // TODO Ralisin: set iconButton theme color
                         }
                     }
                 }
