@@ -6,12 +6,3 @@ labels: ''
 assignees: ''
 
 ---
-
-##Descrizione della issue
-
-Descrivere nei dettagli la issue
-
-##Domande
-
-È replicabile?
-Quali file sono coinvolti?
