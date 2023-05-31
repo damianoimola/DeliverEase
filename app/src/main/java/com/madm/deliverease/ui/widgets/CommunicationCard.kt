@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,7 +43,6 @@ fun CommunicationCard(
     communicationList: List<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
-    sendCommunication: (String) -> Unit = {},
 ) {
     val showTextField = remember { mutableStateOf(false) }
     val textFieldValue = remember { mutableStateOf("") }
@@ -116,8 +116,6 @@ fun CommunicationCard(
                     ) {
                         Button(
                             onClick = {
-                                sendCommunication(textFieldValue.value)
-                                textFieldValue.value = ""
                                 showTextField.value = !showTextField.value
 
                                 Message(
@@ -127,13 +125,23 @@ fun CommunicationCard(
                                     Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                                     Message.MessageType.NOTIFICATION.displayName
                                 ).send(context)
+
+                                textFieldValue.value = ""
+
+                                Toast.makeText(context, "The message has been sent correctly!", Toast.LENGTH_SHORT).show()
                             }
-                        ) { Text(stringResource(R.string.send)) }
+                        ) {
+                            Text(stringResource(R.string.send))
+                        }
                         Spacer(Modifier.width(4.dp))
-                        Button(onClick = {
-                            textFieldValue.value = ""
-                            showTextField.value = !showTextField.value
-                        }) { Text(stringResource(R.string.cancel)) }
+                        Button(
+                            onClick = {
+                                textFieldValue.value = ""
+                                showTextField.value = !showTextField.value
+                            }
+                        ) {
+                            Text(stringResource(R.string.cancel))
+                        }
                     }
                 }
             }

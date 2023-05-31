@@ -15,7 +15,7 @@ data class CalendarManager (
     private val s: Server = Server(context)
 
 
-    fun getDays(callbackFunction: (List<Day>) -> Unit) {
+    fun getDays(callbackFunction: (List<WorkDay>) -> Unit) {
         s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
             this.calendar = ret
             callbackFunction(this.calendar!!.days)
@@ -24,13 +24,17 @@ data class CalendarManager (
 }
 
 data class Calendar(
-    @IgnoredOnParcel var days: List<Day> = listOf()
+    @IgnoredOnParcel var days: List<WorkDay> = listOf()
 )
 
 
-// TODO: refactor in WorkDay
 @Parcelize
-data class Day(
+data class WorkDay(
     @IgnoredOnParcel var date: Date? = null,
     @IgnoredOnParcel var riders: List<String>? = null
-) : Parcelable
+) : Parcelable {
+    fun insertOrUpdate(context : Context){
+        val s : Server = Server(context)
+        s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
+    }
+}

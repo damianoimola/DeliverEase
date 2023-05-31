@@ -36,12 +36,12 @@ fun CalendarScreen(){
 
 
     // getting API data
-    var shiftList : List<Day> by rememberSaveable { mutableStateOf(listOf()) }
+    var shiftList : List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
 
     val calendarManager : CalendarManager =
         CalendarManager(LocalContext.current)
 
-    calendarManager.getDays{ list: List<Day> ->
+    calendarManager.getDays{ list: List<WorkDay> ->
         shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }
     }
 
@@ -72,8 +72,6 @@ fun CalendarScreen(){
                     val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val date: Date = inputDateFormat.parse(inputDateString)!!
                     val outputDateString: String = outputDateFormat.format(date)
-
-                    println("######## $selectedDate, $outputDateString")
 
                     outputDateString == selectedDate.toString()
                 }

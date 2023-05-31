@@ -23,10 +23,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.CalendarManager
-import com.madm.common_libs.model.Day
+import com.madm.common_libs.model.Message
+import com.madm.common_libs.model.WorkDay
 import com.madm.common_libs.model.User
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
@@ -36,9 +38,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 import kotlin.collections.ArrayList
-
-//val ridersAvailable = listOf("Massimo Buniy", "Damiano Imola", "Alessandro Finocchi", "Martina Lupini")
-//val ridersIfNeeded = listOf("Napoleone", "Giulio Cesare", "Matteo Giustini", "Topolino", "Falcao")
 
 
 
@@ -66,7 +65,6 @@ fun ShiftsScreen() {
 
     var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-
 
 
     // filter all users that are available
@@ -98,9 +96,6 @@ fun ShiftsScreen() {
 
         (permanent || nonPermanent) && user.id != "0"
     }
-
-
-
 
 
     Column(
@@ -170,23 +165,27 @@ class CheckBoxItem(val user: User, val isAllocated : Boolean) : Parcelable{
     var isChecked: Boolean by mutableStateOf(isAllocated)
 }
 
+
 @Composable
 fun RidersAvailabilities(
     availableRidersList: List<User>,
     ifNeededRidersList: List<User>,
     selectedDate: Date
 ) {
-    var selectedWorkDay : Day? by rememberSaveable { mutableStateOf(Day()) }
+    val context = LocalContext.current
+    var selectedWorkDay : WorkDay? by rememberSaveable { mutableStateOf(WorkDay()) }
     var allocatedRiderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
     var ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
     val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
 
-    calendarManager.getDays{ list: List<Day> ->
+    calendarManager.getDays{ list: List<WorkDay> ->
         selectedWorkDay = list.firstOrNull { it.date == selectedDate }
 
-        if(selectedWorkDay != null)
-            allocatedRiderList = globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
+        allocatedRiderList = if(selectedWorkDay != null)
+            globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
+        else
+            listOf()
 
         availableRidersCheckboxList = availableRidersList.map {
             CheckBoxItem(it, it in allocatedRiderList)
@@ -302,13 +301,27 @@ fun RidersAvailabilities(
         }
 
         item{
-            ButtonDraftAndSubmit()
+            ButtonDraftAndSubmit({
+                val listOfWorkingRiders =
+                    availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
+                    ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
+
+                val workDay : WorkDay = WorkDay(selectedDate, listOfWorkingRiders)
+                workDay.insertOrUpdate(context)
+            }) {
+                Message(
+                    globalUser!!.id,
+                    "0",
+                    "Hi, a new calendar has been published",
+                    Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                    Message.MessageType.NOTIFICATION.displayName
+                ).send(context)
+            }
         }
     }
 }
 
 
-@Preview
 @Composable
 fun AdjustingButtons(){
     val value =  0
@@ -334,31 +347,36 @@ fun AdjustingButtons(){
     }
 }
 
-@Preview
+
 @Composable
-fun ButtonDraftAndSubmit() {
+fun ButtonDraftAndSubmit(updateServer: () -> Unit, notifyRiders: () -> Unit) {
     Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Button(
-            onClick = {},
+            onClick = {
+                updateServer()
+            },
             shape = RoundedCornerShape(30),
             border = BorderStroke(1.dp, Color.Red),
             modifier = Modifier
                 .weight(1f)
                 .padding(32.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xBF3604))
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604))
         ) {
 
             Text(text = "Save Draft", color = Color.Red)
         }
 
         Button(
-            onClick = {},
+            onClick = {
+                updateServer()
+                notifyRiders()
+            },
             shape = RoundedCornerShape(30),
             border = BorderStroke(1.dp, Color.Red),
             modifier = Modifier
                 .weight(1f)
                 .padding(32.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xBF3604))
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604))
         ) {
 
             Text(text = "Submit", color = Color.Red)

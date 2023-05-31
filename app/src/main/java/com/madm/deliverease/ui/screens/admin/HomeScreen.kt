@@ -20,7 +20,7 @@ import java.util.*
 fun HomeScreen() {
     // getting API data
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-    var todayWorkDay : Day by rememberSaveable { mutableStateOf(Day()) }
+    var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
     var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 
     val messagesManager : MessagesManager =
@@ -30,10 +30,12 @@ fun HomeScreen() {
         CalendarManager(LocalContext.current)
 
     messagesManager.getAllMessages{ list: List<Message> ->
-        communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }
+        communicationList = list
+            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+            .sortedByDescending { it.date }
     }
 
-    calendarManager.getDays{ list: List<Day> ->
+    calendarManager.getDays{ list: List<WorkDay> ->
         todayWorkDay = list.first {
             it.date == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         }
@@ -48,6 +50,6 @@ fun HomeScreen() {
     ) {
         MyPageHeader()
         TodayRidersCard(riderList, modifier = Modifier.weight(1f))
-        CommunicationCard(communicationList, true, Modifier.weight(1f)) { text: String -> println(text) }
+        CommunicationCard(communicationList, true, Modifier.weight(1f))
     }
 }
