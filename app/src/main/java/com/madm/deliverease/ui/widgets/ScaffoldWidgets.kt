@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 class CustomNavItem(
     val title: String,
     val icon: ImageVector,
+    val position: Int,
     val function: () -> Unit
 )
 

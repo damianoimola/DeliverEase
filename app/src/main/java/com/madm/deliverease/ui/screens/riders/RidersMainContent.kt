@@ -35,14 +35,15 @@ fun RidersMainContent(){
 
     // bottom navigation bar icons
     val navItems = listOf(
-        CustomNavItem("Home", Icons.Default.Home) { navController.navigate("home") },
-        CustomNavItem("Calendar", Icons.Default.DateRange) { navController.navigate("calendar") },
-        CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon)) { navController.navigate("preferences") },
-        CustomNavItem("Settings", Icons.Default.Settings) { navController.navigate("settings") }
+        CustomNavItem("Home", Icons.Default.Home, 1) { navController.navigate("home") },
+        CustomNavItem("Calendar", Icons.Default.DateRange, 2) { navController.navigate("calendar") },
+        CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon), 3) { navController.navigate("preferences") },
+        CustomNavItem("Settings", Icons.Default.Settings, 4) { navController.navigate("settings") }
     )
 
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
     var selectedItem by remember { mutableStateOf(navItems[0]) }
+    var previousSelectedItem: CustomNavItem by remember{ mutableStateOf(navItems[0]) }
 
     Scaffold(
         content = {
@@ -58,7 +59,11 @@ fun RidersMainContent(){
                     modifier = Modifier.padding(mediumPadding),
                     enterTransition = {
                         slideIntoContainer(
-                            towards = AnimatedContentScope.SlideDirection.Left,
+                            towards =
+                            if(previousSelectedItem.position < selectedItem.position)
+                                AnimatedContentScope.SlideDirection.Right
+                            else
+                                AnimatedContentScope.SlideDirection.Left,
                             animationSpec = tween(700)
                         )
                     }
@@ -66,7 +71,7 @@ fun RidersMainContent(){
                     composable("home") { HomeScreen() }
                     composable("calendar") { CalendarScreen() }
                     composable("preferences") { ShiftPreferenceScreen()}
-                    composable("settings") { SettingScreenRider()}
+                    composable("settings") { SettingScreenRider() }
                 }
             }
         },
@@ -74,7 +79,9 @@ fun RidersMainContent(){
             CustomBottomAppBar(
                 navItems = navItems,
                 selectedItem = selectedItem,
-                onItemSelected = { item -> selectedItem = item },
+                onItemSelected = { item -> {
+                    previousSelectedItem = selectedItem
+                    selectedItem = item } },
                 modifier = Modifier
                     .clip(RoundedCornerShape(20, 20, 0, 0))
                     .fillMaxWidth()
