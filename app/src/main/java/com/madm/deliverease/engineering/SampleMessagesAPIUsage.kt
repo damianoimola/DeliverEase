@@ -14,8 +14,6 @@ import kotlinx.coroutines.launch
 
 
 
-
-
 @Composable
 fun DummyComposeFunctionForMessages(){
     val context = LocalContext.current
