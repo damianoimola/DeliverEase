@@ -5,11 +5,20 @@ import android.os.Parcelable
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 
-data class MessagesHandler(var receiverId : String, var context: Context){
+data class MessagesManager(var receiverId : String, var context: Context){
     private var messageList: MessageList? = null
     private val s: Server = Server(context)
+
+
+    fun getAllMessages(callbackFunction: (List<Message>) -> Unit) {
+        s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
+            this.messageList = ret
+            callbackFunction(this.messageList!!.messages)
+        }
+    }
 
     fun getReceivedMessages(callbackFunction: (List<Message>) -> Unit) {
         s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
@@ -54,18 +63,21 @@ data class Message(
     @IgnoredOnParcel var senderID: String? = null,
     @IgnoredOnParcel var receiverID: String? = null,
     @IgnoredOnParcel var body: String? = null,
-    @IgnoredOnParcel var messageType: MessageType? = null
+    @IgnoredOnParcel var date: Date? = null,
+    @IgnoredOnParcel private var type: String? = null,
 ) : Parcelable {
-    enum class MessageType { REQUEST, NOTIFICATION, ACCEPTANCE }
+    enum class MessageType (val displayName: String) {
+        REQUEST("REQUEST"),
+        NOTIFICATION("NOTIFICATION"),
+        ACCEPTANCE("ACCEPTANCE")
+    }
 
     @IgnoredOnParcel
-    private val type: String
-    get() = when(this.messageType){
-        MessageType.REQUEST -> "REQUEST"
-        MessageType.NOTIFICATION -> "NOTIFICATION"
-        MessageType.ACCEPTANCE -> "ACCEPTANCE"
-        else -> "ERROR"
-    }
+    var id: String? = null
+
+    @IgnoredOnParcel
+    val messageType: MessageType
+        get() = MessageType.valueOf(this.type!!)
 
     fun send(context : Context){
         val s : Server = Server(context)

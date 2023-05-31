@@ -18,6 +18,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.common_libs.model.User
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 
@@ -25,7 +26,7 @@ data class Rider(val riderName: String, val riderSurname: String)
 
 @Composable
 fun TodayRidersCard(
-    riderList: MutableList<Rider>,
+    riderList: List<User>,
     columns: Int = 2,
     modifier: Modifier = Modifier
 ) {
@@ -60,7 +61,7 @@ fun TodayRidersCard(
 
 @Composable
 fun RiderRow(
-    rider: Rider,
+    rider: User,
     inLine: Boolean = false // Let you switch name from Column to Row structure
 ) {
     Row(
@@ -81,17 +82,17 @@ fun RiderRow(
                 modifier = Modifier.weight(1f)
             ) {
                 Divider(Modifier.width(smallPadding))
-                Text(rider.riderName)
+                Text(rider.name!!)
                 Divider(Modifier.width(smallPadding))
-                Text(rider.riderSurname)
+                Text(rider.surname!!)
             }
         else
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(rider.riderName)
-                Text(rider.riderSurname)
+                Text(rider.name!!)
+                Text(rider.surname!!)
             }
     }
 }

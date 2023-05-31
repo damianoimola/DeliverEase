@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,21 +13,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.madm.common_libs.model.*
 import com.madm.deliverease.R
+import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 data class ShiftRequest(var changerName: String, var offeredDay: String, var wantedDay: String)
 
 @Composable
 fun ShiftChangeCard(
-    shiftsList: MutableList<ShiftRequest>,
+    shiftsList: List<Message>,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Card(
         elevation = mediumCardElevation,
         shape = Shapes.medium,
@@ -52,8 +62,18 @@ fun ShiftChangeCard(
                 shiftsList.forEach { shift ->
                     Card(Modifier.padding(nonePadding, smallPadding)) {
                         CustomShiftChangeRequest(shift) {
-                            shiftsList.remove(shift)
-                            println(shiftsList)
+                            val currentDateTime: Date = Date()
+                            val currentTimestamp: Long = currentDateTime.time
+
+                            Message(
+                                shift.receiverID,
+                                shift.senderID,
+                                shift.id,
+                                Date.from(
+                                    LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                ),
+                                Message.MessageType.ACCEPTANCE.displayName
+                            ).send(context)
                         }
                     }
                 }
@@ -62,12 +82,19 @@ fun ShiftChangeCard(
     }
 }
 
-@Preview
 @Composable
 fun CustomShiftChangeRequest(
-    shiftRequest: ShiftRequest = ShiftRequest("Francesco Virgulini", "dd/mm/yyyy", "dd/mm/yyyy"),
+    shiftRequest: Message,
     onAccept: () -> Unit = {}
 ) {
+    val (offeredDay, wantedDay) = shiftRequest.body!!.split("#");
+
+    val requestingUserFullName = with(
+        globalAllUsers.first { user ->
+            user.id == shiftRequest.senderID!!
+        }
+    ){ "$name $surname" }
+
     Row(
         Modifier
             .clip(Shapes.large)
@@ -79,9 +106,9 @@ fun CustomShiftChangeRequest(
             Modifier
                 .padding(smallPadding)
                 .weight(1f),horizontalAlignment = Alignment.Start) {
-            Text(shiftRequest.changerName,fontSize = 20.sp, fontFamily = gilroy)
-            Text("Offered: " + shiftRequest.offeredDay,fontSize = 15.sp, fontFamily = gilroy)
-            Text("Wanted: " + shiftRequest.wantedDay,fontSize = 15.sp, fontFamily = gilroy)
+            Text(requestingUserFullName, fontSize = 20.sp, fontFamily = gilroy)
+            Text("Offered: $offeredDay", fontSize = 15.sp, fontFamily = gilroy)
+            Text("Wanted: $wantedDay", fontSize = 15.sp, fontFamily = gilroy)
         }
 
         // Icon button accept

@@ -7,13 +7,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.madm.common_libs.model.CalendarManager
-import com.madm.common_libs.model.Day
+import com.madm.common_libs.model.WorkDay
 
 
 @Composable
 fun DummyComposeFunctionForCalendar(){
     val context = LocalContext.current
-    var calendar: List<Day> by remember { mutableStateOf(listOf()) }
+    var calendar: List<WorkDay> by remember { mutableStateOf(listOf()) }
 
     Button(
         onClick = {
@@ -32,7 +32,7 @@ fun DummyComposeFunctionForCalendar(){
 
 
 fun testHandleCalendar(
-    receivedCalendarCallback: (List<Day>) -> Unit,
+    receivedCalendarCallback: (List<WorkDay>) -> Unit,
     context: Context
 ) {
     val calendarManager : CalendarManager = CalendarManager(context)
@@ -41,7 +41,7 @@ fun testHandleCalendar(
 }
 
 @Composable
-fun ReceivedDays(days: List<Day>) {
+fun ReceivedDays(days: List<WorkDay>) {
     Column() {
         days.forEach{
             Text(text = "Date: ${it.date}, IDs: ${it.riders}")

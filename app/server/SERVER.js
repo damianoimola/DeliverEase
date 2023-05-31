@@ -47,13 +47,24 @@ fastify.post("/users", (req, res) => {
     name: parsedData.name,
     surname: parsedData.surname,
     email: parsedData.email,
-    password: parsedData.password
+    password: parsedData.password,
+    permanentConstraints: parsedData.permanentConstraints,
+    nonPermanentConstraints: parsedData.nonPermanentConstraints
   };
   
   console.log('JSON data:', data);
 
-  // Add the new entry to the data object
-  data.users.push(newEntry);
+
+
+  // Find the user by ID or create a new one
+  const userIndex = data.users.findIndex(user => user.id === parsedData.id);
+
+  // Update the user if found, otherwise add a new user
+  if (userIndex !== -1) {
+    data.users[userIndex] = newEntry;
+  } else {
+    data.users.push(newEntry);
+  }
 
   // Convert the updated data object back to JSON
   const updatedJsonData = JSON.stringify(data, null, 2);
@@ -97,6 +108,12 @@ fastify.get("/users", (req, res) => {
 
 
 
+
+
+
+
+
+
 // #######################################
 // MESSAGES
 // #######################################
@@ -114,6 +131,7 @@ fastify.post("/messages", (req, res) => {
     receiverID: parsedData.receiverID,
     body: parsedData.body,
     type: parsedData.type,
+    date: parsedData.date,
   };
 
   // Add the new entry to the data object
@@ -211,7 +229,7 @@ fastify.get("/calendar", (req, res) => {
 });
 
 // POST -> add days
-fastify.post("/messages", (req, res) => {
+fastify.post("/calendar", (req, res) => {
   const parsedData = JSON.parse(req.body);
   
   // Read the existing JSON file

@@ -1,34 +1,44 @@
 {
   "messages": [
     {
-      "senderID": "1",
-      "receiverID": "0",
-      "body": "<DATA>",
-      "type": "REQUEST"
+      "id": "1",
+      "senderID": "2",
+      "receiverID": "1",
+      "body": "2023-06-10#2023-06-20",
+      "type": "REQUEST",
+      "date": "2023-05-25"
     },
     {
+      "id": "2",
       "senderID": "2",
       "receiverID": "1",
       "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION"
+      "type": "NOTIFICATION",
+      "date": "2023-05-25"
     },
     {
+      "id": "3",
       "senderID": "1",
-      "receiverID": "0",
-      "body": "<DATA>",
-      "type": "ACCEPTANCE"
+      "receiverID": "1",
+      "body": "2023-06-10#2023-06-20",
+      "type": "ACCEPTANCE",
+      "date": "2023-05-25"
     },
     {
-      "senderID": "1",
-      "receiverID": "3",
-      "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION"
-    },
-    {
+      "id": "4",
       "senderID": "1",
       "receiverID": "3",
       "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION"
+      "type": "NOTIFICATION",
+      "date": "2023-05-25"
+    },
+    {
+      "id": "5",
+      "senderID": "1",
+      "receiverID": "3",
+      "body": "Ciao un nuovo calendario è stato pubblicato",
+      "type": "NOTIFICATION",
+      "date": "2023-05-25"
     }
   ]
 }

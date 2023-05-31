@@ -45,24 +45,24 @@ val MonthMap = mapOf(
 )
 
 @Parcelize
-data class Day(val number: Int, val name: String) : Parcelable
+data class WeekDay(val number: Int, val name: String) : Parcelable
 
-fun getWeekDays(year: Int, month: Int, week: Int): List<Day> {
+fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     val firstDayOfMonth = LocalDate.of(year, month, 1)
     val firstDayOfWeek = firstDayOfMonth.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
         .plusWeeks(week.toLong() - 1)
 
-    val days = mutableListOf<Day>()
+    val weekDays = mutableListOf<WeekDay>()
     var currentDate = firstDayOfWeek
 
     for (i in 0 until 7) {
         val dayNumber = currentDate.dayOfMonth
         val dayName = currentDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        days.add(Day(dayNumber, dayName))
+        weekDays.add(WeekDay(dayNumber, dayName))
         currentDate = currentDate.plusDays(1)
     }
 
-    return days
+    return weekDays
 }
 
 fun Int.integerToTwoDigit() : String {
@@ -158,7 +158,7 @@ fun MonthSelector(
 
 
 @Composable
-fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable () -> Unit){
+fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit){
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
 
     LazyColumn(
@@ -168,32 +168,32 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
             .padding(top = mediumPadding)
             .fillMaxHeight()
     ) {
-        itemsIndexed(days){_, days ->
+        itemsIndexed(days){_, day ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(nonePadding, smallPadding)
             ) {
-                Text(text = "${days.number} ${days.name}")
+                Text(text = "${day.number} ${day.name}")
                 Divider(modifier = Modifier
                     .fillMaxWidth()
                     .width(2.dp)
                     .padding(start = smallPadding))
             }
 
-            content()
+            content(day)
         }
     }
 }
 
 
 @Composable
-fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
-    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
+fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
+//    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
 
     // list of all mondays (first day of week) of the selected month
     val mondaysList = getMondays(
         selectedYear,
-        selectedMonth + 1,
+        (selectedMonth + 1)%12,
         afterCurrentDay
     )
         .toList()
@@ -201,10 +201,11 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
         .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, currentWeek)) }
+    // TODO: secondo me serve il %12 (DAMIANO)
+    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
 
     // the selected week
-    var selectedWeek by rememberSaveable { mutableStateOf(mondaysList[0]) }
+    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek-1]) }
 
     Row (
         modifier = Modifier
@@ -216,7 +217,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
             Button(
                 onClick = {
                     function(mondaysList.indexOf(it) + 1)
-                    selectedWeek = it
+                    selectedWeekString = it
                     // update the list of days of the selected week
                     daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
 
@@ -230,7 +231,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
                     .padding(smallPadding, smallPadding)
                     .clip(shape = RoundedCornerShape(20)),
                 colors = ButtonDefaults.buttonColors(
-                    if (selectedWeek == it) Color(0xFFFF9800)
+                    if (selectedWeekString == it) Color(0xFFFF9800)
                     else Color(0xFFFF5722)
                 ),
                 border = BorderStroke(width = 1.dp, color = Color.Red),
@@ -251,14 +252,14 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
         Text(
             text = "Week: ",
             style = TextStyle(
-                fontSize = 25.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Normal
             )
         )
         Text(
             text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
             style = TextStyle(
-                fontSize = 25.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(0xFFFF9800)
             )

@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -21,25 +23,32 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.common_libs.model.*
 import com.madm.deliverease.R
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 data class Communication(val text: String, val data: String)
 
 @Composable
 fun CommunicationCard(
-    communicationList: List<Communication>,
+    communicationList: List<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
-    sendCommunication: (String) -> Unit = {},
 ) {
     val showTextField = remember { mutableStateOf(false) }
     val textFieldValue = remember { mutableStateOf("") }
 
     val density = LocalDensity.current
+    val context = LocalContext.current
 
     Card(
         elevation = mediumCardElevation,
@@ -105,16 +114,34 @@ fun CommunicationCard(
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(onClick = {
-                            sendCommunication(textFieldValue.value)
-                            textFieldValue.value = ""
-                            showTextField.value = !showTextField.value
-                        }) { Text(stringResource(R.string.send)) }
+                        Button(
+                            onClick = {
+                                showTextField.value = !showTextField.value
+
+                                Message(
+                                    globalUser!!.id,
+                                    "0",
+                                    textFieldValue.value,
+                                    Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                                    Message.MessageType.NOTIFICATION.displayName
+                                ).send(context)
+
+                                textFieldValue.value = ""
+
+                                Toast.makeText(context, "The message has been sent correctly!", Toast.LENGTH_SHORT).show()
+                            }
+                        ) {
+                            Text(stringResource(R.string.send))
+                        }
                         Spacer(Modifier.width(4.dp))
-                        Button(onClick = {
-                            textFieldValue.value = ""
-                            showTextField.value = !showTextField.value
-                        }) { Text(stringResource(R.string.cancel)) }
+                        Button(
+                            onClick = {
+                                textFieldValue.value = ""
+                                showTextField.value = !showTextField.value
+                            }
+                        ) {
+                            Text(stringResource(R.string.cancel))
+                        }
                     }
                 }
             }
@@ -127,7 +154,14 @@ fun CommunicationCard(
                 content = {
                     items(communicationList) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            CustomCommunication(item.text,item.data)
+                            val inputDateString = item.date!!.toString()
+                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+                            val date: Date = inputDateFormat.parse(inputDateString)!!
+                            val outputDateString: String = outputDateFormat.format(date)
+
+                            CustomCommunication(item.body!!, outputDateString)
                         }
                     }
                 }

@@ -38,7 +38,7 @@ class Server (context : Context) {
 
         serverCompleteUrl.httpPost().body(requestBody).responseString { _, response, result ->
             if(!response.isSuccessful){
-                result.onError { println("Request failed: ${it.exception}") }
+                result.onError { println("Request failed: ${it.exception} - ${it.errorData} - ${it.response}") }
             }
         }
     }

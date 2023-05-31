@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     goToAdminHome = {
+                        println("Going to admin home")
                         navController.navigate("admin-home") {
                             popUpTo("login") { inclusive = true }
                         }

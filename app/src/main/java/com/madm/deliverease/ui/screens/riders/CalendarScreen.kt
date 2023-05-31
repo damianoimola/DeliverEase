@@ -1,50 +1,49 @@
 package com.madm.deliverease.ui.screens.riders
 
-import android.os.Parcelable
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.nonePadding
+import com.madm.common_libs.model.*
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.MonthSelector
 import com.madm.deliverease.ui.widgets.MyPageHeader
 import com.madm.deliverease.ui.widgets.WeekContent
 import com.madm.deliverease.ui.widgets.WeeksList
-import kotlinx.parcelize.Parcelize
-import java.time.DayOfWeek
+import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 import java.util.*
-
-
-
-
-
+import java.util.Calendar
 
 
 @Composable
 fun CalendarScreen(){
-    var indexOfSelectedWeek : Int by remember { mutableStateOf(1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
     val months = (currentMonth..currentMonth + 11).toList().map{i-> i%12}.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
+
+
+    // getting API data
+    var shiftList : List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
+
+    val calendarManager : CalendarManager =
+        CalendarManager(LocalContext.current)
+
+    calendarManager.getDays{ list: List<WorkDay> ->
+        shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }
+    }
 
 
     Column {
@@ -55,8 +54,29 @@ fun CalendarScreen(){
             else currentYear
             selectedMonth = month
         }
-        WeeksList(selectedMonth, selectedYear, false) { weekNumber: Int -> indexOfSelectedWeek = weekNumber }
-        WeekContent(indexOfSelectedWeek, selectedMonth, selectedYear) { ShiftRow() }
+        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+        WeekContent(selectedWeek, selectedMonth, selectedYear) { weekDay ->
+            ShiftRow(
+                shiftList.any {
+                    var selectedDate: LocalDate? = null
+
+                    // create a date from selected day
+                    selectedDate = if (weekDay.number < 7 && selectedWeek != 0)
+                        LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
+                    else
+                        LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
+
+                    // converting API date
+                    val inputDateString = it.date.toString()
+                    val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                    val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    val date: Date = inputDateFormat.parse(inputDateString)!!
+                    val outputDateString: String = outputDateFormat.format(date)
+
+                    outputDateString == selectedDate.toString()
+                }
+            )
+        }
     }
 }
 
@@ -66,21 +86,17 @@ fun CalendarScreen(){
 
 
 @Composable
-fun ShiftRow(){
+fun ShiftRow(haveAShift: Boolean){
     val currentRandomVal = (0..1).random()
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(20))
-            .background(
-                color = if (currentRandomVal == 0) Color.LightGray else Color(
-                    0xFFFF9800
-                )
-            )
+            .background(color = if (!haveAShift) Color.LightGray else Color(0xFFFF9800))
             .fillMaxWidth()
             .padding(smallPadding)
     ){
         Text(
-            text = if (currentRandomVal == 0) "No shift" else "You have a shift!",
+            text = if (!haveAShift) "No shift" else "You have a shift!",
             style = TextStyle(color = Color.White)
         )
     }

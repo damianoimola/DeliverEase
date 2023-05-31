@@ -1,53 +1,55 @@
 package com.madm.deliverease.ui.screens.admin
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.madm.common_libs.model.*
+import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.widgets.*
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 @Preview
 @Composable
 fun HomeScreen() {
-    val riderList = remember { mutableStateListOf(
-        Rider("Name1", "Surname1"),
-        Rider("Name2", "Surname2"),
-        Rider("Name3", "Surname3"),
-        Rider("Name4", "Surname4"),
-        Rider("Name5", "Surname5"),
-        Rider("Name6", "Surname6"),
-        Rider("Name7", "Surname7"),
-        Rider("Name8", "Surname8"),
-        Rider("Name9", "Surname9"),
-        Rider("Name10", "Surname10"),
-        Rider("Name11", "Surname11"),
-        Rider("Name12", "Surname12"),
-        Rider("Name13", "Surname13"),
-        Rider("Name14", "Surname14"),
-        Rider("Name15", "Surname15"),
-        Rider("Name16", "Surname16"),
-    ) }
+    // getting API data
+    var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
+    var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
+    var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 
-    val communicationList = listOf(
-        Communication("News 1! I have published calendar 1", "21/05/2023"),
-        Communication("News 2! I have published calendar 2", "20/05/2023"),
-        Communication("News 3! I have published calendar 3", "19/05/2023"),
-        Communication("News 4! I have published calendar 4", "18/05/2023"),
-        Communication("News 5! I have published calendar 5", "17/05/2023"),
-        Communication("News 6! I have published calendar 6", "16/05/2023"),
-        Communication("News 7! I have published calendar 7", "15/05/2023"),
-        Communication("News 8! I have published calendar 8", "14/05/2023"),
-        Communication("News 9! I have published calendar 9", "13/05/2023"),
-    )
+    val messagesManager : MessagesManager =
+        MessagesManager(globalUser!!.id!!, LocalContext.current)
+
+    val calendarManager : CalendarManager =
+        CalendarManager(LocalContext.current)
+
+    messagesManager.getAllMessages{ list: List<Message> ->
+        communicationList = list
+            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+            .sortedByDescending { it.date }
+    }
+
+    calendarManager.getDays{ list: List<WorkDay> ->
+        todayWorkDay = list.first {
+            it.date == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
+        }
+
+        riderList = globalAllUsers.filter { user ->
+            user.id in todayWorkDay.riders!!.toList()
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MyPageHeader()
         TodayRidersCard(riderList, modifier = Modifier.weight(1f))
-        CommunicationCard(communicationList, true, Modifier.weight(1f)) { text: String -> println(text) }
+        CommunicationCard(communicationList, true, Modifier.weight(1f))
     }
 }
