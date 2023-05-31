@@ -1,33 +1,22 @@
 package com.madm.deliverease.ui.screens.riders
 
-import android.os.Parcelable
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.nonePadding
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.MonthSelector
 import com.madm.deliverease.ui.widgets.MyPageHeader
 import com.madm.deliverease.ui.widgets.WeekContent
 import com.madm.deliverease.ui.widgets.WeeksList
-import kotlinx.parcelize.Parcelize
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 import java.util.*
 
 
@@ -80,7 +69,7 @@ fun ShiftRow(){
             .padding(smallPadding)
     ){
         Text(
-            text = if (currentRandomVal == 0) "No shift" else "You have a shift!",
+            text = if (currentRandomVal == 0) stringResource(id = R.string.noShift) else stringResource(id = R.string.YouHaveAShift),
             style = TextStyle(color = Color.White)
         )
     }

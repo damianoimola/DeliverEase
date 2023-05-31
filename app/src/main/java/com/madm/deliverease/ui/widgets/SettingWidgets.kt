@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,10 +24,10 @@ import com.madm.deliverease.ui.theme.gilroy
 @Composable
 fun PreferencesSetting(){
     Column( verticalArrangement = Arrangement.spacedBy(10.dp)){
-        Divider("Setting")
+        Divider(stringResource(id = R.string.BottomBarSettings))
         Language()
         DarkMode()
-        Divider("General")
+        Divider(stringResource(id = R.string.general))
         ReportBug()
         TermsAndConditions()
         Row(Modifier.height(10.dp)){}
@@ -68,7 +69,7 @@ fun Language(){
                 .padding(start = 9.dp, top = 2.dp)
                 .size(26.dp)
                 .align(Alignment.CenterStart))
-        Text("Language", modifier = Modifier
+        Text(stringResource(id = R.string.language), modifier = Modifier
             .padding(start = 48.dp, top = 0.dp)
             .align(Alignment.CenterStart),
             style = TextStyle(
@@ -121,7 +122,7 @@ fun DarkMode(){
                 .padding(start = 8.dp, top = 1.dp)
                 .size(31.dp)
                 .align(Alignment.CenterStart))
-        Text("Dark Mode", modifier = Modifier
+        Text(stringResource(id = R.string.darkMode), modifier = Modifier
             .padding(start = 48.dp, top = 0.dp)
             .align(Alignment.CenterStart),
             style = TextStyle(
@@ -152,7 +153,7 @@ fun ReportBug(){
                 .padding(start = 8.dp, top = 1.dp)
                 .size(28.dp)
                 .align(Alignment.CenterStart))
-        Text("Report Bug", modifier = Modifier
+        Text(stringResource(id = R.string.bug), modifier = Modifier
             .padding(start = 48.dp, top = 0.dp)
             .align(Alignment.CenterStart),
             style = TextStyle(
@@ -180,7 +181,7 @@ fun TermsAndConditions(){
                 .padding(start = 12.dp, top = 1.dp)
                 .size(28.dp)
                 .align(Alignment.CenterStart))
-        Text("Terms & Conditions", modifier = Modifier
+        Text(stringResource(id = R.string.termsAndConditions), modifier = Modifier
             .padding(start = 48.dp, top = 0.dp)
             .align(Alignment.CenterStart),
             style = TextStyle(
@@ -216,7 +217,7 @@ fun LogOut() {
             tint = Color.White
         )
         Text(
-            "Logout", modifier = Modifier
+            stringResource(id = R.string.logout), modifier = Modifier
                 .padding(start = 180.dp, top = 0.dp)
                 .align(Alignment.CenterStart),
             style = TextStyle(

@@ -11,12 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.MyPageHeader
@@ -33,8 +35,8 @@ fun SettingScreen() {
     ) {
         MyPageHeader()
         SettingCard(){
-            SettingItem("Number of riders per week", false){ RidersPerDayConstraint() }
-            SettingItem("Number of riders per day", false){ RidersPerWeekConstraint() }
+            SettingItem(stringResource(id = R.string.numRidersWeek), false){ RidersPerDayConstraint() }
+            SettingItem(stringResource(id = R.string.numRidersDay), false){ RidersPerWeekConstraint() }
         }
 
         PreferencesSetting()

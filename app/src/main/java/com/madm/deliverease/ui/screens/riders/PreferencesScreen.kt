@@ -76,7 +76,7 @@ fun ShiftOptions(){
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (text != "Remember choice") {
+                    if (text != stringResource(id = R.string.shift_remember)) {
                         RadioButton(
                             selected = (text == selectedOption),
                             onClick = { onOptionSelected(text) },

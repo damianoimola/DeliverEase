@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
@@ -60,7 +62,7 @@ fun RidersAvailabilities(){
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(nonePadding, smallPadding)
         ) {
-            Text(text = "Availabile")
+            Text(text = stringResource(id = R.string.available))
             Divider(modifier = Modifier
                 .fillMaxWidth()
                 .width(2.dp)
@@ -101,7 +103,7 @@ fun RidersAvailabilities(){
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(nonePadding, smallPadding)
         ) {
-            Text(text = "If needed")
+            Text(text = stringResource(id = R.string.If_needed))
             Divider(modifier = Modifier
                 .fillMaxWidth()
                 .width(2.dp)
@@ -182,7 +184,7 @@ fun ButtonDraftAndSubmit() {
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xBF3604))
         ) {
 
-            Text(text = "Save Draft", color = Color.Red)
+            Text(text = stringResource(id = R.string.saveDraft), color = Color.Red)
         }
 
         Button(
@@ -195,7 +197,7 @@ fun ButtonDraftAndSubmit() {
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xBF3604))
         ) {
 
-            Text(text = "Submit", color = Color.Red)
+            Text(text = stringResource(id = R.string.submit), color = Color.Red)
         }
     }
 }

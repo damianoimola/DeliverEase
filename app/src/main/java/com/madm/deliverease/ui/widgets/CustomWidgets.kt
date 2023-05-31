@@ -170,7 +170,7 @@ fun LoginButton(
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Login", modifier = Modifier.padding(6.dp))
+            Text(text = stringResource(id = R.string.login), modifier = Modifier.padding(6.dp))
             Icon(Icons.Default.ArrowForward, contentDescription = stringResource(R.string._continue))
         }
     }

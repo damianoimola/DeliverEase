@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
@@ -249,7 +251,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, afterCurrentDay: Boolean, f
         horizontalArrangement = Arrangement.Start
     ){
         Text(
-            text = "Week: ",
+            text = stringResource(id = R.string.Week),
             style = TextStyle(
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Normal

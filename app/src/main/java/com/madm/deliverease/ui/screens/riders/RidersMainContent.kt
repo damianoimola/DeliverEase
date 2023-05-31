@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -33,10 +34,10 @@ fun RidersMainContent(){
 
     // bottom navigation bar icons
     val navItems = listOf(
-        CustomNavItem("Home", Icons.Default.Home) { navController.navigate("home") },
-        CustomNavItem("Calendar", Icons.Default.DateRange) { navController.navigate("calendar") },
-        CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon)) { navController.navigate("preferences") },
-        CustomNavItem("Settings", Icons.Default.Settings) { navController.navigate("settings") }
+        CustomNavItem(stringResource(id = R.string.BottomBarHome), Icons.Default.Home) { navController.navigate("home") },
+        CustomNavItem(stringResource(id = R.string.Calendar), Icons.Default.DateRange) { navController.navigate("calendar") },
+        CustomNavItem(stringResource(id = R.string.SetShift), ImageVector.vectorResource(id = R.drawable.preference_icon)) { navController.navigate("preferences") },
+        CustomNavItem(stringResource(id = R.string.BottomBarSettings), Icons.Default.Settings) { navController.navigate("settings") }
     )
 
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default

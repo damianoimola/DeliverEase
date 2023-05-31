@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -36,10 +37,10 @@ fun AdminsMainContent(){
 
     // bottom navigation bar icons
     val navItems = listOf(
-        CustomNavItem("Home", Icons.Default.Home) { navController.navigate("home") },
-        CustomNavItem("Shifts", ImageVector.vectorResource(id = R.drawable.newshifts)) { navController.navigate("shift") },
-        CustomNavItem("Riders", ImageVector.vectorResource(id = R.drawable.rider)) { navController.navigate("riders") },
-        CustomNavItem("Settings", Icons.Default.Settings) { navController.navigate("settings") }
+        CustomNavItem(stringResource(id = R.string.BottomBarHome) , Icons.Default.Home) { navController.navigate("home") },
+        CustomNavItem(stringResource(id = R.string.BottomBarShifts), ImageVector.vectorResource(id = R.drawable.newshifts)) { navController.navigate("shift") },
+        CustomNavItem(stringResource(id = R.string.BottomBarRiders), ImageVector.vectorResource(id = R.drawable.rider)) { navController.navigate("riders") },
+        CustomNavItem(stringResource(id = R.string.BottomBarSettings), Icons.Default.Settings) { navController.navigate("settings") }
     )
 
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default

@@ -7,10 +7,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
@@ -69,7 +71,7 @@ fun RidersScreen() {
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Text("List of your riders", style = TextStyle(fontSize = 20.sp))
+                Text(stringResource(id = R.string.listRiders), style = TextStyle(fontSize = 20.sp))
                 SwipeToRevealRiderList(riderList, 520.dp)
             }
         }
@@ -81,7 +83,7 @@ fun RidersScreen() {
                     .wrapContentSize()
                     .weight(1f)
             ) {
-                Text(text = "Show Alert Dialog")
+                Text(text = stringResource(id = R.string.alertDialog))
             }
         }
     }

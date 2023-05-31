@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.smallPadding
 
@@ -45,7 +47,7 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                 // DialogBox title
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Hire new Rider",
+                        text = stringResource(id = R.string.HireRider),
                         style = TextStyle(
                             fontFamily = gilroy,
                             fontWeight = FontWeight.Bold,
@@ -58,28 +60,28 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                 TextField(
                     value = riderName,
                     onValueChange = { riderName = it },
-                    placeholder = { Text(text = "Name") },
+                    placeholder = { Text(text = stringResource(id = R.string.name)) },
                     modifier = Modifier.padding(smallPadding)
                 )
 
                 TextField(
                     value = riderSurname,
                     onValueChange = { riderSurname = it },
-                    placeholder = { Text(text = "Surname") },
+                    placeholder = { Text(text = stringResource(id = R.string.surname)) },
                     modifier = Modifier.padding(smallPadding)
                 )
 
                 TextField(
                     value = riderUsername,
                     onValueChange = { riderUsername = it },
-                    placeholder = { Text(text = "Username") },
+                    placeholder = { Text(text = stringResource(id = R.string.username)) },
                     modifier = Modifier.padding(smallPadding)
                 )
 
                 TextField(
                     value = riderPassword,
                     onValueChange = { riderPassword = it },
-                    placeholder = { Text(text = "Password") },
+                    placeholder = { Text(text = stringResource(id = R.string.password)) },
                     modifier = Modifier.padding(smallPadding)
                 )
 
@@ -87,14 +89,14 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Button(
                         onClick = { onDismiss() },
-                        content = { Text(text = "Close") },
+                        content = { Text(text = stringResource(id = R.string.close)) },
                         modifier = Modifier
                             .weight(.5f)
                             .padding(8.dp)
                     )
                     Button(
                         onClick = { Toast.makeText(context, "CLICKED ON HIRE", Toast.LENGTH_SHORT).show() },
-                        content = { Text(text = "Hire") },
+                        content = { Text(text = stringResource(id = R.string.hire)) },
                         modifier = Modifier
                             .weight(.5f)
                             .padding(8.dp)
