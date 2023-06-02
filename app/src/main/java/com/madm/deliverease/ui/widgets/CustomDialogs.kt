@@ -112,7 +112,7 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                             isPasswordError = riderPassword.isEmpty()
 
                             if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
-                                User(
+                                val newUser = User(
                                     id = (globalAllUsers.maxOf { (it.id)!!.toInt() } + 1).toString(),
                                     name = riderName,
                                     surname = riderSurname,
@@ -120,11 +120,11 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                                     password = riderPassword,
                                     permanentConstraints = ArrayList(),
                                     nonPermanentConstraints = ArrayList()
-                                ).registerOrUpdate(context)
+                                )
 
+                                newUser.registerOrUpdate(context)       // updating server info
                                 onDismiss()
-
-                                //TODO: add rider to globalUsersList (Damiano)
+                                globalAllUsers.add(newUser)             // updating ui with the new rider
 
                                 Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
                             }

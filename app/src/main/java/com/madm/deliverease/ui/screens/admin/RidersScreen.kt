@@ -25,19 +25,16 @@ import com.madm.deliverease.ui.widgets.*
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import kotlin.reflect.KProperty
 
 @Preview
 @Composable
 fun RidersScreen() {
     val copyOfGlobalUsers = globalAllUsers
 
-    val riderList : List<User> by rememberSaveable {
+    val riderList : MutableList<User> by rememberSaveable {
         mutableStateOf(copyOfGlobalUsers)
     }
-
-
-
-
 
     var showCustomDialog by rememberSaveable { mutableStateOf(false) }
 
