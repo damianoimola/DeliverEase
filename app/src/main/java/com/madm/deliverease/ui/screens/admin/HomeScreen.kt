@@ -21,7 +21,7 @@ fun HomeScreen() {
     // getting API data
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
-    var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
 
     val messagesManager : MessagesManager =
         MessagesManager(globalUser!!.id!!, LocalContext.current)
@@ -29,10 +29,10 @@ fun HomeScreen() {
     val calendarManager : CalendarManager =
         CalendarManager(LocalContext.current)
 
-    messagesManager.getAllMessages{ list: List<Message> ->
+    messagesManager.getAllMessages{ list: MutableList<Message> ->
         communicationList = list
             .filter { it.messageType == Message.MessageType.NOTIFICATION }
-            .sortedByDescending { it.date }
+            .sortedByDescending { it.date }.toMutableList()
     }
 
     calendarManager.getDays{ list: List<WorkDay> ->
@@ -50,6 +50,6 @@ fun HomeScreen() {
     ) {
         MyPageHeader()
         TodayRidersCard(riderList, modifier = Modifier.weight(1f))
-        CommunicationCard(communicationList, true, Modifier.weight(1f))
+        CommunicationCard(communicationList, true, Modifier.weight(1f), messagesManager)
     }
 }

@@ -40,9 +40,10 @@ data class Communication(val text: String, val data: String)
 
 @Composable
 fun CommunicationCard(
-    communicationList: List<Message>,
+    communicationList: MutableList<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
+    messagesManager: MessagesManager,
 ) {
     val showTextField = remember { mutableStateOf(false) }
     val textFieldValue = remember { mutableStateOf("") }
@@ -118,13 +119,17 @@ fun CommunicationCard(
                             onClick = {
                                 showTextField.value = !showTextField.value
 
-                                Message(
+                                val msg = Message(                  // declaration of the message
                                     globalUser!!.id,
                                     "0",
                                     textFieldValue.value,
                                     Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                                     Message.MessageType.NOTIFICATION.displayName
-                                ).send(context)
+                                )
+
+                                msg.send(context)                   // sending message to server
+                                messagesManager.addNewMessage(msg)  // updating MessageManager info
+                                communicationList.add(0, msg)          // updating ui with new communication
 
                                 textFieldValue.value = ""
 

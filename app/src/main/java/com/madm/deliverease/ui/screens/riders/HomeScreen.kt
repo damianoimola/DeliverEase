@@ -17,14 +17,14 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
-    var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 
     val messagesManager : MessagesManager =
         MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
-        communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }
+        communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }.toMutableList()
     }
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
@@ -36,7 +36,7 @@ fun HomeScreen() {
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         MyPageHeader()
-        CommunicationCard(communicationList, false, Modifier.weight(1f))
+        CommunicationCard(communicationList, false, Modifier.weight(1f), messagesManager)
         ShiftChangeCard(shiftRequestList, Modifier.weight(1f))
     }
 }
