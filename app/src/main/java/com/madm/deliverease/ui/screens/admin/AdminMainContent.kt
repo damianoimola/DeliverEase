@@ -58,10 +58,12 @@ fun AdminsMainContent(){
                     enterTransition = {
                         slideIntoContainer(
                             towards =
-                            if(previousSelectedItem.position < selectedItem.position)
+                            if(previousSelectedItem.position > selectedItem.position)
                                 AnimatedContentScope.SlideDirection.Right
+                            else if(previousSelectedItem.position < selectedItem.position)
+                                AnimatedContentScope.SlideDirection.Left
                             else
-                                AnimatedContentScope.SlideDirection.Left,
+                                AnimatedContentScope.SlideDirection.Up,
                             animationSpec = tween(700)
                         )
                     }
@@ -77,9 +79,12 @@ fun AdminsMainContent(){
             CustomBottomAppBar(
                 navItems = navItems,
                 selectedItem = selectedItem,
-                onItemSelected = { item -> {
-                    previousSelectedItem = selectedItem
-                    selectedItem = item } },
+                onItemSelected = { item ->
+                    run {
+                        previousSelectedItem = selectedItem
+                        selectedItem = item
+                    }
+                },
                 modifier = Modifier
                     .clip(RoundedCornerShape(20, 20, 0, 0))
                     .fillMaxWidth()
