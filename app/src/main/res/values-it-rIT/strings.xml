@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DeliverEase</string>
+    <string name="username">Email</string>
+    <string name="password">Password</string>
+    <string name="google_login">Accedi con Google</string>
+    <string name="apple_login">Accedi con Apple</string>
+    <string name="todays_rider">Rider oggi presenti</string>
+    <string name="cancel">Cancella</string>
+    <string name="send">Invia</string>
+    <string name="no_riders_today">Nessun rider presente oggi</string>
+    <string name="communication_title">Comunicazioni</string>
+    <string name="no_communications">Nessuna comunicazione presente</string>
+    <string name="shift_yes">Ci sono</string>
+    <string name="shift_no">Non ci sono</string>
+    <string name="shift_maybe">Preferirei non esserci</string>
+    <string name="shift_remember">Ricorda la mia scelta</string>
+    <string name="save_your_preference">Salva la preferenza</string>
+    <string name="available">Disponibili</string>
+    <string name="publishedOn">"Pubblicato il: "</string>
+    <string name="save_draft">Salva la bozza</string>
+    <string name="submit">Invia</string>
+    <string name="if_needed">Se necessario</string>
+    <string name="_continue">Continua</string>
+</resources>
