@@ -50,7 +50,7 @@ fun HomeScreen() {
         modifier = Modifier.fillMaxWidth()
     ) {
         MyPageHeader()
-        TodayRidersCard(riderList, modifier = Modifier.weight(1f))
+        TodayRidersCard(riderList, 2, Modifier.weight(1f))
         CommunicationCard(communicationList, true, Modifier.weight(1f))
     }
 }

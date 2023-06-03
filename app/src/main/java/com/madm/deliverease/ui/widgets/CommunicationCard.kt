@@ -114,7 +114,6 @@ fun CommunicationCard(
                         Button(
                             onClick = {
                                 showTextField.value = !showTextField.value
-
                                 Message(
                                     globalUser!!.id,
                                     "0",
