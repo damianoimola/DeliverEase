@@ -9,21 +9,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 @Preview
@@ -35,16 +31,11 @@ fun RidersScreen() {
         mutableStateOf(copyOfGlobalUsers)
     }
 
-
-
-
-
     var showCustomDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showCustomDialog) {
         HireNewRiderDialog { showCustomDialog = !showCustomDialog }
     }
-
 
     Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
         MyPageHeader()

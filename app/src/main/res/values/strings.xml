@@ -19,4 +19,5 @@
     <string name="shiftChangeOffers">Shift Change Offers</string>
     <string name="save_your_preference">Save your preference</string>
     <string name="available">Available</string>
+    <string name="publishedOn">Published on:</string>
 </resources>

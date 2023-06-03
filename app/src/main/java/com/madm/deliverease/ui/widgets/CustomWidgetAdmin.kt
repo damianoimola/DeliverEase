@@ -45,7 +45,7 @@ fun SwipeToRevealRiderList(
 
                 ActionsRow(
                     actionIconSize = 56.dp,
-                    onDelete = { isRevealed = false; riderList.remove(rider) },
+                    onDelete = { isRevealed = false; riderList.remove(rider) }, // TODO Ralisin: remove rider from Rest API
                     onEdit = { Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show() },
                 )
 

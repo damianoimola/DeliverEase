@@ -184,7 +184,7 @@ fun CustomCommunication(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Published on: $publishDate") /* TODO: set to typography */
+            Text(stringResource(R.string.publishedOn) + publishDate) /* TODO: set to typography */
         }
     }
 }

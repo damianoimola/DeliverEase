@@ -5,6 +5,8 @@ import android.os.Parcelable
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 
@@ -63,7 +65,7 @@ data class Message(
     @IgnoredOnParcel var senderID: String? = null,
     @IgnoredOnParcel var receiverID: String? = null,
     @IgnoredOnParcel var body: String? = null,
-    @IgnoredOnParcel var date: Date? = null,
+    @IgnoredOnParcel var date: Date? = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
     @IgnoredOnParcel private var type: String? = null,
 ) : Parcelable {
     enum class MessageType (val displayName: String) {
