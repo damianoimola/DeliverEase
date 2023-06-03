@@ -46,7 +46,8 @@ fun HomeScreen() {
     }
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
     ) {
         MyPageHeader()
         TodayRidersCard(riderList, modifier = Modifier.weight(1f))

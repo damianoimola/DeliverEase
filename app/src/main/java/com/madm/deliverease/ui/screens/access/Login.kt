@@ -54,7 +54,7 @@ fun LoginScreen(
         ClassicLogin(goToRiderHome, goToAdminHome, isPlaying)
 
         Divider(
-            color = Color(0xFFD8D8D8),
+            color = Color(0xFFD8D8D8), // TODO Ralisin: set color with theme
             thickness = 1.dp,
             modifier = Modifier.padding(largePadding)
         )

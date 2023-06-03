@@ -1,23 +1,26 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">DeliverEase</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="google_login">"Login with Google"</string>
     <string name="apple_login">"Login with Apple"</string>
-    <string name="_continue">"Continue"</string>
-    <string name="todays_rider">Today\'s Rider</string>
-    <string name="cancel">Cancel</string>
-    <string name="send">Send</string>
-    <string name="no_riders_today">No rider\'s for today</string>
-    <string name="communication_title">Communications</string>
-    <string name="no_communications">No communications to read</string>
-    <string name="shift_yes">I\'m in</string>
-    <string name="shift_no">I\'m not in</string>
-    <string name="shift_maybe">I\'d like no</string>
-    <string name="shift_remember">Remember choice</string>
-    <string name="settings_constraints">Constraints</string>
-    <string name="shiftChangeOffers">Shift Change Offers</string>
-    <string name="save_your_preference">Save your preference</string>
-    <string name="available">Available</string>
-    <string name="publishedOn">Published on:</string>
+    <string name="_continue" tools:ignore="MissingTranslation">"Continue"</string>
+    <string name="todays_rider" tools:ignore="MissingTranslation">Today\'s Rider</string>
+    <string name="cancel" tools:ignore="MissingTranslation">Cancel</string>
+    <string name="send" tools:ignore="MissingTranslation">Send</string>
+    <string name="no_riders_today" tools:ignore="MissingTranslation">No rider\'s for today</string>
+    <string name="communication_title" tools:ignore="MissingTranslation">Communications</string>
+    <string name="no_communications" tools:ignore="MissingTranslation">No communications to read</string>
+    <string name="shift_yes" tools:ignore="MissingTranslation">I\'m in</string>
+    <string name="shift_no" tools:ignore="MissingTranslation">I\'m not in</string>
+    <string name="shift_maybe" tools:ignore="MissingTranslation">I\'d like no</string>
+    <string name="shift_remember" tools:ignore="MissingTranslation">Remember choice</string>
+    <string name="settings_constraints" tools:ignore="MissingTranslation">Constraints</string>
+    <string name="shiftChangeOffers" tools:ignore="MissingTranslation">Shift Change Offers</string>
+    <string name="save_your_preference" tools:ignore="MissingTranslation">Save your preference</string>
+    <string name="available" tools:ignore="MissingTranslation">Available</string>
+    <string name="publishedOn" tools:ignore="MissingTranslation">Published on: </string>
+    <string name="save_draft" tools:ignore="MissingTranslation">Save Draft</string>
+    <string name="submit" tools:ignore="MissingTranslation">Submit</string>
+    <string name="if_needed" tools:ignore="MissingTranslation">If needed</string>
 </resources>

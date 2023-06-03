@@ -41,7 +41,7 @@ fun RidersScreen() {
         MyPageHeader()
         Card(
             elevation = mediumCardElevation,
-            shape = Shapes.medium,
+            shape = MaterialTheme.shapes.medium,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = nonePadding, vertical = smallPadding)

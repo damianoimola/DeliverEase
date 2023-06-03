@@ -1,8 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
 import android.os.Parcelable
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +13,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -28,6 +25,8 @@ import com.madm.common_libs.model.User
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
+import com.madm.deliverease.ui.theme.Shapes
+import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
@@ -37,8 +36,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 import kotlin.collections.ArrayList
-
-
 
 fun getNext90Days(): List<LocalDate> {
     val currentDate = LocalDate.now()
@@ -53,18 +50,15 @@ fun getNext90Days(): List<LocalDate> {
     return next90Days.toList()
 }
 
-
-
-
-
 @Composable
 fun ShiftsScreen() {
     var selectedDay : Int by rememberSaveable { mutableStateOf(0) }
-    var selectedDate : Date by rememberSaveable { mutableStateOf(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant())) }
+    var selectedDate : Date by rememberSaveable {
+        mutableStateOf(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+    }
 
     var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-
 
     // filter all users that are available
     availableRidersList = globalAllUsers.filter {  user ->
@@ -79,7 +73,6 @@ fun ShiftsScreen() {
 
         permanent && nonPermanent && user.id != "0"
     }
-
 
     // filter all users that if needed will come
     ifNeededRidersList = globalAllUsers.filter {  user ->
@@ -96,13 +89,13 @@ fun ShiftsScreen() {
         (permanent || nonPermanent) && user.id != "0"
     }
 
-
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxHeight()
     ) {
         MyPageHeader()
 
-        DaysList(selectedDay){ dayNumber, date ->
+        DaysList(selectedDay) { dayNumber, date ->
             selectedDay = dayNumber
             selectedDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
         }
@@ -120,7 +113,7 @@ fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
     LazyRow(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         itemsIndexed(days){ _, it ->
             val month = it.month
             val dayNumber = it.dayOfMonth
@@ -139,16 +132,16 @@ fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
                 modifier = Modifier
                     .padding(smallPadding, smallPadding)
                     .clip(shape = RoundedCornerShape(20)),
-                colors = ButtonDefaults.buttonColors(
-                    if (selectedDayString == it) Color(0xFFFF9800)
-                    else Color(0xFFFF5722)
-                ),
-                border = BorderStroke(width = 1.dp, color = Color.Red),
-                shape = RoundedCornerShape(20)
+//                colors = ButtonDefaults.buttonColors(
+//                    if (selectedDayString == it) Color(0xFFFF9800)
+//                    else Color(0xFFFF5722)
+//                ), // TODO Ralisin: set button color themed and understand witch button it is
+//                border = BorderStroke(width = 1.dp, color = Color.Red), // TODO Ralisin: set border color with theme
+                shape = MaterialTheme.shapes.medium //RoundedCornerShape(20)
             ) {
                 Text(
                     text = "$month\n$dayNumber ${dayName.toString().subSequence(0..2)}",
-                    color = Color.White,
+                    // color = Color.White, // TODO ralisin: set text color with theme
                     textAlign = TextAlign.Center
                 )
             }
@@ -195,115 +188,25 @@ fun RidersAvailabilities(
         }
     }
 
-
     LazyColumn{
-        if(availableRidersCheckboxList.isNotEmpty()) {
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(nonePadding, smallPadding)
-                ) {
-                    Text(text = stringResource(R.string.available))
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .width(2.dp)
-                            .padding(start = smallPadding)
-                    )
-                }
+        item {
+            // Card with available riders
+            if (availableRidersCheckboxList.isNotEmpty()) {
+                TextLineSeparator(stringResource(R.string.available))
+                RidersCheckboxCard(availableRidersCheckboxList)
             }
-            item {
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20))
-                        .background(color = Color.LightGray)
-                        .fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(smallPadding),
-                        verticalArrangement = Arrangement.spacedBy(0.dp)
-                    ) {
-                        availableRidersCheckboxList.forEach {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp)
-                                    .height(20.dp)
-                                    .clickable { it.isChecked = !it.isChecked },
-                            ) {
-                                Checkbox(
-                                    checked = it.isChecked,
-                                    onCheckedChange = { isChecked -> it.isChecked = isChecked },
-                                    modifier = Modifier.padding(start = 0.dp)
-                                )
-                                Text(
-                                    text = "${it.user.name} ${it.user.surname}",
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
-        if(ifNeededRidersCheckboxList.isNotEmpty()) {
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(nonePadding, smallPadding)
-                ) {
-                    Text(text = "If needed")
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .width(2.dp)
-                            .padding(start = smallPadding)
-                    )
-                }
+            // Section with only if_needed riders
+            if (ifNeededRidersCheckboxList.isNotEmpty()) {
+                TextLineSeparator(stringResource(R.string.if_needed))
+                RidersCheckboxCard(ifNeededRidersCheckboxList)
             }
-            item {
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20))
-                        .background(color = Color.LightGray)
-                        .fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(smallPadding),
-                        verticalArrangement = Arrangement.spacedBy(0.dp)
-                    ) {
-                        ifNeededRidersCheckboxList.forEach {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(5.dp)
-                                    .height(20.dp)
-                                    .clickable { it.isChecked = !it.isChecked },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Checkbox(
-                                    checked = it.isChecked,
-                                    onCheckedChange = { isChecked -> it.isChecked = isChecked },
-                                    modifier = Modifier.padding(start = 0.dp)
-                                )
-                                Text(
-                                    text = "${it.user.name} ${it.user.surname}",
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
-        item{
+            // Buttons for action "Save Draft" and "Submit" choice
             ButtonDraftAndSubmit({
                 val listOfWorkingRiders =
                     availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
-                    ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
+                            ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
 
                 val workDay : WorkDay = WorkDay(selectedDate, listOfWorkingRiders)
                 workDay.insertOrUpdate(context)
@@ -317,19 +220,77 @@ fun RidersAvailabilities(
                 ).send(context)
             }
         }
+
+        item{
+
+        }
+    }
+}
+
+@Composable
+fun TextLineSeparator(text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(nonePadding, smallPadding)
+    ) {
+        Text(text)
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .width(2.dp)
+                .padding(start = smallPadding)
+        )
+    }
+}
+
+@Composable
+fun RidersCheckboxCard(riderCheckBoxList: List<CheckBoxItem>) {
+    Card(
+        elevation = mediumCardElevation,
+        shape = Shapes.medium,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(nonePadding, smallPadding)
+    ) {
+        Column(
+            modifier = Modifier.padding(smallPadding),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            riderCheckBoxList.forEach {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp)
+                        .height(20.dp)
+                        .clickable { it.isChecked = !it.isChecked },
+                ) {
+                    Checkbox(
+                        checked = it.isChecked,
+                        onCheckedChange = { isChecked -> it.isChecked = isChecked },
+                        modifier = Modifier.padding(start = 0.dp)
+                    )
+                    Text(
+                        text = "${it.user.name} ${it.user.surname}",
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
 
+// TODO Ralisin to @DamianoImola: is it still useful or we can delete it?
 @Composable
-fun AdjustingButtons(){
+fun AdjustingButtons() {
     val value =  0
 
     Row{
         Button(onClick = {
             /*TODO*/
         },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+            // colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray), // TODO Ralisin: understand color background
             shape= RectangleShape,
         ) {
             Text(text = "-")
@@ -338,7 +299,7 @@ fun AdjustingButtons(){
         Button(onClick = {
             /*TODO*/
         },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+            // colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray), // TODO Ralisin: understand color background
             shape= RectangleShape,
         ) {
             Text(text = "+")
@@ -351,18 +312,15 @@ fun AdjustingButtons(){
 fun ButtonDraftAndSubmit(updateServer: () -> Unit, notifyRiders: () -> Unit) {
     Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Button(
-            onClick = {
-                updateServer()
-            },
+            onClick = { updateServer() },
             shape = RoundedCornerShape(30),
-            border = BorderStroke(1.dp, Color.Red),
+            // border = BorderStroke(1.dp, Color.Red), // TODO Ralisin: set theme border
             modifier = Modifier
                 .weight(1f)
                 .padding(32.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604))
+            // colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604)) // TODO Ralisin: set theme color buttons
         ) {
-
-            Text(text = "Save Draft", color = Color.Red)
+            Text(text = stringResource(R.string.save_draft) /*color = Color.Red TODO Ralisin: set text color with theme*/)
         }
 
         Button(
@@ -370,15 +328,14 @@ fun ButtonDraftAndSubmit(updateServer: () -> Unit, notifyRiders: () -> Unit) {
                 updateServer()
                 notifyRiders()
             },
-            shape = RoundedCornerShape(30),
-            border = BorderStroke(1.dp, Color.Red),
+            shape = RoundedCornerShape(30), // TODO Ralisin: decide if to leave RoundedCornerShape of choose a default
+            // border = BorderStroke(1.dp, Color.Transparent /*Color.Red TODO: set theme color border*/),
             modifier = Modifier
                 .weight(1f)
                 .padding(32.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604))
+            // colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604)) // TODO Ralisin: set theme color buttons
         ) {
-
-            Text(text = "Submit", color = Color.Red)
+            Text(text = stringResource(R.string.submit) /*color = Color.Red TODO Ralisin: set theme color*/)
         }
     }
 }

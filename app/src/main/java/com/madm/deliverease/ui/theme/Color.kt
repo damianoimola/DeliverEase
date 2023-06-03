@@ -42,5 +42,5 @@ val lightRed = Color(0xFFBF3604)
 val lightGrey = Color(0xFF263330)
 
 // Ralisin theme
-val lightBackground = Color(0xFFF4F4F4)
-val lightSurface = Color(0xFFFFF7F7)
+val lightBackground = Color(0xFFF4F4F4) // Color of app background
+val lightSurface = Color(0xFFFFF7F7) // Color of widget background
