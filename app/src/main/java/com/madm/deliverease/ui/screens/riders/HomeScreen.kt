@@ -17,6 +17,7 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
+
     var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
     var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
 

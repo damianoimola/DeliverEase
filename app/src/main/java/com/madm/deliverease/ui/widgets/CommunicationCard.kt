@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -20,9 +22,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,6 +54,7 @@ fun CommunicationCard(
 
     val density = LocalDensity.current
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     Card(
         elevation = mediumCardElevation,
@@ -121,8 +127,14 @@ fun CommunicationCard(
                     TextField(
                         value = textFieldValue.value,
                         onValueChange = { textFieldValue.value = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Ascii,
+                            imeAction = ImeAction.Done // Done, not Enter
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {focusManager.clearFocus()},
+                        ),
                     )
                     Row(
                         horizontalArrangement = Arrangement.End,
@@ -167,14 +179,14 @@ fun CommunicationCard(
                 content = {
                     items(communicationList) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            val inputDateString = item.date!!.toString()
-                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val inputDateString = item.date
+//                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+//                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+//
+//                            val date: Date = inputDateFormat.parse(inputDateString)!!
+//                            val outputDateString: String = outputDateFormat.format(date)
 
-                            val date: Date = inputDateFormat.parse(inputDateString)!!
-                            val outputDateString: String = outputDateFormat.format(date)
-
-                            CustomCommunication(item.body!!, outputDateString)
+                            CustomCommunication(item.body!!, item.date)
                         }
                     }
                 }

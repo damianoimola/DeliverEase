@@ -31,8 +31,8 @@ fun LoginScreen(
     goToRiderHome: () -> Unit,
     goToAdminHome: () -> Unit,
 ){
+    println("########### LOGIN")
     val focusManager = LocalFocusManager.current
-    var isPlaying = rememberSaveable { mutableStateOf (false) }
 
     Column(
         modifier = Modifier
@@ -51,7 +51,7 @@ fun LoginScreen(
             contentScale = ContentScale.FillHeight
         )
 
-        ClassicLogin(goToRiderHome, goToAdminHome, isPlaying)
+        ClassicLogin(goToRiderHome, goToAdminHome)
 
         Divider(
             color = Color(0xFFD8D8D8), // TODO Ralisin: set color with theme
@@ -66,17 +66,18 @@ fun LoginScreen(
 @Composable
 fun ClassicLogin(
     goToRiderHome: () -> Unit,
-    goToAdminHome: () -> Unit,
-    isPlaying: MutableState<Boolean>) {
+    goToAdminHome: () -> Unit
+) {
+    val isPlaying = rememberSaveable { mutableStateOf (false) }
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val isError = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    var users: List<User> by remember { mutableStateOf(listOf()) }
+    var user: User? by remember { mutableStateOf(null) }
 
-    if(users.isNotEmpty() && users.count() == 1){       //todo: fix this scempio
-        globalUser = users.first()
+    if(user != null){
+        globalUser = user
         when (globalUser!!.id) {
             "0" -> goToAdminHome()
             else -> goToRiderHome()
@@ -109,26 +110,11 @@ fun ClassicLogin(
                 isPlaying.value = true
                 val userManager: UserManager = UserManager(context)
                 userManager.getUsers { list ->
-                    users = list.filter { user -> (user.email == username.value) && (user.password == password.value) }
+                    user = list.firstOrNull { user ->
+                        (user.email == username.value) && (user.password == password.value)
+                    }
                     globalAllUsers = list
                 }
-
-
-                //                userManager.getUsers{ list ->
-                //
-                //                    val filteredList = list.filter { user -> (user.email == username.value) && (user.password == password.value)}
-                //
-                //                    println("############ LISTA $filteredList")
-                //                    if (filteredList.count() == 1) {
-                //
-                //                        println("############ DETAILS ${filteredList.count()} ${filteredList.first().id}")
-                //                        when (filteredList.first().id) {
-                //                            "0" -> goToAdminHome()
-                //                            else -> goToRiderHome()
-                //                        }
-                //                    }
-                //                    else isError.value = true
-                //                }
             }
         )
     }
