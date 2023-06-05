@@ -2,6 +2,8 @@ package com.madm.deliverease.ui.screens.admin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +24,7 @@ fun HomeScreen() {
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
+    var isPlaying = rememberSaveable { mutableStateOf (false) }
 
     val messagesManager : MessagesManager =
         MessagesManager(globalUser!!.id!!, LocalContext.current)
@@ -29,10 +32,11 @@ fun HomeScreen() {
     val calendarManager : CalendarManager =
         CalendarManager(LocalContext.current)
 
-    messagesManager.getAllMessages{ list: MutableList<Message> ->
-        communicationList = list
-            .filter { it.messageType == Message.MessageType.NOTIFICATION }
-            .sortedByDescending { it.date }.toMutableList()
+    messagesManager.getAllMessages{ list: MutableList<Message>? ->
+        if(list != null )
+            communicationList = list
+                .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                .sortedByDescending { it.date }.toMutableList()
     }
 
     calendarManager.getDays{ list: List<WorkDay> ->
@@ -45,11 +49,14 @@ fun HomeScreen() {
         }
     }
 
+    if(isPlaying.value)
+        PizzaLoaderDialog(isPlaying = isPlaying)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MyPageHeader()
         TodayRidersCard(riderList, modifier = Modifier.weight(1f))
-        CommunicationCard(communicationList, true, Modifier.weight(1f), messagesManager)
+        CommunicationCard(communicationList, true, Modifier.weight(1f), isPlaying)
     }
 }

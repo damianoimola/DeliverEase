@@ -36,7 +36,7 @@ fun PizzaLoader(isPlaying: MutableState<Boolean>){
         LottieAnimation(
             composition = composition,
             modifier = Modifier.size(300.dp),
-            progress = { progress }
+            progress = { progress },
         )
     }
 }

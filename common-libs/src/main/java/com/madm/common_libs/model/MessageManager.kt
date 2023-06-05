@@ -16,10 +16,10 @@ data class MessagesManager(var receiverId : String, var context: Context){
         messageList?.messages?.add(msg)
     }
 
-    fun getAllMessages(callbackFunction: (MutableList<Message>) -> Unit) {
+    fun getAllMessages(callbackFunction: (MutableList<Message>?) -> Unit) {
         s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
             this.messageList = ret
-            callbackFunction(this.messageList!!.messages)
+            callbackFunction(this.messageList?.messages)
         }
     }
 
@@ -82,9 +82,9 @@ data class Message(
     val messageType: MessageType
         get() = MessageType.valueOf(this.type!!)
 
-    fun send(context : Context){
+    fun send(context : Context, callbackFunction: (Boolean) -> Unit = { }){
         val s : Server = Server(context)
-        s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES)
+        s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES, callbackFunction)
     }
 }
 

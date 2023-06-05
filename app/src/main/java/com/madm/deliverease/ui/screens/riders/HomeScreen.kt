@@ -19,6 +19,7 @@ import com.madm.deliverease.ui.widgets.*
 fun HomeScreen() {
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var isPlaying = rememberSaveable { mutableStateOf (false) }
 
     val messagesManager : MessagesManager =
         MessagesManager(globalUser!!.id!!, LocalContext.current)
@@ -36,7 +37,7 @@ fun HomeScreen() {
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         MyPageHeader()
-        CommunicationCard(communicationList, false, Modifier.weight(1f), messagesManager)
+        CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying)
         ShiftChangeCard(shiftRequestList, Modifier.weight(1f))
     }
 }

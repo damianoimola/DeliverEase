@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
@@ -9,8 +10,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +33,9 @@ import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
@@ -38,18 +44,20 @@ import java.util.*
 
 data class Communication(val text: String, val data: String)
 
+const val TAG = "ToastTag"
+
 @Composable
 fun CommunicationCard(
     communicationList: MutableList<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
-    messagesManager: MessagesManager,
+    isPlaying: MutableState<Boolean>
 ) {
+    val context = LocalContext.current
     val showTextField = remember { mutableStateOf(false) }
     val textFieldValue = remember { mutableStateOf("") }
 
     val density = LocalDensity.current
-    val context = LocalContext.current
 
     Card(
         elevation = mediumCardElevation,
@@ -118,22 +126,47 @@ fun CommunicationCard(
                         Button(
                             onClick = {
                                 showTextField.value = !showTextField.value
+                                isPlaying.value = true
 
                                 val msg = Message(                  // declaration of the message
                                     globalUser!!.id,
                                     "0",
                                     textFieldValue.value,
-                                    Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                                    Date.from(
+                                        LocalDate.now().atStartOfDay(ZoneId.systemDefault())
+                                            .toInstant()
+                                    ),
                                     Message.MessageType.NOTIFICATION.displayName
                                 )
 
-                                msg.send(context)                   // sending message to server
-                                messagesManager.addNewMessage(msg)  // updating MessageManager info
-                                communicationList.add(0, msg)          // updating ui with new communication
+                                msg.send(context) { messageSent ->          // sending message to server
 
-                                textFieldValue.value = ""
+                                    if(messageSent) {
+                                        communicationList.add(              // updating ui with new communication
+                                            0,
+                                            msg
+                                        )
 
-                                Toast.makeText(context, "The message has been sent correctly!", Toast.LENGTH_SHORT).show()
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            Toast.makeText(
+                                                context,
+                                                "Message has been sent correctly!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    } else {
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            Toast.makeText(
+                                                context,
+                                                "Message has not been sent!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+
+                                    textFieldValue.value = ""
+                                    isPlaying.value = false
+                                }
                             }
                         ) {
                             Text(stringResource(R.string.send))
