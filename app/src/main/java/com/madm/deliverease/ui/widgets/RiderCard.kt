@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,8 +23,6 @@ import com.madm.common_libs.model.User
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 
-data class Rider(val riderName: String, val riderSurname: String)
-
 @Composable
 fun TodayRidersCard(
     riderList: List<User>,
@@ -41,7 +40,7 @@ fun TodayRidersCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(nonePadding, smallPadding)
         ) {
-            Text(stringResource(R.string.todays_rider), style = TextStyle(fontSize = 22.sp))
+            Text(stringResource(R.string.todays_rider), style = TextStyle(fontSize = 22.sp)) // TODO Ralisin: set Theme text style
             
             if(riderList.isEmpty()) Text(stringResource(R.string.no_riders_today), style = TextStyle(fontSize = 18.sp))
             

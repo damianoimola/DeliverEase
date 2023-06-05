@@ -142,9 +142,9 @@ fun ShiftOptions(
             else permanentPreferenceKind
         )
     }
-    println("########### ACTUAL $actualOption")
-    println("########### PERMA $permanentPreferenceKind, ${permanentConstraint?.type}, ${ShiftOptionMap[permanentConstraint?.type]} $permanentConstraint")
-    println("########### NON PERMA $nonPermanentPreferenceKind, ${nonPermanentConstraint?.type}, ${ShiftOptionMap[nonPermanentConstraint?.type]}, $nonPermanentConstraint")
+    println("########### ACTUAL $actualOption") // TODO Ralisin: remove println
+    println("########### PERMA $permanentPreferenceKind, ${permanentConstraint?.type}, ${ShiftOptionMap[permanentConstraint?.type]} $permanentConstraint") // TODO Ralisin: remove println
+    println("########### NON PERMA $nonPermanentPreferenceKind, ${nonPermanentConstraint?.type}, ${ShiftOptionMap[nonPermanentConstraint?.type]}, $nonPermanentConstraint") // TODO Ralisin: remove println
 
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[actualOption]) }
     onOptionSelected(radioOptions[actualOption])

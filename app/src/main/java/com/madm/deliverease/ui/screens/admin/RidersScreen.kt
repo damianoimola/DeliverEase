@@ -9,21 +9,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
+import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 @Preview
@@ -31,26 +28,19 @@ import java.util.*
 fun RidersScreen() {
     val copyOfGlobalUsers = globalAllUsers
 
-    val riderList : List<User> by rememberSaveable {
-        mutableStateOf(copyOfGlobalUsers)
-    }
-
-
-
-
+    val riderList : List<User> by rememberSaveable { mutableStateOf(copyOfGlobalUsers) }
 
     var showCustomDialog by rememberSaveable { mutableStateOf(false) }
 
-    if (showCustomDialog) {
-        HireNewRiderDialog { showCustomDialog = !showCustomDialog }
-    }
+    if (showCustomDialog) HireNewRiderDialog { showCustomDialog = !showCustomDialog }
 
-
-    Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column (
+        Modifier.verticalScroll(rememberScrollState())
+    ) {
         MyPageHeader()
         Card(
             elevation = mediumCardElevation,
-            shape = Shapes.medium,
+            shape = MaterialTheme.shapes.medium,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = nonePadding, vertical = smallPadding)
@@ -61,7 +51,7 @@ fun RidersScreen() {
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Text("List of your riders", style = TextStyle(fontSize = 20.sp))
+                Text(stringResource(R.string.list_of_your_riders), style = TextStyle(fontSize = 20.sp)) // TODO Ralisin: add theme typography
                 SwipeToRevealRiderList(ArrayList(riderList), 520.dp)
             }
         }
@@ -73,7 +63,7 @@ fun RidersScreen() {
                     .wrapContentSize()
                     .weight(1f)
             ) {
-                Text(text = "Hire a new rider!")
+                Text(text = stringResource(R.string.hire_new_rider)) // TODO Ralisin: add theme typography
             }
         }
     }

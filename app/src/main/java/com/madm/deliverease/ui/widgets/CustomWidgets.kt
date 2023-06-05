@@ -55,7 +55,7 @@ fun MyPageHeader(modifier: Modifier = Modifier){
                 fontSize = 35.sp,
                 fontFamily = gilroy,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black // TODO Ralisin: set text color
             )
 
         )
@@ -98,11 +98,11 @@ fun MyOutlinedTextField(
             fontFamily = gilroy,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xff131b31)
+            color = Color(0xff131b31) // TODO Ralisin: set outlinedTextField color
         ),
         shape = RoundedCornerShape(20.dp),
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color(0xff131b31),
+            textColor = Color(0xff131b31), // TODO Ralisin: set text field color
             backgroundColor = Color.Transparent,
             cursorColor = Color(0xff131b31),
             focusedIndicatorColor = Color.Gray
@@ -126,7 +126,7 @@ fun MyButton(
         shape = Shapes.medium,//RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
-            contentColor = Color(0xff131b31),
+            contentColor = Color(0xff131b31), // TODO Ralisin: button color
         ),
         elevation = ButtonDefaults.elevation(0.dp, 0.dp)
     ) {

@@ -45,7 +45,7 @@ fun SwipeToRevealRiderList(
 
                 ActionsRow(
                     actionIconSize = 56.dp,
-                    onDelete = { isRevealed = false; riderList.remove(rider) },
+                    onDelete = { isRevealed = false; riderList.remove(rider) }, // TODO Ralisin: remove rider from Rest API
                     onEdit = { Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show() },
                 )
 
@@ -72,9 +72,9 @@ fun DroppableListItemCard(
     onCollapse: () -> Unit,
     cardHeight: Dp = 56.dp,
     cardOffset: Float = 120f.dp(),
-    minDragAmount: Int = 10,
-    colorBackgroundExpanded: Color = Color(0xFFD1A3FF), /* TODO: Set color theme */
-    colorBackgroundCollapsed: Color = Color(0xFFBDE7EC), /* TODO: Set color theme */
+    minDragAmount: Int = 20,
+    colorBackgroundItem: Color = Color(0xFFBDE7EC), /* TODO Ralisin: Set color theme */
+    colorBackgroundItemExpanded: Color = Color(0xFFD1A3FF), /* TODO Ralisin: Set color theme */
     animationDuration: Int = 200,
     content: @Composable (User) -> Unit,
 ) {
@@ -84,7 +84,7 @@ fun DroppableListItemCard(
         label = "cardBgColorTransition",
         transitionSpec = { tween(durationMillis = animationDuration) },
         targetValueByState = {
-            if (isRevealed) colorBackgroundExpanded else colorBackgroundCollapsed
+            if (isRevealed) colorBackgroundItemExpanded else colorBackgroundItem
         }
     )
 
@@ -114,7 +114,7 @@ fun DroppableListItemCard(
                     }
                 }
             },
-        backgroundColor = cardBgColor,
+        backgroundColor = cardBgColor, // TODO Ralisin: set theme color
         shape = remember { Shapes.small },
         elevation = cardElevation,
         content = { content(rider) }

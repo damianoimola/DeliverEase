@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
         On Error color of text and icons displayed on top of the error color.
  */
 
+/*
 private val DarkColorPalette = darkColors(
     // background colors
     background = darkBackground,
@@ -54,6 +55,15 @@ private val LightColorPalette = lightColors(
     onPrimary = lightTextColor,
     onSecondary = lightTextColor,
 )
+ */
+
+private val DarkColorPalette = darkColors()
+
+private val LightColorPalette = lightColors(
+    background = lightBackground,
+    surface = lightSurface
+)
+
 
 @Composable
 fun DeliverEaseTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {

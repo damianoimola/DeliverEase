@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">DeliverEase</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -19,4 +19,12 @@
     <string name="shiftChangeOffers">Shift Change Offers</string>
     <string name="save_your_preference">Save your preference</string>
     <string name="available">Available</string>
+    <string name="publishedOn">Published on: </string>
+    <string name="save_draft">Save Draft</string>
+    <string name="submit">Submit</string>
+    <string name="if_needed">If needed</string>
+    <string name="list_of_your_riders">List of your riders</string>
+    <string name="hire_new_rider">Hire a new rider</string>
+    <string name="num_riders_for_week">Number of riders per week</string>
+    <string name="num_riders_for_day">Number of riders per day</string>
 </resources>
