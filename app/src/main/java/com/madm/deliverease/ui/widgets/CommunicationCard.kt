@@ -2,9 +2,12 @@ package com.madm.deliverease.ui.widgets
 
 import android.widget.Toast
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -72,9 +75,23 @@ fun CommunicationCard(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        IconButton(onClick = { showTextField.value = !showTextField.value }) {
-                            if(!showTextField.value) Icon(Icons.Default.Add, "Add") // TODO Ralisin: set iconButton theme color
-                            else Icon(ImageVector.vectorResource(id = R.drawable.remove),"Remove") // TODO Ralisin: set iconButton theme color
+                        IconButton(
+                            onClick = { showTextField.value = !showTextField.value },
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colors.primary)
+                                .size(40.dp)
+                        ) {
+                            if(!showTextField.value) Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = stringResource(R.string.add),
+                                tint = MaterialTheme.colors.onPrimary
+                            )
+                            else Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.remove),
+                                contentDescription = stringResource(R.string.remove),
+                                tint = MaterialTheme.colors.onPrimary
+                            )
                         }
                     }
                 }

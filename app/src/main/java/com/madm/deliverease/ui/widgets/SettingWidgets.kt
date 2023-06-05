@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,10 +24,10 @@ import com.madm.deliverease.ui.theme.gilroy
 @Composable
 fun PreferencesSetting(){
     Column( verticalArrangement = Arrangement.spacedBy(10.dp)){
-        Divider("Setting")
+        Divider(stringResource(R.string.setting))
         Language()
         DarkMode()
-        Divider("General")
+        Divider(stringResource(R.string.general))
         ReportBug()
         TermsAndConditions()
         Row(Modifier.height(10.dp)){}
@@ -57,7 +58,7 @@ fun Divider(text: String ){
 @Composable
 fun Language(){
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("English", "Italiano")
+    val items = listOf(stringResource(R.string.english), stringResource(R.string.italian))
     var selectedIndex by remember { mutableStateOf(0) }
 
     Box(modifier = Modifier
@@ -68,9 +69,10 @@ fun Language(){
                 .padding(start = 9.dp, top = 2.dp)
                 .size(26.dp)
                 .align(Alignment.CenterStart))
-        Text("Language", modifier = Modifier
-            .padding(start = 48.dp, top = 0.dp)
-            .align(Alignment.CenterStart),
+        Text(stringResource(R.string.language),
+            modifier = Modifier
+                .padding(start = 48.dp, top = 0.dp)
+                .align(Alignment.CenterStart),
             style = TextStyle(
                 fontFamily = gilroy,
                 fontSize = 18.sp,
@@ -121,9 +123,11 @@ fun DarkMode(){
                 .padding(start = 8.dp, top = 1.dp)
                 .size(31.dp)
                 .align(Alignment.CenterStart))
-        Text("Dark Mode", modifier = Modifier
-            .padding(start = 48.dp, top = 0.dp)
-            .align(Alignment.CenterStart),
+        Text(
+            stringResource(R.string.dark_mode),
+            modifier = Modifier
+                .padding(start = 48.dp, top = 0.dp)
+                .align(Alignment.CenterStart),
             style = TextStyle(
                 fontFamily = gilroy,
                 fontSize = 18.sp,
@@ -144,17 +148,21 @@ fun DarkMode(){
 
 @Composable
 fun ReportBug(){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(40.dp).clickable { /*TODO*/ }){
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .clickable { /*TODO*/ }
+    ){
         Icon(painter = painterResource(id = R.drawable.bug), contentDescription = "bug",
             modifier = Modifier
                 .padding(start = 8.dp, top = 1.dp)
                 .size(28.dp)
                 .align(Alignment.CenterStart))
-        Text("Report Bug", modifier = Modifier
-            .padding(start = 48.dp, top = 0.dp)
-            .align(Alignment.CenterStart),
+        Text(stringResource(R.string.report_bug),
+            modifier = Modifier
+                .padding(start = 48.dp, top = 0.dp)
+                .align(Alignment.CenterStart),
             style = TextStyle(
                 fontFamily = gilroy,
                 fontSize = 18.sp,
@@ -180,7 +188,8 @@ fun TermsAndConditions(){
                 .padding(start = 12.dp, top = 1.dp)
                 .size(28.dp)
                 .align(Alignment.CenterStart))
-        Text("Terms & Conditions", modifier = Modifier
+        Text(
+                    stringResource(R.string.terms_conditions), modifier = Modifier
             .padding(start = 48.dp, top = 0.dp)
             .align(Alignment.CenterStart),
             style = TextStyle(
@@ -204,7 +213,8 @@ fun LogOut() {
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
-            .background(Color.Red).clickable { /*TODO*/ }
+            // .background(Color.Red) // TODO Ralisin: add theme button
+            .clickable { /*TODO*/ }
     ) {
         Icon(
             painter = painterResource(id = R.drawable.log_out),

@@ -27,4 +27,15 @@
     <string name="hire_new_rider">Hire a new rider</string>
     <string name="num_riders_for_week">Number of riders per week</string>
     <string name="num_riders_for_day">Number of riders per day</string>
+    <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="report_bug">Report Bug</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="language">Language</string>
+    <string name="english" translatable="false">English</string>
+    <string name="italian" translatable="false">Italiano</string>
+    <string name="setting">Setting</string>
+    <string name="general">General</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="default_message_send_shift">Hi, a new calendar has been published</string>
 </resources>

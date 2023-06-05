@@ -1,6 +1,7 @@
 package com.madm.deliverease.ui.screens.admin
 
 import android.os.Parcelable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -91,7 +93,7 @@ fun ShiftsScreen() {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier.fillMaxSize()
     ) {
         MyPageHeader()
 
@@ -114,7 +116,7 @@ fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        itemsIndexed(days){ _, it ->
+        itemsIndexed(days) { _, it ->
             val month = it.month
             val dayNumber = it.dayOfMonth
             val dayName = it.dayOfWeek
@@ -124,25 +126,26 @@ fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
                     function(days.indexOf(it) + 1, it)
                     selectedDayString = it
                 },
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 2.dp
-                ),
+//                elevation = ButtonDefaults.elevation(
+//                    defaultElevation = 6.dp,
+//                    pressedElevation = 8.dp,
+//                    disabledElevation = 2.dp
+//                ),
                 modifier = Modifier
                     .padding(smallPadding, smallPadding)
-                    .clip(shape = RoundedCornerShape(20)),
-//                colors = ButtonDefaults.buttonColors(
-//                    if (selectedDayString == it) Color(0xFFFF9800)
-//                    else Color(0xFFFF5722)
-//                ), // TODO Ralisin: set button color themed and understand witch button it is
-//                border = BorderStroke(width = 1.dp, color = Color.Red), // TODO Ralisin: set border color with theme
+                    .clip(shape = MaterialTheme.shapes.medium),
+                colors = ButtonDefaults.buttonColors(
+                    if (selectedDayString == it) MaterialTheme.colors.primaryVariant
+                    else MaterialTheme.colors.primary
+                ),
+                border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary), // TODO Ralisin: set border color with theme
                 shape = MaterialTheme.shapes.medium //RoundedCornerShape(20)
             ) {
                 Text(
                     text = "$month\n$dayNumber ${dayName.toString().subSequence(0..2)}",
                     // color = Color.White, // TODO ralisin: set text color with theme
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = if (selectedDayString == it) Color.Black else MaterialTheme.colors.onPrimary // TODO Ralisin: set second color for themes
                 )
             }
         }
@@ -171,6 +174,8 @@ fun RidersAvailabilities(
     var ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
     val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
 
+    val defaultMessage :String = stringResource(R.string.default_message_send_shift)
+
     calendarManager.getDays{ list: List<WorkDay> ->
         selectedWorkDay = list.firstOrNull { it.date == selectedDate }
 
@@ -188,7 +193,7 @@ fun RidersAvailabilities(
         }
     }
 
-    LazyColumn{
+    LazyColumn {
         item {
             // Card with available riders
             if (availableRidersCheckboxList.isNotEmpty()) {
@@ -212,17 +217,13 @@ fun RidersAvailabilities(
                 workDay.insertOrUpdate(context)
             }) {
                 Message(
-                    globalUser!!.id,
-                    "0",
-                    "Hi, a new calendar has been published",
-                    Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                    Message.MessageType.NOTIFICATION.displayName
+                    senderID = globalUser!!.id,
+                    receiverID = "0",
+                    body = defaultMessage,
+                    date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                    type = Message.MessageType.NOTIFICATION.displayName
                 ).send(context)
             }
-        }
-
-        item{
-
         }
     }
 }
