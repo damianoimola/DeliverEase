@@ -112,9 +112,11 @@ fun AdminsMainContent(){
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    if(item != previousSelectedItem){
-                        previousSelectedItem = selectedItem
-                        selectedItem = item
+                    run {
+                        if(item != previousSelectedItem){
+                            previousSelectedItem = selectedItem
+                            selectedItem = item
+                        }
                     }
                 },
                 modifier = Modifier
@@ -123,12 +125,4 @@ fun AdminsMainContent(){
             )
         }
     )
-
-    BackHandler {
-        run {
-            previousSelectedItem = selectedItem
-            if(previousSelectedItem.position != navItems[0].position)
-                selectedItem = navItems[0]
-        }
-    }
 }

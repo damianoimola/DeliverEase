@@ -114,12 +114,4 @@ fun RidersMainContent(){
             )
         }
     )
-
-    BackHandler {
-        run {
-            previousSelectedItem = selectedItem
-            if(previousSelectedItem.position != navItems[0].position)
-                selectedItem = navItems[0]
-        }
-    }
 }
