@@ -1,5 +1,7 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -18,6 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -36,10 +41,26 @@ fun AdminsMainContent(){
 
     // bottom navigation bar icons
     val navItems = listOf(
-        CustomNavItem("Home", Icons.Default.Home, 1) { navController.navigate("home") },
-        CustomNavItem("Shifts", ImageVector.vectorResource(id = R.drawable.newshifts), 2) { navController.navigate("shift") },
-        CustomNavItem("Riders", ImageVector.vectorResource(id = R.drawable.rider), 3) { navController.navigate("riders") },
-        CustomNavItem("Settings", Icons.Default.Settings, 4) { navController.navigate("settings") }
+        CustomNavItem("Home", Icons.Default.Home, 1) {
+            if(navController.currentDestination?.route != "home") {
+                navController.navigate("home")
+            }
+        },
+        CustomNavItem("Shifts", ImageVector.vectorResource(id = R.drawable.newshifts), 2) {
+            if(navController.currentDestination?.route != "shift") {
+                navController.navigate("shift")
+            }
+        },
+        CustomNavItem("Riders", ImageVector.vectorResource(id = R.drawable.rider), 3) {
+            if(navController.currentDestination?.route != "riders") {
+                navController.navigate("riders")
+            }
+        },
+        CustomNavItem("Settings", Icons.Default.Settings, 4) {
+            if(navController.currentDestination?.route != "settings") {
+                navController.navigate("settings")
+            }
+        },
     )
 
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
@@ -62,20 +83,32 @@ fun AdminsMainContent(){
                     enterTransition = {
                         slideIntoContainer(
                             towards =
-                            if(previousSelectedItem.position > selectedItem.position)
-                                AnimatedContentScope.SlideDirection.Right
-                            else if(previousSelectedItem.position < selectedItem.position)
-                                AnimatedContentScope.SlideDirection.Left
-                            else
-                                AnimatedContentScope.SlideDirection.Up,
+                                if(previousSelectedItem.position > selectedItem.position)
+                                    AnimatedContentScope.SlideDirection.Right
+                                else if(previousSelectedItem.position < selectedItem.position)
+                                    AnimatedContentScope.SlideDirection.Left
+                                else
+                                    AnimatedContentScope.SlideDirection.Up,
                             animationSpec = tween(700)
                         )
                     }
                 ) {
-                    composable("home") { HomeScreen() }
-                    composable("shift") { ShiftsScreen() }
-                    composable("riders") { RidersScreen() }
-                    composable("settings") { SettingScreen() }
+                    composable("home") {
+                        selectedItem = navItems[0]
+                        HomeScreen()
+                    }
+                    composable("shift") {
+                        selectedItem = navItems[1]
+                        ShiftsScreen()
+                    }
+                    composable("riders") {
+                        selectedItem = navItems[2]
+                        RidersScreen()
+                    }
+                    composable("settings") {
+                        selectedItem = navItems[3]
+                        SettingScreen()
+                    }
                 }
             }
         },
@@ -84,10 +117,14 @@ fun AdminsMainContent(){
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    run {
+                    if(item != previousSelectedItem){
                         previousSelectedItem = selectedItem
                         selectedItem = item
                     }
+//                    run {
+//                        previousSelectedItem = selectedItem
+//                        selectedItem = item
+//                    }
                 },
                 modifier = Modifier
                     .clip(RoundedCornerShape(20, 20, 0, 0))

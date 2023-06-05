@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -63,7 +64,7 @@ data class Message(
     @IgnoredOnParcel var senderID: String? = null,
     @IgnoredOnParcel var receiverID: String? = null,
     @IgnoredOnParcel var body: String? = null,
-    @IgnoredOnParcel var date: Date? = null,
+    @IgnoredOnParcel var messageDate: Date = Date(),
     @IgnoredOnParcel private var type: String? = null,
 ) : Parcelable {
     enum class MessageType (val displayName: String) {
@@ -73,11 +74,26 @@ data class Message(
     }
 
     @IgnoredOnParcel
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+
+    @IgnoredOnParcel
+    var date: String = "Date not available"
+        set(value){
+            field = value
+            this.messageDate = dateFormat.parse(field)!!
+        }
+
+    @IgnoredOnParcel
     var id: String? = null
 
     @IgnoredOnParcel
     val messageType: MessageType
         get() = MessageType.valueOf(this.type!!)
+
+    init {
+        this.date = dateFormat.format(this.messageDate)
+    }
+
 
     fun send(context : Context){
         val s : Server = Server(context)

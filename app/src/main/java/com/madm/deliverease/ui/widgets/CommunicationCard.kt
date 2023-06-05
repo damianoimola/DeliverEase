@@ -154,14 +154,14 @@ fun CommunicationCard(
                 content = {
                     items(communicationList) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            val inputDateString = item.date!!.toString()
-                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val inputDateString = item.date
+//                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+//                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+//
+//                            val date: Date = inputDateFormat.parse(inputDateString)!!
+//                            val outputDateString: String = outputDateFormat.format(date)
 
-                            val date: Date = inputDateFormat.parse(inputDateString)!!
-                            val outputDateString: String = outputDateFormat.format(date)
-
-                            CustomCommunication(item.body!!, outputDateString)
+                            CustomCommunication(item.body!!, item.date)
                         }
                     }
                 }

@@ -50,14 +50,17 @@ class MainActivity : ComponentActivity() {
             composable("login") {
                 LoginScreen(
                     goToRiderHome = {
-                        navController.navigate("rider-home") {
-                            popUpTo("login") { inclusive = true }
+                        if(navController.currentDestination?.route != "rider-home"){
+                            navController.navigate("rider-home") {
+                                popUpTo("login") { inclusive = true }
+                            }
                         }
                     },
                     goToAdminHome = {
-                        println("Going to admin home")
-                        navController.navigate("admin-home") {
-                            popUpTo("login") { inclusive = true }
+                        if(navController.currentDestination?.route != "admin-home") {
+                            navController.navigate("admin-home") {
+                                popUpTo("login") { inclusive = true }
+                            }
                         }
                     }
                 )

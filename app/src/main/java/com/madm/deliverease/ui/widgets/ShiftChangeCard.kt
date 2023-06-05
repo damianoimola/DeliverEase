@@ -62,9 +62,6 @@ fun ShiftChangeCard(
                 shiftsList.forEach { shift ->
                     Card(Modifier.padding(nonePadding, smallPadding)) {
                         CustomShiftChangeRequest(shift) {
-                            val currentDateTime: Date = Date()
-                            val currentTimestamp: Long = currentDateTime.time
-
                             Message(
                                 shift.receiverID,
                                 shift.senderID,

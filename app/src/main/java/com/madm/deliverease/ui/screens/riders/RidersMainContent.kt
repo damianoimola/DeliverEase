@@ -26,6 +26,9 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -41,9 +44,13 @@ fun RidersMainContent(){
         CustomNavItem("Settings", Icons.Default.Settings, 4) { navController.navigate("settings") }
     )
 
+
+
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
     var selectedItem by remember { mutableStateOf(navItems[0]) }
     var previousSelectedItem: CustomNavItem by remember{ mutableStateOf(navItems[0]) }
+
+
 
     Scaffold(
         content = {
@@ -71,10 +78,22 @@ fun RidersMainContent(){
                         )
                     }
                 ) {
-                    composable("home") { HomeScreen() }
-                    composable("calendar") { CalendarScreen() }
-                    composable("preferences") { ShiftPreferenceScreen()}
-                    composable("settings") { SettingScreenRider() }
+                    composable("home") {
+                        selectedItem = navItems[0]
+                        HomeScreen()
+                    }
+                    composable("calendar") {
+                        selectedItem = navItems[1]
+                        CalendarScreen()
+                    }
+                    composable("preferences") {
+                        selectedItem = navItems[2]
+                        ShiftPreferenceScreen()
+                    }
+                    composable("settings") {
+                        selectedItem = navItems[3]
+                        SettingScreenRider()
+                    }
                 }
             }
         },

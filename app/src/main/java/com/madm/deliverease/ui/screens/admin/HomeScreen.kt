@@ -15,9 +15,11 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 
-@Preview
+
 @Composable
 fun HomeScreen() {
+    println("########### HOME ADMIN")
+
     // getting API data
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
