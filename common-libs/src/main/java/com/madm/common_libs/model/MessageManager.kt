@@ -13,11 +13,7 @@ data class MessagesManager(var receiverId : String, var context: Context){
     private var messageList: MessageList? = null
     private val s: Server = Server(context)
 
-    fun addNewMessage(msg: Message) {
-        messageList?.messages?.add(msg)
-    }
-
-    fun getAllMessages(callbackFunction: (MutableList<Message>?) -> Unit) {
+    fun getAllMessages(callbackFunction: (List<Message>?) -> Unit) {
         s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
             this.messageList = ret
             callbackFunction(this.messageList?.messages)
@@ -57,7 +53,7 @@ data class MessagesManager(var receiverId : String, var context: Context){
 
 @Parcelize
 data class MessageList(
-    @IgnoredOnParcel var messages: MutableList<Message> = mutableListOf()
+    @IgnoredOnParcel var messages: List<Message> = listOf()
 ) : Parcelable
 
 

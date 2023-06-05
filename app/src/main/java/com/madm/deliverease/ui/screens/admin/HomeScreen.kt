@@ -31,7 +31,7 @@ fun HomeScreen() {
 
     val calendarManager = CalendarManager(LocalContext.current)
 
-    messagesManager.getAllMessages{ list: MutableList<Message>? ->
+    messagesManager.getAllMessages{ list: List<Message>? ->
         if(list != null )
             communicationList = list
                 .filter { it.messageType == Message.MessageType.NOTIFICATION }

@@ -220,7 +220,7 @@ fun RidersAvailabilities(
                     senderID = globalUser!!.id,
                     receiverID = "0",
                     body = defaultMessage,
-                    date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                    messageDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                     type = Message.MessageType.NOTIFICATION.displayName
                 ).send(context)
             }

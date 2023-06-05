@@ -190,9 +190,8 @@ fun CommunicationCard(
                                     }
                                 }
 
-                                    textFieldValue.value = ""
-                                    isPlaying.value = false
-                                }
+                                textFieldValue.value = ""
+                                isPlaying.value = false
                             }
                         ) {
                             Text(stringResource(R.string.send))
