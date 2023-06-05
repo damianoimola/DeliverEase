@@ -6,12 +6,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
+import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.MonthSelector
@@ -23,7 +28,7 @@ import java.time.LocalDate
 import java.util.*
 import java.util.Calendar
 
-
+@Preview
 @Composable
 fun CalendarScreen(){
     var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)) }
@@ -33,6 +38,8 @@ fun CalendarScreen(){
     val months = (currentMonth..currentMonth + 11).toList().map{i-> i%12}.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
+
+    val swap = remember{ mutableStateOf(false)}
 
 
     // getting API data
@@ -74,8 +81,9 @@ fun CalendarScreen(){
                     val outputDateString: String = outputDateFormat.format(date)
 
                     outputDateString == selectedDate.toString()
-                }
+                }, swap
             )
+            swap.value = false
         }
     }
 }
@@ -86,19 +94,50 @@ fun CalendarScreen(){
 
 
 @Composable
-fun ShiftRow(haveAShift: Boolean){
+fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>){
     val currentRandomVal = (0..1).random()
-    Row(
+
+    Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20))
-            .background(color = if (!haveAShift) Color.LightGray else Color(0xFFFF9800))
+            .background(color =
+            (if (!haveAShift && !swap.value) {Color.LightGray }
+            else if( !swap.value) { Color(0xFFFF9800)}
+            else if(!haveAShift && swap.value){
+                Color(0xFFFF9800)
+            } else {
+                Color.LightGray
+            })
+            )
             .fillMaxWidth()
-            .padding(smallPadding)
-    ){
+            .padding(smallPadding).clickable { /*TODO*/ }
+    ) {
         Text(
-            text = if (!haveAShift) "No shift" else "You have a shift!",
-            style = TextStyle(color = Color.White)
+            text = (if (!haveAShift && !swap.value) {"No shift"}
+            else if(!swap.value){
+             "You have a shift!"}
+            else if(!haveAShift && swap.value){
+                 "Click here to swap day"
+            } else {
+                "You already have a turn"
+            }),
+            style = TextStyle(color = Color.White),
         )
+
+        if (haveAShift && !swap.value) {
+
+            Icon(
+                painter = painterResource(id = R.drawable.swap),
+                contentDescription = "shift change",
+                modifier = Modifier
+                    .padding(start = 140.dp, top = 1.dp)
+                    .size(28.dp)
+                    .align(Alignment.CenterEnd)
+                    .clickable { swap.value = true },
+                tint = Color.Red
+            )
+        }
+
     }
 }
 
