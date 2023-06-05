@@ -3,6 +3,8 @@ package com.madm.deliverease.ui.screens.admin
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,25 +18,24 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 
-
+@Preview
 @Composable
 fun HomeScreen() {
-    println("########### HOME ADMIN")
-
     // getting API data
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
-    var communicationList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
+    var isPlaying = rememberSaveable { mutableStateOf (false) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     val calendarManager = CalendarManager(LocalContext.current)
 
-    messagesManager.getAllMessages{ list: List<Message> ->
-        Log.i("DELIVEREASE-MESS", "$list")
-        communicationList = list
-            .filter { it.messageType == Message.MessageType.NOTIFICATION }
-            .sortedByDescending { it.date }
+    messagesManager.getAllMessages{ list: MutableList<Message>? ->
+        if(list != null )
+            communicationList = list
+                .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                .sortedByDescending { it.date }.toMutableList()
     }
 
     calendarManager.getDays{ list: List<WorkDay> ->
@@ -47,12 +48,15 @@ fun HomeScreen() {
         }
     }
 
+    if(isPlaying.value)
+        PizzaLoaderDialog(isPlaying = isPlaying)
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
         MyPageHeader()
-        TodayRidersCard(riderList, 2, Modifier.weight(1f))
-        CommunicationCard(communicationList, true, Modifier.weight(1f))
+        TodayRidersCard(riderList, 2, modifier = Modifier.weight(1f))
+        CommunicationCard(communicationList, true, Modifier.weight(1f), isPlaying)
     }
 }

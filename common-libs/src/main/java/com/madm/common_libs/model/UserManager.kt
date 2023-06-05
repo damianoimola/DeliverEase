@@ -18,11 +18,11 @@ data class UserManager(
     private var s: Server = Server(context)
 
 
-    fun getUsers(callbackFunction: (List<User>) -> Unit) {
+    fun getUsers(callbackFunction: (MutableList<User>) -> Unit) {
         s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
             this.usersList = ret
 
-            callbackFunction(this.usersList!!.users)
+            callbackFunction(this.usersList!!.users.toMutableList())
         }
     }
 }

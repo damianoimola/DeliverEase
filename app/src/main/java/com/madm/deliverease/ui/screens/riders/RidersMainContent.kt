@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.riders
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -105,7 +106,6 @@ fun RidersMainContent(){
                         previousSelectedItem = selectedItem
                         if(previousSelectedItem.position != item.position)
                             selectedItem = item
-
                     }
                 },
                 modifier = Modifier
@@ -114,4 +114,12 @@ fun RidersMainContent(){
             )
         }
     )
+
+    BackHandler {
+        run {
+            previousSelectedItem = selectedItem
+            if(previousSelectedItem.position != navItems[0].position)
+                selectedItem = navItems[0]
+        }
+    }
 }

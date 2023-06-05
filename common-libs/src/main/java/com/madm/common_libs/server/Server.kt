@@ -2,6 +2,8 @@ package com.madm.common_libs.server
 
 import android.content.Context
 import android.content.res.Resources
+import android.widget.Toast
+import androidx.core.content.contentValuesOf
 import com.github.kittinunf.fuel.core.isSuccessful
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
@@ -13,6 +15,7 @@ import com.madm.common_libs.R
 
 class Server (context : Context) {
     var serverBaseUrl : String
+    val context: Context
 
     // MANAGE KIND OF REQUESTS
     enum class RequestKind { MESSAGES, USERS, CALENDAR }
@@ -28,15 +31,17 @@ class Server (context : Context) {
 //        this.serverBaseUrl = getResources().getString(R.string.base_url);
 //        this.serverBaseUrl = Resources.getSystem().getText(R.string.base_server_url).toString()
         this.serverBaseUrl = context.getString(R.string.base_server_url)
+        this.context = context
     }
 
 
     // BUILD POST REQUESTS
-    fun <T> makePostRequest(objectToSend : T, kind : RequestKind) {
+    inline fun <T> makePostRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) {
         val requestBody = Gson().toJson(objectToSend)
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpPost().body(requestBody).responseString { _, response, result ->
+            callbackFunction(response.isSuccessful)
             if(!response.isSuccessful){
                 result.onError { println("Request failed: ${it.exception} - ${it.errorData} - ${it.response}") }
             }
