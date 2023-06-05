@@ -28,7 +28,7 @@ import com.madm.deliverease.ui.widgets.PreferencesSetting
 @Preview
 @Composable
 fun SettingScreen() {
-    var minRiderPerWeek = remember { mutableStateOf(0) }
+    var minRiderPerWeek = remember { mutableStateOf(0) } // TODO Ralisin: make into LocalPreferences
     var maxRiderPerWeek = remember { mutableStateOf(0) }
     var minRiderPerDay = remember { mutableStateOf(0) }
     var maxRiderPerDay = remember { mutableStateOf(0) }

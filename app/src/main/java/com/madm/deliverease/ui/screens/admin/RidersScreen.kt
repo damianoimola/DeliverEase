@@ -35,7 +35,9 @@ fun RidersScreen() {
     if (showCustomDialog) HireNewRiderDialog { showCustomDialog = !showCustomDialog }
 
     Column (
-        Modifier.verticalScroll(rememberScrollState())
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
     ) {
         MyPageHeader()
         Card(
