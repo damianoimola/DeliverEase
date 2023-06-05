@@ -121,10 +121,6 @@ fun AdminsMainContent(){
                         previousSelectedItem = selectedItem
                         selectedItem = item
                     }
-//                    run {
-//                        previousSelectedItem = selectedItem
-//                        selectedItem = item
-//                    }
                 },
                 modifier = Modifier
                     .clip(RoundedCornerShape(20, 20, 0, 0))
