@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -15,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.User
@@ -24,6 +27,7 @@ import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.ui.theme.largePadding
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.globalUser
+import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.widgets.*
 
 @Composable
@@ -71,7 +75,7 @@ fun ClassicLogin(
     val isPlaying = rememberSaveable { mutableStateOf (false) }
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    val isError = remember { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     var user: User? by remember { mutableStateOf(null) }
@@ -84,7 +88,7 @@ fun ClassicLogin(
         }
     }
 
-    if (isPlaying.value && !(isError.value)) {
+    if (isPlaying.value && !(isError)) {
         PizzaLoaderDialog(isPlaying = isPlaying)
     }
 
@@ -100,15 +104,27 @@ fun ClassicLogin(
             label = stringResource(R.string.password),
             onDone = { focusManager.clearFocus() })
 
+        if(isError)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Wrong Username or Password.\nPlease try again.",
+                    style = TextStyle(
+                        textAlign = TextAlign.Center,
+                        color = Color.Red,
+                        fontFamily = gilroy
+                    )
+                )
+            }
+
         LoginButton(
             username = username,
             password = password,
-            isError = isError,
-            goToRiderHome = goToRiderHome,
-            goToAdminHome = goToAdminHome,
             onClick = {
                 focusManager.clearFocus()
-                isError.value = false
+                isError = false
                 isPlaying.value = true
                 val userManager: UserManager = UserManager(context)
                 userManager.getUsers { list ->
@@ -117,8 +133,9 @@ fun ClassicLogin(
                     }
                     globalAllUsers = list
 
+                    // to show login animation
                     Thread.sleep(2500)
-                    isError.value = (user == null)
+                    isError = (user == null)
                 }
             }
         )

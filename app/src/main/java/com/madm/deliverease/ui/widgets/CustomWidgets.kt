@@ -66,7 +66,7 @@ fun MyPageHeader(modifier: Modifier = Modifier){
 @Composable
 fun MyOutlinedTextField(
     field: MutableState<String>,
-    isError: MutableState<Boolean>,
+    isError: Boolean,
     label: String = "",
     onDone: () -> Unit = {}
 ){
@@ -107,7 +107,7 @@ fun MyOutlinedTextField(
             cursorColor = Color(0xff131b31),
             focusedIndicatorColor = Color.Gray
         ),
-        isError = isError.value,
+        isError = isError,
     )
 }
 
@@ -143,9 +143,6 @@ fun MyButton(
 fun LoginButton(
     username: MutableState<String>,
     password: MutableState<String>,
-    isError: MutableState<Boolean>,
-    goToRiderHome: () -> Unit,
-    goToAdminHome: () -> Unit,
     onClick: () -> Unit
 ){
     Button(
