@@ -60,13 +60,10 @@ fun ShiftChangeCard(
                     Card(Modifier.padding(nonePadding, smallPadding)) {
                         CustomShiftChangeRequest(shift) {
                             Message(
-                                shift.receiverID,
-                                shift.senderID,
-                                shift.id,
-                                Date.from(
-                                    LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                                ),
-                                Message.MessageType.ACCEPTANCE.displayName
+                                senderID = shift.receiverID,
+                                receiverID = shift.senderID,
+                                body = shift.id,
+                                type = Message.MessageType.ACCEPTANCE.displayName
                             ).send(context)
                         }
                     }
@@ -84,9 +81,7 @@ fun CustomShiftChangeRequest(
     val (offeredDay, wantedDay) = shiftRequest.body!!.split("#");
 
     val requestingUserFullName = with(
-        globalAllUsers.first { user ->
-            user.id == shiftRequest.senderID!!
-        }
+        globalAllUsers.first { user -> user.id == shiftRequest.senderID!! }
     ){ "$name $surname" }
 
     Row(

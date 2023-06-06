@@ -86,7 +86,7 @@ fun AdminsMainContent(){
                                     AnimatedContentScope.SlideDirection.Left
                                 else
                                     AnimatedContentScope.SlideDirection.Up,
-                            animationSpec = tween(700)
+                            animationSpec = tween(500)
                         )
                     }
                 ) {

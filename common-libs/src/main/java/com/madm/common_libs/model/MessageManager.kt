@@ -73,7 +73,7 @@ data class Message(
     }
 
     @IgnoredOnParcel
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ITALIAN)
 
     @IgnoredOnParcel
     var date: String = "Date not available"
@@ -83,7 +83,7 @@ data class Message(
         }
 
     @IgnoredOnParcel
-    var id: String? = null
+    var id: String? = UUID.randomUUID().toString()
 
     @IgnoredOnParcel
     val messageType: MessageType

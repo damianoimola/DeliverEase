@@ -154,14 +154,10 @@ fun CommunicationCard(
                                 isPlaying.value = true
 
                                 val msg = Message(                  // declaration of the message
-                                    globalUser!!.id,
-                                    "0",
-                                    textFieldValue.value,
-                                    Date.from(
-                                        LocalDate.now().atStartOfDay(ZoneId.systemDefault())
-                                            .toInstant()
-                                    ),
-                                    Message.MessageType.NOTIFICATION.displayName
+                                    senderID = globalUser!!.id,
+                                    receiverID = "0",
+                                    body = textFieldValue.value,
+                                    type = Message.MessageType.NOTIFICATION.displayName
                                 )
 
                                 msg.send(context) { messageSent ->          // sending message to server
@@ -217,13 +213,6 @@ fun CommunicationCard(
                 content = {
                     items(communicationList) { item ->
                         Card(Modifier.padding(smallPadding)) {
-                            val inputDateString = item.date
-//                            val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-//                            val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-//
-//                            val date: Date = inputDateFormat.parse(inputDateString)!!
-//                            val outputDateString: String = outputDateFormat.format(date)
-
                             CustomCommunication(item.body!!, item.date)
                         }
                     }

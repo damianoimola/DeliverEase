@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -60,6 +61,26 @@ data class PermanentConstraint(
 
 @Parcelize
 data class NonPermanentConstraint(
-    @IgnoredOnParcel var date: Date? = null,
     @IgnoredOnParcel var type: String? = null
-) : Parcelable
+) : Parcelable {
+
+    @Transient
+    @IgnoredOnParcel
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+
+    @IgnoredOnParcel
+    var date: String? = null
+
+    @Transient
+    @IgnoredOnParcel
+    var constraintDate: Date? = null
+    set(value){
+        field = value
+        this.date = dateFormat.format(value!!)
+    }
+    get() {
+        return if(field == null && this.date != null)
+            dateFormat.parse(this.date!!)
+        else null
+    }
+}

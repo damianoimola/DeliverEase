@@ -44,7 +44,7 @@ fun testHandleCalendar(
 fun ReceivedDays(days: List<WorkDay>) {
     Column() {
         days.forEach{
-            Text(text = "Date: ${it.date}, IDs: ${it.riders}")
+            Text(text = "Date: ${it.workDayDate}, IDs: ${it.riders}")
         }
     }
 }

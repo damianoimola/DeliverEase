@@ -40,7 +40,7 @@ fun HomeScreen() {
 
     calendarManager.getDays{ list: List<WorkDay> ->
         todayWorkDay = list.first {
-            it.date == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
+            it.workDayDate == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
         }
 
         riderList = globalAllUsers.filter { user ->

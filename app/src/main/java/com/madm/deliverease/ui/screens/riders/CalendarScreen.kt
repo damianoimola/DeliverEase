@@ -74,7 +74,7 @@ fun CalendarScreen(){
                         LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
 
                     // converting API date
-                    val inputDateString = it.date.toString()
+                    val inputDateString = it.workDayDate.toString()
                     val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
                     val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val date: Date = inputDateFormat.parse(inputDateString)!!

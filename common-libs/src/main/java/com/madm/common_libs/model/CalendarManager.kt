@@ -5,7 +5,8 @@ import android.os.Parcelable
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 data class CalendarManager (
@@ -30,9 +31,27 @@ data class Calendar(
 
 @Parcelize
 data class WorkDay(
-    @IgnoredOnParcel var date: Date? = null,
     @IgnoredOnParcel var riders: List<String>? = null
 ) : Parcelable {
+
+    @IgnoredOnParcel
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+
+    @IgnoredOnParcel
+    var date: String? = null
+
+    @IgnoredOnParcel
+    var workDayDate: Date? = null
+    set(value){
+        field = value
+        this.date = dateFormat.format(value!!)
+    }
+    get() {
+        return if(field == null && this.date != null)
+            dateFormat.parse(this.date!!)
+        else null
+    }
+
     fun insertOrUpdate(context : Context){
         val s : Server = Server(context)
         s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)

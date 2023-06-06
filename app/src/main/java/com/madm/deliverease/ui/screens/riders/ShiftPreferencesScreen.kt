@@ -38,7 +38,12 @@ val ReverseShiftOptionMap = mapOf(
     2 to "light"
 )
 
-
+fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
+    val date = LocalDate.of(year, month, day)
+    val dayOfWeek = date.dayOfWeek
+    val dayOfWeekNumber = (dayOfWeek.value - 1) % 7
+    return dayOfWeekNumber
+}
 
 @Composable
 fun ShiftPreferenceScreen(){
@@ -50,8 +55,8 @@ fun ShiftPreferenceScreen(){
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
-    val permanentConstraints = globalUser!!.permanentConstraints
-    val nonPermanentConstraints = globalUser!!.nonPermanentConstraints
+    val permanentConstraints = globalUser!!.permanentConstraints.sortedByDescending { x -> x.dayOfWeek }
+    val nonPermanentConstraints = globalUser!!.nonPermanentConstraints.sortedByDescending { x -> x.constraintDate }
 
     val context = LocalContext.current
 
@@ -72,33 +77,38 @@ fun ShiftPreferenceScreen(){
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
             ShiftOptions(
-                permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == (it.number)%7 },
-                nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.date == selectedDateFormatted },
+                permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
+                nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
                 onComplete = { kind: Int, permanent: Boolean ->
                     if(permanent) {
                         val tmpConstraint =
-                            permanentConstraints.firstOrNull { c -> c.dayOfWeek == (it.number) % 7 }
+                            permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
+
+                        println("######### AAAAAAAAAAAA ${getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number)}")
+                        println("######### BBBBBBBBBBBB ${(selectedMonth+1)%12}-${it.number}-${selectedYear}")
 
                         if(tmpConstraint == null)
                             globalUser!!.permanentConstraints.add(
                                 PermanentConstraint(
-                                    (it.number) % 7,
+                                    getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number),
                                     ReverseShiftOptionMap[kind]
                                 )
                             )
-                        else globalUser!!.permanentConstraints.first{ c -> c.dayOfWeek == (it.number) % 7 }.type = ReverseShiftOptionMap[kind]
+                        else
+                            globalUser!!.permanentConstraints.first{ c ->
+                                c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number)
+                            }.type = ReverseShiftOptionMap[kind]
                     } else {
                         val tmpConstraint =
-                            nonPermanentConstraints.firstOrNull { c -> c.date == selectedDateFormatted }
+                            nonPermanentConstraints.firstOrNull { c -> c.constraintDate == selectedDateFormatted }
 
-                        if(tmpConstraint == null)
-                            globalUser!!.nonPermanentConstraints.add(
-                                NonPermanentConstraint(
-                                    selectedDateFormatted,
-                                    ReverseShiftOptionMap[kind]
-                                )
-                            )
-                        else globalUser!!.nonPermanentConstraints.first { c -> c.date == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
+                        if(tmpConstraint == null) {
+                            val npc = NonPermanentConstraint(ReverseShiftOptionMap[kind])
+                            npc.constraintDate = selectedDateFormatted
+
+                            globalUser!!.nonPermanentConstraints.add(npc)
+                        }
+                        else globalUser!!.nonPermanentConstraints.first { c -> c.constraintDate == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
                     }
 
                     globalUser!!.registerOrUpdate(context)
@@ -142,9 +152,6 @@ fun ShiftOptions(
             else permanentPreferenceKind
         )
     }
-    println("########### ACTUAL $actualOption") // TODO Ralisin: remove println
-    println("########### PERMA $permanentPreferenceKind, ${permanentConstraint?.type}, ${ShiftOptionMap[permanentConstraint?.type]} $permanentConstraint") // TODO Ralisin: remove println
-    println("########### NON PERMA $nonPermanentPreferenceKind, ${nonPermanentConstraint?.type}, ${ShiftOptionMap[nonPermanentConstraint?.type]}, $nonPermanentConstraint") // TODO Ralisin: remove println
 
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[actualOption]) }
     onOptionSelected(radioOptions[actualOption])

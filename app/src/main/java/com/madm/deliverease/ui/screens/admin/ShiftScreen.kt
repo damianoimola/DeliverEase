@@ -70,7 +70,7 @@ fun ShiftsScreen() {
 
         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
             // TODO: "OPEN"
-            it.date == selectedDate
+            it.constraintDate == selectedDate
         } == null
 
         permanent && nonPermanent && user.id != "0"
@@ -85,7 +85,7 @@ fun ShiftsScreen() {
         } != null
 
         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.date == selectedDate && it.type == "light"
+            it.constraintDate == selectedDate && it.type == "light"
         } != null
 
         (permanent || nonPermanent) && user.id != "0"
@@ -177,7 +177,11 @@ fun RidersAvailabilities(
     val defaultMessage :String = stringResource(R.string.default_message_send_shift)
 
     calendarManager.getDays{ list: List<WorkDay> ->
-        selectedWorkDay = list.firstOrNull { it.date == selectedDate }
+        selectedWorkDay = list.firstOrNull {
+
+            println("##### SELECTED DATE $selectedDate    DATE ${it.date}    workDayDate ${it.workDayDate}")
+            it.workDayDate == selectedDate
+        }
 
         allocatedRiderList = if(selectedWorkDay != null)
             globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
@@ -211,16 +215,17 @@ fun RidersAvailabilities(
             ButtonDraftAndSubmit({
                 val listOfWorkingRiders =
                     availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
-                            ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
+                    ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
 
-                val workDay : WorkDay = WorkDay(selectedDate, listOfWorkingRiders)
+                val workDay : WorkDay = WorkDay(listOfWorkingRiders)
+                workDay.workDayDate = selectedDate
+
                 workDay.insertOrUpdate(context)
             }) {
                 Message(
                     senderID = globalUser!!.id,
                     receiverID = "0",
                     body = defaultMessage,
-                    messageDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                     type = Message.MessageType.NOTIFICATION.displayName
                 ).send(context)
             }
@@ -310,7 +315,10 @@ fun AdjustingButtons() {
 
 
 @Composable
-fun ButtonDraftAndSubmit(updateServer: () -> Unit, notifyRiders: () -> Unit) {
+fun ButtonDraftAndSubmit(
+    updateServer: () -> Unit,
+    notifyRiders: () -> Unit
+) {
     Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Button(
             onClick = { updateServer() },
