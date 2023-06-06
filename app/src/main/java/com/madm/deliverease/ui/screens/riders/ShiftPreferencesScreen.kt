@@ -84,8 +84,6 @@ fun ShiftPreferenceScreen(){
                         val tmpConstraint =
                             permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
 
-                        println("######### AAAAAAAAAAAA ${getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number)}")
-                        println("######### BBBBBBBBBBBB ${(selectedMonth+1)%12}-${it.number}-${selectedYear}")
 
                         if(tmpConstraint == null)
                             globalUser!!.permanentConstraints.add(
