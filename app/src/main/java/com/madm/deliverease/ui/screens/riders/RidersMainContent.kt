@@ -37,6 +37,8 @@ fun RidersMainContent(){
     // manages the navigation between different destinations
     val navController = rememberAnimatedNavController()
 
+    navController.enableOnBackPressed(false)
+
     // bottom navigation bar icons
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home, 1) { navController.navigate("home") },
@@ -79,19 +81,19 @@ fun RidersMainContent(){
                     }
                 ) {
                     composable("home") {
-                        selectedItem = navItems[0]
+                        //selectedItem = navItems[0]
                         HomeScreen()
                     }
                     composable("calendar") {
-                        selectedItem = navItems[1]
+                        //selectedItem = navItems[1]
                         CalendarScreen()
                     }
                     composable("preferences") {
-                        selectedItem = navItems[2]
+                        //selectedItem = navItems[2]
                         ShiftPreferenceScreen()
                     }
                     composable("settings") {
-                        selectedItem = navItems[3]
+                        //selectedItem = navItems[3]
                         SettingScreenRider()
                     }
                 }
@@ -114,4 +116,9 @@ fun RidersMainContent(){
             )
         }
     )
+    BackHandler(enabled = true) {
+        previousSelectedItem = selectedItem
+        selectedItem = navItems[0]
+        navController.navigate("home")
+    }
 }
