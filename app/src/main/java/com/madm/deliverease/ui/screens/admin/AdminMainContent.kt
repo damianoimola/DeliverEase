@@ -35,6 +35,8 @@ fun AdminsMainContent(){
     // manages the navigation between different destinations
     val navController = rememberAnimatedNavController()
 
+    navController.enableOnBackPressed(false)
+
     // bottom navigation bar icons
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home, 1) {
@@ -89,19 +91,19 @@ fun AdminsMainContent(){
                     }
                 ) {
                     composable("home") {
-                        selectedItem = navItems[0]
+                        //selectedItem = navItems[0]
                         HomeScreen()
                     }
                     composable("shift") {
-                        selectedItem = navItems[1]
+                        //selectedItem = navItems[1]
                         ShiftsScreen()
                     }
                     composable("riders") {
-                        selectedItem = navItems[2]
+                        //selectedItem = navItems[2]
                         RidersScreen()
                     }
                     composable("settings") {
-                        selectedItem = navItems[3]
+                        //selectedItem = navItems[3]
                         SettingScreen()
                     }
                 }
@@ -125,4 +127,9 @@ fun AdminsMainContent(){
             )
         }
     )
+    BackHandler(enabled = true) {
+        previousSelectedItem = selectedItem
+        selectedItem = navItems[0]
+        navController.navigate("home")
+    }
 }
