@@ -84,8 +84,9 @@ fun ClassicLogin(
         }
     }
 
-    if(isPlaying.value)
+    if (isPlaying.value && !(isError.value)) {
         PizzaLoaderDialog(isPlaying = isPlaying)
+    }
 
     Column {
         MyOutlinedTextField(
@@ -107,6 +108,7 @@ fun ClassicLogin(
             goToAdminHome = goToAdminHome,
             onClick = {
                 focusManager.clearFocus()
+                isError.value = false
                 isPlaying.value = true
                 val userManager: UserManager = UserManager(context)
                 userManager.getUsers { list ->
@@ -114,6 +116,9 @@ fun ClassicLogin(
                         (user.email == username.value) && (user.password == password.value)
                     }
                     globalAllUsers = list
+
+                    Thread.sleep(2500)
+                    isError.value = (user == null)
                 }
             }
         )
