@@ -55,7 +55,7 @@ fun HomeScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        MyPageHeader()
+//        MyPageHeader()
         TodayRidersCard(riderList, 2, modifier = Modifier.weight(1f))
         CommunicationCard(communicationList, true, Modifier.weight(1f), isPlaying)
     }

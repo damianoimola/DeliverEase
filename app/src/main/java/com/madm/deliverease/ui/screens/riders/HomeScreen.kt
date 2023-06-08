@@ -36,7 +36,7 @@ fun HomeScreen() {
 
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        MyPageHeader()
+//        MyPageHeader()
         CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying)
         ShiftChangeCard(shiftRequestList, Modifier.weight(1f))
     }

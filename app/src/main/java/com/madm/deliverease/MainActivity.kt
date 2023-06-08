@@ -50,14 +50,14 @@ class MainActivity : ComponentActivity() {
             composable("login") {
                 LoginScreen(
                     goToRiderHome = {
-                        if(navController.currentDestination?.route != "rider-home"){
+                        if (navController.currentDestination?.route != "rider-home") {
                             navController.navigate("rider-home") {
                                 popUpTo("login") { inclusive = true }
                             }
                         }
                     },
                     goToAdminHome = {
-                        if(navController.currentDestination?.route != "admin-home") {
+                        if (navController.currentDestination?.route != "admin-home") {
                             navController.navigate("admin-home") {
                                 popUpTo("login") { inclusive = true }
                             }
@@ -65,8 +65,30 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
-            composable("rider-home") { RidersMainContent() }
-            composable("admin-home") { AdminsMainContent() }
+            composable("rider-home") {
+                RidersMainContent(){
+                    if (navController.currentDestination?.route != "login") {
+                        navController.navigate("login") {
+                            popUpTo("rider-home") { inclusive = true }
+                            popUpTo("admin-home") { inclusive = true }
+                        }
+
+                        cleanGlobalAppData()
+                    }
+                }
+            }
+            composable("admin-home") {
+                AdminsMainContent(){
+                    if (navController.currentDestination?.route != "login") {
+                        navController.navigate("login") {
+                            popUpTo("rider-home") { inclusive = true }
+                            popUpTo("admin-home") { inclusive = true }
+                        }
+
+                        cleanGlobalAppData()
+                    }
+                }
+            }
         }
     }
 }

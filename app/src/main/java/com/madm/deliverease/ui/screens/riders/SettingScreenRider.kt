@@ -13,15 +13,15 @@ import com.madm.deliverease.ui.widgets.MyPageHeader
 import com.madm.deliverease.ui.widgets.PreferencesSetting
 
 @Composable
-fun SettingScreenRider(){
+fun SettingScreenRider(logoutCallback: () -> Unit){
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState()).padding(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        MyPageHeader()
-        PreferencesSetting()
+//        MyPageHeader()
+        PreferencesSetting(logoutCallback)
 
     }
 }

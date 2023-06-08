@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.gilroy
+import com.madm.deliverease.ui.theme.smallPadding
 
-@Preview
 @Composable
-fun PreferencesSetting(){
+fun PreferencesSetting(logoutCallback: () -> Unit){
     Column( verticalArrangement = Arrangement.spacedBy(10.dp)){
         Divider(stringResource(R.string.setting))
         Language()
@@ -31,7 +31,7 @@ fun PreferencesSetting(){
         ReportBug()
         TermsAndConditions()
         Row(Modifier.height(10.dp)){}
-        LogOut()
+        LogOut(logoutCallback)
     }
 }
 
@@ -208,27 +208,29 @@ fun TermsAndConditions(){
 }
 
 @Composable
-fun LogOut() {
-    Box(
+fun LogOut(logoutCallback: () -> Unit) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(40.dp)
             // .background(Color.Red) // TODO Ralisin: add theme button
-            .clickable { /*TODO*/ }
+            .clickable {
+                logoutCallback()
+            },
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.log_out),
             contentDescription = "logout",
             modifier = Modifier
-                .padding(start = 140.dp, top = 1.dp)
-                .size(28.dp)
-                .align(Alignment.CenterStart),
+                .padding(smallPadding)
+                .size(28.dp),
             tint = Color.White
         )
         Text(
             "Logout", modifier = Modifier
-                .padding(start = 180.dp, top = 0.dp)
-                .align(Alignment.CenterStart),
+                .padding(smallPadding),
             style = TextStyle(
                 fontFamily = gilroy,
                 fontSize = 18.sp,
