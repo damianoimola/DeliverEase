@@ -48,6 +48,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
     ),
+    h4 = TextStyle(
+        fontFamily = gilroy,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+    ),
     h5 = TextStyle(
         fontFamily = gilroy,
         fontWeight = FontWeight.Bold,

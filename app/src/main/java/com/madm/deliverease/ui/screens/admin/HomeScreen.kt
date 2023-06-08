@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.screens.admin
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -55,8 +54,7 @@ fun HomeScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-//        MyPageHeader()
-        TodayRidersCard(riderList, 2, modifier = Modifier.weight(1f))
+        TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2)
         CommunicationCard(communicationList, true, Modifier.weight(1f), isPlaying)
     }
 }

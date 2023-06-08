@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.widgets
 
-import android.content.res.Resources.Theme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,9 +24,9 @@ import com.madm.deliverease.ui.theme.*
 
 @Composable
 fun TodayRidersCard(
+    modifier: Modifier = Modifier,
     riderList: List<User>,
-    columns: Int = 2,
-    modifier: Modifier = Modifier
+    columns: Int = 2
 ) {
     Card(
         elevation = mediumCardElevation,

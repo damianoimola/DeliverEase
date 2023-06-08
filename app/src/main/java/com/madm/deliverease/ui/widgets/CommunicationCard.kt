@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.widgets
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -10,7 +9,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,18 +34,10 @@ import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.Shapes
-import com.madm.deliverease.ui.theme.mediumCardElevation
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Composable
 fun CommunicationCard(
@@ -69,7 +58,8 @@ fun CommunicationCard(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxSize()
-            .padding(nonePadding, smallPadding)
+            .padding(nonePadding, smallPadding),
+        backgroundColor = CustomTheme.colors.surface
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             // Top card bar
@@ -81,7 +71,7 @@ fun CommunicationCard(
             ) {
                 Text(
                     stringResource(R.string.communication_title),
-                    style = TextStyle(fontSize = 22.sp), // TODO Ralisin: set text style
+                    style = CustomTheme.typography.h4,
                     textAlign = TextAlign.Center
                 )
                 if(showAddButton) {
@@ -93,18 +83,18 @@ fun CommunicationCard(
                             onClick = { showTextField.value = !showTextField.value },
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(MaterialTheme.colors.primary)
+                                .background(CustomTheme.colors.primary)
                                 .size(40.dp)
                         ) {
                             if(!showTextField.value) Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = stringResource(R.string.add),
-                                tint = MaterialTheme.colors.onPrimary
+                                tint = CustomTheme.colors.onPrimary
                             )
                             else Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.remove),
                                 contentDescription = stringResource(R.string.remove),
-                                tint = MaterialTheme.colors.onPrimary
+                                tint = CustomTheme.colors.onPrimary
                             )
                         }
                     }
@@ -142,6 +132,16 @@ fun CommunicationCard(
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {focusManager.clearFocus()},
+                        ),
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = CustomTheme.colors.onBackground,
+                            backgroundColor = CustomTheme.colors.surface,
+                            cursorColor = CustomTheme.colors.onBackground,
+                            focusedLabelColor = CustomTheme.colors.onBackground,
+                            focusedIndicatorColor = CustomTheme.colors.onBackground,
+                            unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                            unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                            placeholderColor = CustomTheme.colors.onBackgroundVariant
                         ),
                     )
                     Row(

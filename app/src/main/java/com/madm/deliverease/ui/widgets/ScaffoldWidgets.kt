@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.smallPadding
 
@@ -42,6 +43,8 @@ fun CustomBottomAppBar(
 ) {
     BottomAppBar(
         modifier = modifier,
+        backgroundColor = CustomTheme.colors.primary,
+        contentColor = CustomTheme.colors.onPrimary
     ) {
         navItems.forEach { navItem : CustomNavItem ->
             BottomNavigationItem(
@@ -53,8 +56,8 @@ fun CustomBottomAppBar(
                     navItem.function()
                 },
                 alwaysShowLabel = false,
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.White.copy(alpha = 0.5f),
+                selectedContentColor = CustomTheme.colors.onPrimary,
+                unselectedContentColor = CustomTheme.colors.onPrimary.copy(alpha = 0.5f),
                 modifier = Modifier.padding(vertical = 0.dp),
             )
         }
