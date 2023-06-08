@@ -13,7 +13,7 @@ data class CalendarManager (
     var context: Context
 ) {
     private var calendar : Calendar? = null
-    private val s: Server = Server(context)
+    private val s: Server = Server.getInstance(context)
 
 
     fun getDays(callbackFunction: (List<WorkDay>) -> Unit) {
@@ -53,7 +53,7 @@ data class WorkDay(
     }
 
     fun insertOrUpdate(context : Context){
-        val s : Server = Server(context)
+        val s : Server = Server.getInstance(context)
         s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
     }
 }
