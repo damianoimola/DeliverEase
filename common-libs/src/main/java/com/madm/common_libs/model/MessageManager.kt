@@ -23,7 +23,7 @@ data class MessagesManager(var receiverId : String, var context: Context){
     fun getReceivedMessages(callbackFunction: (List<Message>) -> Unit) {
         s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
             this.messageList = ret
-            callbackFunction(this.messageList!!.messages.filter { it.receiverID == this.receiverId })
+            callbackFunction(this.messageList!!.messages.filter { it.receiverID == this.receiverId || it.receiverID == "0" })
         }
     }
 

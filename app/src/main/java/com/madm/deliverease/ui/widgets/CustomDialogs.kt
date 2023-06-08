@@ -192,11 +192,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                         val msg = Message(
                             senderID = globalUser!!.id,
                             receiverID = "0",
-                            body = /*"${globalUser!!.name}\n" +
-                                    " Offers: ${previousWeekDay?.name} ${previousWeekDay?.number}/$month/$year\n" +
-                                    "Wants ${dayOfTheWeek?.name} ${dayOfTheWeek?.number}/$month/$year"
-                                    */
-                            "${previousWeekDay?.number}-$month-$year#${dayOfTheWeek?.number}-${month}-${year}",
+                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
                             type = Message.MessageType.REQUEST.displayName
                         )
 
