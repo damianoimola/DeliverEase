@@ -22,6 +22,5 @@ fun SettingScreenRider(){
     ) {
         MyPageHeader()
         PreferencesSetting()
-
     }
 }

@@ -182,7 +182,8 @@ fun ReportBug(){
 fun TermsAndConditions(){
     Box(modifier = Modifier
         .fillMaxWidth()
-        .height(40.dp).clickable { /*TODO*/ }){
+        .height(40.dp)
+        .clickable { /*TODO*/ }){
         Icon(painter = painterResource(id = R.drawable.terms_and_conditions), contentDescription = "terms and conditions",
             modifier = Modifier
                 .padding(start = 12.dp, top = 1.dp)
@@ -190,8 +191,8 @@ fun TermsAndConditions(){
                 .align(Alignment.CenterStart))
         Text(
                     stringResource(R.string.terms_conditions), modifier = Modifier
-            .padding(start = 48.dp, top = 0.dp)
-            .align(Alignment.CenterStart),
+                .padding(start = 48.dp, top = 0.dp)
+                .align(Alignment.CenterStart),
             style = TextStyle(
                 fontFamily = gilroy,
                 fontSize = 18.sp,
@@ -226,7 +227,8 @@ fun LogOut() {
             tint = Color.White
         )
         Text(
-            "Logout", modifier = Modifier
+            text = "Logout",
+            modifier = Modifier
                 .padding(start = 180.dp, top = 0.dp)
                 .align(Alignment.CenterStart),
             style = TextStyle(

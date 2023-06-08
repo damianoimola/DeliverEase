@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.access
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -29,6 +31,8 @@ import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.widgets.*
+
+
 
 @Composable
 fun LoginScreen(
@@ -78,15 +82,17 @@ fun ClassicLogin(
     var isError by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    var user: User? by remember { mutableStateOf(null) }
+    val user: MutableState<User?> = remember { mutableStateOf<User?>(null) }
 
-    if(user != null){
-        globalUser = user
+    if(user.value != null){
+        globalUser = user.value
         when (globalUser!!.id) {
             "0" -> goToAdminHome()
             else -> goToRiderHome()
         }
     }
+
+    directAccess(context, user, focusManager, isPlaying)
 
     if (isPlaying.value && !(isError)) {
         PizzaLoaderDialog(isPlaying = isPlaying)
@@ -128,14 +134,15 @@ fun ClassicLogin(
                 isPlaying.value = true
                 val userManager: UserManager = UserManager(context)
                 userManager.getUsers { list ->
-                    user = list.firstOrNull { user ->
+                    user.value = list.firstOrNull { user ->
                         (user.email == username.value) && (user.password == password.value)
                     }
                     globalAllUsers = list
+                    saveAccess(context, user.value)
 
                     // to show login animation
                     Thread.sleep(2500)
-                    isError = (user == null)
+                    isError = (user.value == null)
                 }
             }
         )
@@ -158,4 +165,45 @@ fun ThirdPartyLogin(){
             imgId = R.drawable.apple
         )
     }
+}
+
+const val SHARED_PREFERENCES_FILE = "accessFile"
+const val EMAIL_FIELD = "EMAIL"
+const val PASSWORD_FIELD = "PASSWORD"
+
+fun directAccess(
+    context: Context,
+    user: MutableState<User?>,
+    focusManager: FocusManager,
+    isPlaying: MutableState<Boolean>){
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val usernameSaved = sharedPreferences.getString(EMAIL_FIELD, "")
+    val passwordSaved = sharedPreferences.getString(PASSWORD_FIELD, "")
+
+    if(usernameSaved != "" && passwordSaved != ""){
+        focusManager.clearFocus()
+        isPlaying.value = true
+        val userManager: UserManager = UserManager(context)
+        userManager.getUsers { list ->
+            user.value = list.firstOrNull { user ->
+                (user.email == usernameSaved) && (user.password == passwordSaved)
+            }
+            globalAllUsers = list
+
+            // to show login animation
+            Thread.sleep(2500)
+        }
+    }
+}
+
+fun saveAccess(
+    context: Context,
+    user: User?){
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
+    editor.putString(EMAIL_FIELD, user?.email)
+    editor.putString(PASSWORD_FIELD, user?.password)
+
+    editor.apply()
 }

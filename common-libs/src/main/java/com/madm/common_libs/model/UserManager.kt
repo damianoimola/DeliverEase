@@ -8,13 +8,7 @@ import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-
-
-
-data class UserManager(
-    var context: Context
-) {
+data class UserManager(var context: Context) {
     private var usersList : UsersList? = null
     private var s: Server = Server(context)
 
@@ -27,8 +21,6 @@ data class UserManager(
         }
     }
 }
-
-
 
 @Parcelize
 private data class UsersList(
@@ -50,8 +42,6 @@ data class User(
         s.makePostRequest<User>(this, Server.RequestKind.USERS)
     }
 }
-
-
 
 @Parcelize
 data class PermanentConstraint(
