@@ -25,11 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.User
 import com.madm.common_libs.model.UserManager
+import com.madm.deliverease.*
 import com.madm.deliverease.R
-import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.ui.theme.largePadding
 import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.widgets.*
 
@@ -173,10 +172,6 @@ fun ThirdPartyLogin(){
         )
     }
 }
-
-const val SHARED_PREFERENCES_FILE = "accessFile"
-const val EMAIL_FIELD = "EMAIL"
-const val PASSWORD_FIELD = "PASSWORD"
 
 fun directAccess(
     context: Context,
