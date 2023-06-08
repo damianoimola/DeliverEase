@@ -8,15 +8,9 @@ import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-
-
-
-data class UserManager(
-    var context: Context
-) {
+data class UserManager(var context: Context) {
     private var usersList : UsersList? = null
-    private var s: Server = Server(context)
+    private val s : Server = Server.getInstance(context)
 
 
     fun getUsers(callbackFunction: (MutableList<User>) -> Unit) {
@@ -27,8 +21,6 @@ data class UserManager(
         }
     }
 }
-
-
 
 @Parcelize
 private data class UsersList(
@@ -46,12 +38,10 @@ data class User(
     @IgnoredOnParcel var nonPermanentConstraints: ArrayList<NonPermanentConstraint> = arrayListOf()
 ) : Parcelable {
     fun registerOrUpdate(context : Context){
-        val s : Server = Server(context)
+        val s : Server = Server.getInstance(context)
         s.makePostRequest<User>(this, Server.RequestKind.USERS)
     }
 }
-
-
 
 @Parcelize
 data class PermanentConstraint(

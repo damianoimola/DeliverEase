@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.widget.Toast
 import androidx.core.content.contentValuesOf
+import androidx.room.Room
 import com.github.kittinunf.fuel.core.isSuccessful
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
@@ -13,11 +14,25 @@ import com.google.gson.reflect.TypeToken
 import com.madm.common_libs.R
 
 
-class Server (context : Context) {
+class Server private constructor (context : Context) {
     var serverBaseUrl : String
     val context: Context
 
-    // MANAGE KIND OF REQUESTS
+
+    companion object{
+        private var s : Server? = null
+
+        fun getInstance (context : Context) : Server{
+            if(s == null)
+                // the "applicationContext" should avoid the upper warning
+                s = Server(context.applicationContext)
+
+            return s as Server
+        }
+    }
+
+
+    // MANAGE REQUEST'S KIND
     enum class RequestKind { MESSAGES, USERS, CALENDAR }
 
     val requestsMap = mapOf<RequestKind, String>(

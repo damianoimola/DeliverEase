@@ -40,7 +40,7 @@ fun RidersScreen() {
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        MyPageHeader()
+//        MyPageHeader()
         Card(
             elevation = mediumCardElevation,
             shape = MaterialTheme.shapes.medium,

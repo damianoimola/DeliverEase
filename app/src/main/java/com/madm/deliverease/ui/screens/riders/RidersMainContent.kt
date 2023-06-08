@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun RidersMainContent(){
+fun RidersMainContent(logoutCallback : () -> Unit){
     // manages the navigation between different destinations
     val navController = rememberAnimatedNavController()
 
@@ -94,7 +94,7 @@ fun RidersMainContent(){
                     }
                     composable("settings") {
                         //selectedItem = navItems[3]
-                        SettingScreenRider()
+                        SettingScreenRider(logoutCallback)
                     }
                 }
             }
@@ -118,7 +118,9 @@ fun RidersMainContent(){
     )
     BackHandler(enabled = true) {
         previousSelectedItem = selectedItem
-        selectedItem = navItems[0]
-        navController.navigate("home")
+        if(selectedItem.position != 1) {
+            selectedItem = navItems[0]
+            navController.navigate("home")
+        }
     }
 }

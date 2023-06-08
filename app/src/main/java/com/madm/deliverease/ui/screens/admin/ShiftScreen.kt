@@ -95,7 +95,7 @@ fun ShiftsScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        MyPageHeader()
+//        MyPageHeader()
 
         DaysList(selectedDay) { dayNumber, date ->
             selectedDay = dayNumber
