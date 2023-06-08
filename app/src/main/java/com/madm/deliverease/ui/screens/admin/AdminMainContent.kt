@@ -129,7 +129,9 @@ fun AdminsMainContent(){
     )
     BackHandler(enabled = true) {
         previousSelectedItem = selectedItem
-        selectedItem = navItems[0]
-        navController.navigate("home")
+        if(selectedItem.position != 1) {
+            selectedItem = navItems[0]
+            navController.navigate("home")
+        }
     }
 }
