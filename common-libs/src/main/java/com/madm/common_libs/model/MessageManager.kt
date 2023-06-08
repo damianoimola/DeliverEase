@@ -11,7 +11,7 @@ import java.util.*
 
 data class MessagesManager(var receiverId : String, var context: Context){
     private var messageList: MessageList? = null
-    private val s: Server = Server(context)
+    private val s : Server = Server.getInstance(context)
 
     fun getAllMessages(callbackFunction: (List<Message>?) -> Unit) {
         s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
@@ -95,7 +95,7 @@ data class Message(
 
 
     fun send(context : Context, callbackFunction: (Boolean) -> Unit = { }){
-        val s : Server = Server(context)
+        val s : Server = Server.getInstance(context)
         s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES, callbackFunction)
     }
 }

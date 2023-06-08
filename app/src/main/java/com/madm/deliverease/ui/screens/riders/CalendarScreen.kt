@@ -54,7 +54,7 @@ fun CalendarScreen(){
 
 
     Column {
-        MyPageHeader()
+//        MyPageHeader()
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
                 currentYear + 1

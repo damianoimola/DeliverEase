@@ -1,12 +1,29 @@
 package com.madm.deliverease.ui.widgets
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.madm.deliverease.R
+import com.madm.deliverease.ui.theme.gilroy
+import com.madm.deliverease.ui.theme.smallPadding
 
 
 class CustomNavItem(
@@ -44,3 +61,36 @@ fun CustomBottomAppBar(
     }
 }
 
+
+
+
+@Composable
+fun CustomTopAppBar(){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(smallPadding),
+    ){
+        Image(
+            painter = painterResource(id = R.drawable.logo_dark_icon_hd),
+            contentDescription = "Logo", // stringResource(R.string.logo),
+            modifier = Modifier
+                .size((LocalConfiguration.current.screenWidthDp.dp), 50.dp)
+                .padding(0.dp),
+            contentScale = ContentScale.FillHeight,
+            alignment = Alignment.CenterStart,
+        )
+        Text(
+            text = stringResource(R.string.app_name),
+            modifier = Modifier.fillMaxWidth(),
+            style = TextStyle(
+                textAlign = TextAlign.Center,
+                fontSize = 35.sp,
+                fontFamily = gilroy,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black // TODO Ralisin: set text color
+            )
+
+        )
+    }
+}

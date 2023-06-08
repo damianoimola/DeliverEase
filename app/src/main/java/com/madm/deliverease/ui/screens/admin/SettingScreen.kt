@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.screens.admin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,9 +23,8 @@ import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.MyPageHeader
 import com.madm.deliverease.ui.widgets.PreferencesSetting
 
-@Preview
 @Composable
-fun SettingScreen() {
+fun SettingScreen(logoutCallback: () -> Unit) {
     var minRiderPerWeek = remember { mutableStateOf(0) } // TODO Ralisin: make into LocalPreferences
     var maxRiderPerWeek = remember { mutableStateOf(0) }
     var minRiderPerDay = remember { mutableStateOf(0) }
@@ -40,7 +37,7 @@ fun SettingScreen() {
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-        MyPageHeader()
+//        MyPageHeader()
         SettingCard {
             SettingItem(stringResource(R.string.num_riders_for_week), false){
                 SetRidersAmount(
@@ -89,7 +86,7 @@ fun SettingScreen() {
                 }
             }
         }
-        PreferencesSetting()
+        PreferencesSetting(logoutCallback)
     }
 }
 
