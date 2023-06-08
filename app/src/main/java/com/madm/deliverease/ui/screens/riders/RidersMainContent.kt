@@ -127,4 +127,6 @@ fun RidersMainContent(logoutCallback : () -> Unit){
             navController.navigate("home")
         }
     }
+
+    selectedItem = navItems[0]
 }
