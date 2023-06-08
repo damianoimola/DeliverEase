@@ -3,13 +3,11 @@ package com.madm.deliverease.ui.widgets
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,10 +15,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.madm.common_libs.model.Message
 import com.madm.common_libs.model.User
+import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.smallPadding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun HireNewRiderDialog(onDismiss: () -> Unit) {
@@ -136,6 +140,95 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
                             .weight(.5f)
                             .padding(8.dp)
                     )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: Int, year: Int,  onDismiss: () -> Unit){
+
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = { onDismiss()},
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )) {
+        Surface(modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
+            shape = MaterialTheme.shapes.large) {
+            Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
+            verticalArrangement = Arrangement.spacedBy(25.dp)) {
+
+                Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek?.name+" ?",
+                    style = TextStyle(
+                        fontFamily = gilroy,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+
+                Row(
+                    modifier = Modifier.width(400.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = { onDismiss() }) {
+                        Text(text = stringResource(id = R.string.cancel),
+                            style = TextStyle(
+                                fontFamily = gilroy,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
+                            ))
+                    }
+                    Button(onClick = {
+
+                        // declaration of the message
+                        val msg = Message(
+                            senderID = globalUser!!.id,
+                            receiverID = "0",
+                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
+                            type = Message.MessageType.REQUEST.displayName
+                        )
+
+                        // sending message to server
+                        msg.send(context) { messageSent ->
+
+                            if (messageSent) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    Toast.makeText(
+                                        context,
+                                        "Request sent!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    Toast.makeText(
+                                        context,
+                                        "Request cannot be sent, please try later",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                        //closing dialog
+                        onDismiss()
+
+                    }) {
+                        Text(text = stringResource(id = R.string._continue),
+                            style = TextStyle(
+                                fontFamily = gilroy,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
+                            ))
+                    }
                 }
             }
         }

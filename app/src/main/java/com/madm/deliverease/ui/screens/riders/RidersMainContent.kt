@@ -27,6 +27,7 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
+import com.madm.deliverease.ui.widgets.CustomTopAppBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -114,6 +115,9 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                     .clip(RoundedCornerShape(20, 20, 0, 0))
                     .fillMaxWidth()
             )
+        },
+        topBar = {
+            CustomTopAppBar()
         }
     )
     BackHandler(enabled = true) {
