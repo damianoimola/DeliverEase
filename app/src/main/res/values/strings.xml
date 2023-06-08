@@ -38,4 +38,6 @@
     <string name="add">Add</string>
     <string name="remove">Remove</string>
     <string name="default_message_send_shift">Hi, a new calendar has been published</string>
+    <string name="wrong_username_password">Wrong Username or Password.</string>
+    <string name="please_try_again">Please try again.</string>
 </resources>

@@ -120,21 +120,25 @@ fun MyButton(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = mediumPadding, end = mediumPadding, bottom = mediumPadding)
-            .border(BorderStroke(2.dp, Color(0xFFD8D8D8)), shape = RoundedCornerShape(50)),
-        shape = Shapes.medium,//RoundedCornerShape(6.dp),
+            .padding(start = mediumPadding, end = mediumPadding, bottom = mediumPadding),
+        shape = RoundedCornerShape(50),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
-            contentColor = Color(0xff131b31), // TODO Ralisin: button color
+            backgroundColor = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground
         ),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp)
+        elevation = ButtonDefaults.elevation(0.dp, 0.dp),
+        border = BorderStroke(1.dp, CustomTheme.colors.onBackground)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = imgId),
             contentDescription = text,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
         )
-        Text(text = text, modifier = Modifier.padding(6.dp))
+        Text(
+            text = text,
+            modifier = Modifier.padding(6.dp),
+            style = CustomTheme.typography.h6
+        )
     }
 }
 
@@ -149,15 +153,14 @@ fun LoginButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = smallPadding)
-            .clip(RoundedCornerShape(50))
-            .border(
-                BorderStroke(2.dp, Color(0xFFD8D8D8)),
-                shape = RoundedCornerShape(50)
-            ),
-        shape = RoundedCornerShape(6.dp),
+            .clip(RoundedCornerShape(50)),
+        border = BorderStroke(1.dp, CustomTheme.colors.onBackground),
+        shape = RoundedCornerShape(50.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
-            contentColor = Color(0xff131b31)
+            backgroundColor = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground,
+            disabledBackgroundColor = CustomTheme.colors.backgroundVariant,
+            disabledContentColor = CustomTheme.colors.onBackgroundVariant
         ),
         elevation = ButtonDefaults.elevation(0.dp, 0.dp),
         enabled = username.value.isNotBlank() && password.value.isNotBlank(),

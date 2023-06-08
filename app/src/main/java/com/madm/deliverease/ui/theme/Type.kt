@@ -53,6 +53,11 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
     ),
+    h6 = TextStyle(
+        fontFamily = gilroy,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+    ),
     subtitle1 = TextStyle(
         fontFamily = gilroy,
         fontWeight = FontWeight.Medium,

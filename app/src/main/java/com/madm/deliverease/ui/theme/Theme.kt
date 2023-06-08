@@ -5,7 +5,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 
 
 /*
@@ -79,6 +78,7 @@ var lightColorsPalette = CustomThemeColors(
     tertiary = lightTertiary,
     tertiaryVariant = lightTertiaryVariant,
     background = lightBackground,
+    backgroundVariant = lightBackgroundVariant,
     surface = lightSurface,
     error = lightError,
     onPrimary = lightOnPrimary,
@@ -101,6 +101,7 @@ var darkColorPalette = CustomThemeColors(
     tertiary = darkTertiary,
     tertiaryVariant = darkTertiaryVariant,
     background = darkBackground,
+    backgroundVariant = darkBackgroundVariant,
     surface = darkSurface,
     error = darkError,
     onPrimary = darkOnPrimary,

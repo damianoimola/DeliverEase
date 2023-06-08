@@ -15,6 +15,7 @@ class CustomThemeColors(
     tertiary: Color,
     tertiaryVariant: Color,
     background: Color,
+    backgroundVariant: Color,
     surface: Color,
     error: Color,
     onPrimary: Color,
@@ -41,6 +42,8 @@ class CustomThemeColors(
     var tertiaryVariant by mutableStateOf(tertiaryVariant)
         private set
     var background by mutableStateOf(background)
+        private set
+    var backgroundVariant by mutableStateOf(backgroundVariant)
         private set
     var surface by mutableStateOf(surface)
         private set
@@ -75,6 +78,7 @@ class CustomThemeColors(
         tertiary: Color = this.tertiary,
         tertiaryVariant: Color = this.tertiaryVariant,
         background: Color = this.background,
+        backgroundVariant: Color = this.backgroundVariant,
         surface: Color = this.surface,
         error: Color = this.error,
         onPrimary: Color = this.onPrimary,
@@ -95,6 +99,7 @@ class CustomThemeColors(
         tertiary = tertiary,
         tertiaryVariant = tertiaryVariant,
         background = background,
+        backgroundVariant = backgroundVariant,
         surface = surface,
         error = error,
         onPrimary = onPrimary,
@@ -117,6 +122,7 @@ class CustomThemeColors(
         tertiary = other.tertiary
         tertiaryVariant = other.tertiaryVariant
         background = other.background
+        backgroundVariant = other.backgroundVariant
         surface = other.surface
         error = other.error
         onPrimary = other.onPrimary

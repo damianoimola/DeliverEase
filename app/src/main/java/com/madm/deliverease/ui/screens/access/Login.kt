@@ -29,11 +29,8 @@ import com.madm.common_libs.model.UserManager
 import com.madm.deliverease.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.ui.theme.largePadding
-import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.CustomTheme
-import com.madm.deliverease.ui.theme.gilroy
+import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
 
 @Composable
@@ -49,7 +46,6 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(mediumPadding)
             .clickable (
                 indication = null,
                 interactionSource = interactionSource,
@@ -66,12 +62,12 @@ fun LoginScreen(
                 .size((LocalConfiguration.current.screenWidthDp.dp), 100.dp)
                 .padding(mediumPadding),
             contentScale = ContentScale.FillHeight
-        )
+        ) // TODO Ralisin: change image to match light and dark color
 
         ClassicLogin(goToRiderHome, goToAdminHome)
 
         Divider(
-            color = Color(0xFFD8D8D8), // TODO Ralisin: set color with theme
+            color = CustomTheme.colors.onBackgroundVariant,
             thickness = 1.dp,
             modifier = Modifier.padding(largePadding)
         )
@@ -91,7 +87,7 @@ fun ClassicLogin(
     var isError by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val user: MutableState<User?> = remember { mutableStateOf<User?>(null) }
+    val user: MutableState<User?> = remember { mutableStateOf(null) }
 
     if(user.value != null){
         globalUser = user.value
@@ -125,12 +121,9 @@ fun ClassicLogin(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Wrong Username or Password.\nPlease try again.",
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        color = Color.Red,
-                        fontFamily = gilroy
-                    )
+                    stringResource(R.string.wrong_username_password) +"\n"+ stringResource(R.string.please_try_again),
+                    style = CustomTheme.typography.h5,
+                    color = CustomTheme.colors.error
                 )
             }
 
@@ -141,7 +134,7 @@ fun ClassicLogin(
                 focusManager.clearFocus()
                 isError = false
                 isPlaying.value = true
-                val userManager: UserManager = UserManager(context)
+                val userManager = UserManager(context)
                 userManager.getUsers { list ->
                     user.value = list.firstOrNull { user ->
                         (user.email == username.value) && (user.password == password.value)
@@ -157,7 +150,6 @@ fun ClassicLogin(
         )
     }
 }
-
 
 @Preview
 @Composable
@@ -180,7 +172,8 @@ fun directAccess(
     context: Context,
     user: MutableState<User?>,
     focusManager: FocusManager,
-    isPlaying: MutableState<Boolean>){
+    isPlaying: MutableState<Boolean>
+){
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
     val usernameSaved = sharedPreferences.getString(EMAIL_FIELD, "")
     val passwordSaved = sharedPreferences.getString(PASSWORD_FIELD, "")
@@ -188,7 +181,7 @@ fun directAccess(
     if(usernameSaved != "" && passwordSaved != ""){
         focusManager.clearFocus()
         isPlaying.value = true
-        val userManager: UserManager = UserManager(context)
+        val userManager = UserManager(context)
         userManager.getUsers { list ->
             user.value = list.firstOrNull { user ->
                 (user.email == usernameSaved) && (user.password == passwordSaved)
@@ -203,7 +196,8 @@ fun directAccess(
 
 fun saveAccess(
     context: Context,
-    user: User?){
+    user: User?
+){
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
 
