@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -30,9 +28,6 @@ import com.madm.deliverease.ui.widgets.ConfirmExitingApp
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
 import com.madm.deliverease.ui.widgets.CustomTopAppBar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

@@ -39,4 +39,6 @@
     <string name="remove">Remove</string>
     <string name="default_message_send_shift">Hi, a new calendar has been published</string>
     <string name="confirmation_change">Do you want to change your shift with </string>
+    <string name="exit">Exit</string>
+    <string name="exiting_question">Are you sure to exit ?</string>
 </resources>

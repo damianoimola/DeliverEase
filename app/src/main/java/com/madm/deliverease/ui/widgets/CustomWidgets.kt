@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.widgets
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -32,13 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.madm.common_libs.model.Message
 import com.madm.deliverease.R
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 @Composable
@@ -201,7 +195,7 @@ fun ConfirmExitingApp(onDismiss: () -> Unit){
             Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(25.dp)) {
 
-                Text(text = "Are you sure to exit ?",
+                Text(text = stringResource(R.string.exiting_question),
                     style = TextStyle(
                         fontFamily = gilroy,
                         fontWeight = FontWeight.Normal,
@@ -229,7 +223,7 @@ fun ConfirmExitingApp(onDismiss: () -> Unit){
                         exitProcess(0)
 
                     }) {
-                        Text(text = "Exit",
+                        Text(text = stringResource(R.string.exit),
                             style = TextStyle(
                                 fontFamily = gilroy,
                                 fontWeight = FontWeight.SemiBold,
