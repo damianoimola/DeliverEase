@@ -1,6 +1,7 @@
 package com.madm.deliverease.ui.screens.access
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -24,10 +25,8 @@ import com.madm.common_libs.model.User
 import com.madm.common_libs.model.UserManager
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.ui.theme.largePadding
-import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.gilroy
+import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
 
 @Composable
@@ -35,14 +34,14 @@ fun LoginScreen(
     goToRiderHome: () -> Unit,
     goToAdminHome: () -> Unit,
 ){
-    println("########### LOGIN")
+    println("########### LOGIN") // TODO Ralisin: remove on deploy version
     val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(mediumPadding)
-            .clickable { focusManager.clearFocus() },
+            .clickable { focusManager.clearFocus() }
+            .background(CustomTheme.colors.background),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -92,7 +91,7 @@ fun ClassicLogin(
         PizzaLoaderDialog(isPlaying = isPlaying)
     }
 
-    Column {
+    Column(Modifier.padding(mediumPadding)) {
         MyOutlinedTextField(
             field = username,
             isError = isError,

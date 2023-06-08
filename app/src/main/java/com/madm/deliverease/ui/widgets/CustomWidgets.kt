@@ -94,18 +94,17 @@ fun MyOutlinedTextField(
         ),
         singleLine = true,
         maxLines = 1,
-        textStyle = TextStyle(
-            fontFamily = gilroy,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xff131b31) // TODO Ralisin: set outlinedTextField color
-        ),
+        textStyle = CustomTheme.typography.h5,
         shape = RoundedCornerShape(20.dp),
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color(0xff131b31), // TODO Ralisin: set text field color
-            backgroundColor = Color.Transparent,
-            cursorColor = Color(0xff131b31),
-            focusedIndicatorColor = Color.Gray
+            textColor = CustomTheme.colors.onBackground,
+            backgroundColor = CustomTheme.colors.surface,
+            cursorColor = CustomTheme.colors.onBackground,
+            focusedLabelColor = CustomTheme.colors.onBackground,
+            focusedIndicatorColor = CustomTheme.colors.onBackground,
+            unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+            unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+            placeholderColor = CustomTheme.colors.onBackgroundVariant
         ),
         isError = isError,
     )

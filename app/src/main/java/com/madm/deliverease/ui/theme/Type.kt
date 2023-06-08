@@ -1,6 +1,7 @@
 package com.madm.deliverease.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -47,4 +48,16 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
     ),
+    h5 = TextStyle(
+        fontFamily = gilroy,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+    ),
+    subtitle1 = TextStyle(
+        fontFamily = gilroy,
+        fontWeight = FontWeight.Medium,
+        fontSize = 18.sp,
+    )
 )
+
+val LocalTypography = staticCompositionLocalOf { Typography }
