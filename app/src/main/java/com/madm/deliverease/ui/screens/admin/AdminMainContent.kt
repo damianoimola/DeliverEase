@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,6 +23,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.mediumPadding
+import com.madm.deliverease.ui.widgets.ConfirmExitingApp
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
 import com.madm.deliverease.ui.widgets.CustomTopAppBar
@@ -62,6 +64,11 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
     var selectedItem by remember { mutableStateOf(navItems[0]) }
     var previousSelectedItem: CustomNavItem by remember{ mutableStateOf(navItems[0]) }
+    //variable used to show the exiting dialog
+    var showExitingDialog by rememberSaveable { mutableStateOf(false) }
+
+    if(showExitingDialog)
+        ConfirmExitingApp() { showExitingDialog = false }
 
     Scaffold(
         content = {
@@ -133,6 +140,9 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
         if(selectedItem.position != 1) {
             selectedItem = navItems[0]
             navController.navigate("home")
+        }
+        else{
+            showExitingDialog = true
         }
     }
 

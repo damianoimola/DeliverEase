@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -28,8 +30,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.madm.common_libs.model.Message
 import com.madm.deliverease.R
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 @Composable
 fun MyPageHeader(modifier: Modifier = Modifier){
@@ -173,4 +183,63 @@ fun LoginButton(
     }
 }
 
+@Composable
+fun ConfirmExitingApp(onDismiss: () -> Unit){
+
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = { onDismiss()},
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Surface(modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
+            shape = MaterialTheme.shapes.large) {
+            Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
+                verticalArrangement = Arrangement.spacedBy(25.dp)) {
+
+                Text(text = "Are you sure to exit ?",
+                    style = TextStyle(
+                        fontFamily = gilroy,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+
+                Row(
+                    modifier = Modifier.width(400.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = { onDismiss() }) {
+                        Text(text = stringResource(id = R.string.cancel),
+                            style = TextStyle(
+                                fontFamily = gilroy,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
+                            ))
+                    }
+                    Button(onClick = {
+                        //closing dialog
+                        onDismiss()
+                        exitProcess(0)
+
+                    }) {
+                        Text(text = "Exit",
+                            style = TextStyle(
+                                fontFamily = gilroy,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
+                            ))
+                    }
+                }
+            }
+        }
+    }
+}
 
