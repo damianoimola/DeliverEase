@@ -42,4 +42,6 @@
     <string name="wrong_username_password">Wrong Username or Password.</string>
     <string name="please_try_again">Please try again.</string>
     <string name="new_communication">New communication</string>
+    <string name="exit">Exit</string>
+    <string name="exiting_question">Are you sure to exit ?</string>
 </resources>
