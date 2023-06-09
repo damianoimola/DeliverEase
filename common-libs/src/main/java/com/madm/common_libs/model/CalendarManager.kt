@@ -16,6 +16,13 @@ data class CalendarManager (
     private val s: Server = Server.getInstance(context)
 
 
+
+    fun insertDays(workDays : List<WorkDay>) {
+        val s : Server = Server.getInstance(context)
+        s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
+    }
+
+
     fun getDays(callbackFunction: (List<WorkDay>) -> Unit) {
         s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
             this.calendar = ret

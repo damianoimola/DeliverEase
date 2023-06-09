@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,9 +23,6 @@ import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.screens.riders.ReverseShiftOptionMap
-import com.madm.deliverease.ui.screens.riders.ShiftOptions
-import com.madm.deliverease.ui.screens.riders.getDayOfWeekNumber
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
@@ -51,7 +47,10 @@ class CheckBoxItem(val user: User, val isAllocated : Boolean) : Parcelable{
 
 
 @Composable
-fun ShiftsScreen() {
+fun ShiftsScreenV1() {
+    println("MAIN")
+    val defaultMessage: String = stringResource(R.string.default_message_send_shift)
+    val context = LocalContext.current
     var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -62,13 +61,15 @@ fun ShiftsScreen() {
 
 
     // retrieving all working days in server
+    val updatedWorkingDays: ArrayList<WorkDay> = arrayListOf()
     var workingDays: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
-    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
-    calendarManager.getDays { days -> workingDays = days }
+    val calendarManager : CalendarManager = CalendarManager(context)
+    calendarManager.getDays { days ->
+        println("API CALL")
+        workingDays = days
+    }
 
 
-    var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-    var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
 
 
 
@@ -85,14 +86,31 @@ fun ShiftsScreen() {
 
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
 
+        ButtonDraftAndSubmit({
+//            if(updatedWorkingDays.isNotEmpty()) {
+//                calendarManager.insertDays(updatedWorkingDays)
+//            }
+            println("SENDING UWD $updatedWorkingDays")
+        }) {
+            Message(
+                senderID = globalUser!!.id,
+                receiverID = "0",
+                body = defaultMessage,
+                type = Message.MessageType.NOTIFICATION.displayName
+            ).send(context)
+        }
+
+
         WeekContent(selectedWeek, selectedMonth, selectedYear) { weekDay ->
+            println("WEEK CONTENT")
             // retrieve the selected date in a full format
             val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0)
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
             else
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
-
+            var availableRidersList : List<User> = listOf()
+            var ifNeededRidersList : List<User> = listOf()
 
             // filter all users that are available
             availableRidersList = globalAllUsers.filter {  user ->
@@ -110,7 +128,6 @@ fun ShiftsScreen() {
 
                 permanent && nonPermanent && user.id != "0"
             }
-
 
             // filter all users that if needed will come
             ifNeededRidersList = globalAllUsers.filter {  user ->
@@ -130,19 +147,131 @@ fun ShiftsScreen() {
             }
 
 
-            RidersAvailabilities(
+            RidersAvailabilitiesV1(
                 availableRidersList = availableRidersList,
                 ifNeededRidersList = ifNeededRidersList,
                 selectedDate = selectedDateFormatted,
                 workingDays = workingDays
-            )
+            ){ riderId ->
+
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun RidersAvailabilitiesV1(
+    availableRidersList: List<User>,
+    ifNeededRidersList: List<User>,
+    selectedDate: Date,
+    workingDays: List<WorkDay>,
+    riderSelected : (String) -> Unit
+) {
+    println("RIDERS AVAILABILITIES")
+    val selectedWorkDay : WorkDay? = workingDays.firstOrNull { it.workDayDate == selectedDate }
+
+    val allocatedRiderList : List<User> = if(selectedWorkDay != null)
+        globalAllUsers.filter { user -> user.id in selectedWorkDay.riders!!.toList() }
+    else listOf()
+
+    val availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
+        availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+    ) }
+
+    val ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
+        ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+    ) }
+
+
+    Column {
+        // Card with available riders
+        if (availableRidersCheckboxList.isNotEmpty()) {
+            TextLineSeparator(stringResource(R.string.available))
+            RidersCheckboxCard(availableRidersCheckboxList) { riderSelected(it) }
         }
 
-//        ButtonDraftAndSubmit()
+        // Section with only if_needed riders
+        if (ifNeededRidersCheckboxList.isNotEmpty()) {
+            TextLineSeparator(stringResource(R.string.if_needed))
+            RidersCheckboxCard(ifNeededRidersCheckboxList) { riderSelected(it) }
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@Composable
+fun ShiftsScreen() {
+    var selectedDay : Int by rememberSaveable { mutableStateOf(0) }
+    var selectedDate : Date by rememberSaveable {
+        mutableStateOf(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+    }
+
+    var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
+    var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
+
+    // filter all users that are available
+    availableRidersList = globalAllUsers.filter {  user ->
+        val permanent = user.permanentConstraints.firstOrNull {
+            it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                    &&
+                    it.type!!.lowercase() != "open"
+        } == null
+
+        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
+            it.constraintDate == selectedDate
+                    &&
+                    it.type!!.lowercase() != "open"
+        } == null
+
+        permanent && nonPermanent && user.id != "0"
+    }
+
+    // filter all users that if needed will come
+    ifNeededRidersList = globalAllUsers.filter {  user ->
+        val permanent = user.permanentConstraints.firstOrNull {
+            it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                    &&
+                    it.type == "light"
+        } != null
+
+        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
+            it.constraintDate == selectedDate
+                    &&
+                    it.type == "light"
+        } != null
+
+        (permanent || nonPermanent) && user.id != "0"
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        DaysList(selectedDay) { dayNumber, date ->
+            selectedDay = dayNumber
+            selectedDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
+        }
+
+        RidersAvailabilities(availableRidersList, ifNeededRidersList, selectedDate)
     }
 
 }
-
 
 
 
@@ -150,63 +279,75 @@ fun ShiftsScreen() {
 fun RidersAvailabilities(
     availableRidersList: List<User>,
     ifNeededRidersList: List<User>,
-    selectedDate: Date,
-    workingDays: List<WorkDay>
+    selectedDate: Date
 ) {
+    println("RIDERS AVAILABILITIES")
     val context = LocalContext.current
     var selectedWorkDay : WorkDay? by rememberSaveable { mutableStateOf(WorkDay()) }
     var allocatedRiderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
     var ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
+    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
 
     val defaultMessage :String = stringResource(R.string.default_message_send_shift)
 
+    calendarManager.getDays{ list: List<WorkDay> ->
+        selectedWorkDay = list.firstOrNull {
 
-    selectedWorkDay = workingDays.firstOrNull { it.workDayDate == selectedDate }
-
-    allocatedRiderList = if(selectedWorkDay != null)
-        globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
-    else listOf()
-
-    availableRidersCheckboxList = availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-
-    ifNeededRidersCheckboxList = ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-
-
-
-    Column {
-        // Card with available riders
-        if (availableRidersCheckboxList.isNotEmpty()) {
-            TextLineSeparator(stringResource(R.string.available))
-            RidersCheckboxCard(availableRidersCheckboxList)
+            println("##### SELECTED DATE $selectedDate    DATE ${it.date}    workDayDate ${it.workDayDate}")
+            it.workDayDate == selectedDate
         }
 
-        // Section with only if_needed riders
-        if (ifNeededRidersCheckboxList.isNotEmpty()) {
-            TextLineSeparator(stringResource(R.string.if_needed))
-            RidersCheckboxCard(ifNeededRidersCheckboxList)
+        allocatedRiderList = if(selectedWorkDay != null)
+            globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
+        else
+            listOf()
+
+        availableRidersCheckboxList = availableRidersList.map {
+            CheckBoxItem(it, it in allocatedRiderList)
         }
 
-        // Buttons for action "Save Draft" and "Submit" choice
-        ButtonDraftAndSubmit({
-            val listOfWorkingRiders =
-                availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
-                        ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
+        ifNeededRidersCheckboxList = ifNeededRidersList.map {
+            CheckBoxItem(it, it in allocatedRiderList)
+        }
+    }
 
-            val workDay : WorkDay = WorkDay(listOfWorkingRiders)
-            workDay.workDayDate = selectedDate
+    LazyColumn {
+        item {
+            // Card with available riders
+            if (availableRidersCheckboxList.isNotEmpty()) {
+                TextLineSeparator(stringResource(R.string.available))
+//                RidersCheckboxCard(availableRidersCheckboxList)
+            }
 
-            workDay.insertOrUpdate(context)
-        }) {
-            Message(
-                senderID = globalUser!!.id,
-                receiverID = "0",
-                body = defaultMessage,
-                type = Message.MessageType.NOTIFICATION.displayName
-            ).send(context)
+            // Section with only if_needed riders
+            if (ifNeededRidersCheckboxList.isNotEmpty()) {
+                TextLineSeparator(stringResource(R.string.if_needed))
+//                RidersCheckboxCard(ifNeededRidersCheckboxList)
+            }
+
+            // Buttons for action "Save Draft" and "Submit" choice
+            ButtonDraftAndSubmit({
+                val listOfWorkingRiders =
+                    availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
+                            ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
+
+                val workDay : WorkDay = WorkDay(listOfWorkingRiders)
+                workDay.workDayDate = selectedDate
+
+                workDay.insertOrUpdate(context)
+            }) {
+                Message(
+                    senderID = globalUser!!.id,
+                    receiverID = "0",
+                    body = defaultMessage,
+                    type = Message.MessageType.NOTIFICATION.displayName
+                ).send(context)
+            }
         }
     }
 }
+
 
 
 @Composable
@@ -226,7 +367,10 @@ fun TextLineSeparator(text: String) {
 }
 
 @Composable
-fun RidersCheckboxCard(riderCheckBoxList: List<CheckBoxItem>) {
+fun RidersCheckboxCard(
+    riderCheckBoxList: List<CheckBoxItem>,
+    riderSelected : (String) -> Unit
+) {
     Card(
         elevation = mediumCardElevation,
         shape = Shapes.medium,
@@ -245,11 +389,17 @@ fun RidersCheckboxCard(riderCheckBoxList: List<CheckBoxItem>) {
                         .fillMaxWidth()
                         .padding(5.dp)
                         .height(20.dp)
-                        .clickable { it.isChecked = !it.isChecked },
+                        .clickable {
+                            it.isChecked = !it.isChecked
+                            riderSelected(it.user.id!!)
+                        },
                 ) {
                     Checkbox(
                         checked = it.isChecked,
-                        onCheckedChange = { isChecked -> it.isChecked = isChecked },
+                        onCheckedChange = { isChecked ->
+                            it.isChecked = isChecked
+                            riderSelected(it.user.id!!)
+                        },
                         modifier = Modifier.padding(start = 0.dp)
                     )
                     Text(
@@ -300,66 +450,6 @@ fun ButtonDraftAndSubmit(
 
 
 
-
-
-@Composable
-fun ButtonDraftAndSubmitV1(
-    updateServer: () -> Unit,
-    notifyRiders: () -> Unit
-) {
-    Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Button(
-            onClick = { updateServer() },
-            shape = RoundedCornerShape(30),
-            // border = BorderStroke(1.dp, Color.Red), // TODO Ralisin: set theme border
-            modifier = Modifier
-                .weight(1f)
-                .padding(32.dp),
-            // colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604)) // TODO Ralisin: set theme color buttons
-        ) {
-            Text(text = stringResource(R.string.save_draft) /*color = Color.Red TODO Ralisin: set text color with theme*/)
-        }
-
-        Button(
-            onClick = {
-                updateServer()
-                notifyRiders()
-            },
-            shape = RoundedCornerShape(30), // TODO Ralisin: decide if to leave RoundedCornerShape of choose a default
-            // border = BorderStroke(1.dp, Color.Transparent /*Color.Red TODO: set theme color border*/),
-            modifier = Modifier
-                .weight(1f)
-                .padding(32.dp),
-            // colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604)) // TODO Ralisin: set theme color buttons
-        ) {
-            Text(text = stringResource(R.string.submit) /*color = Color.Red TODO Ralisin: set theme color*/)
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 fun getNext90Days(): List<LocalDate> {
     val currentDate = LocalDate.now()
     val next90Days: ArrayList<LocalDate> = arrayListOf()
@@ -371,66 +461,6 @@ fun getNext90Days(): List<LocalDate> {
     }
 
     return next90Days.toList()
-}
-
-
-@Composable
-fun ShiftsScreenV1() {
-    var selectedDay : Int by rememberSaveable { mutableStateOf(0) }
-    var selectedDate : Date by rememberSaveable {
-        mutableStateOf(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-    }
-
-    var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-    var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-
-    // filter all users that are available
-    availableRidersList = globalAllUsers.filter {  user ->
-        val permanent = user.permanentConstraints.firstOrNull {
-            it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-            &&
-            it.type!!.lowercase() != "open"
-        } == null
-
-        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.constraintDate == selectedDate
-            &&
-            it.type!!.lowercase() != "open"
-        } == null
-
-        permanent && nonPermanent && user.id != "0"
-    }
-
-    // filter all users that if needed will come
-    ifNeededRidersList = globalAllUsers.filter {  user ->
-        val permanent = user.permanentConstraints.firstOrNull {
-            it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-            &&
-            it.type == "light"
-        } != null
-
-        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.constraintDate == selectedDate
-            &&
-            it.type == "light"
-        } != null
-
-        (permanent || nonPermanent) && user.id != "0"
-    }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        DaysList(selectedDay) { dayNumber, date ->
-            selectedDay = dayNumber
-            selectedDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
-        }
-
-        RidersAvailabilitiesV1(availableRidersList, ifNeededRidersList, selectedDate)
-    }
-
 }
 
 
@@ -482,77 +512,6 @@ fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
 
 
 
-@Composable
-fun RidersAvailabilitiesV1(
-    availableRidersList: List<User>,
-    ifNeededRidersList: List<User>,
-    selectedDate: Date
-) {
-    val context = LocalContext.current
-    var selectedWorkDay : WorkDay? by rememberSaveable { mutableStateOf(WorkDay()) }
-    var allocatedRiderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-    var availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
-    var ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
-    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
-
-    val defaultMessage :String = stringResource(R.string.default_message_send_shift)
-
-    calendarManager.getDays{ list: List<WorkDay> ->
-        selectedWorkDay = list.firstOrNull {
-
-            println("##### SELECTED DATE $selectedDate    DATE ${it.date}    workDayDate ${it.workDayDate}")
-            it.workDayDate == selectedDate
-        }
-
-        allocatedRiderList = if(selectedWorkDay != null)
-            globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
-        else
-            listOf()
-
-        availableRidersCheckboxList = availableRidersList.map {
-            CheckBoxItem(it, it in allocatedRiderList)
-        }
-
-        ifNeededRidersCheckboxList = ifNeededRidersList.map {
-            CheckBoxItem(it, it in allocatedRiderList)
-        }
-    }
-
-    LazyColumn {
-        item {
-            // Card with available riders
-            if (availableRidersCheckboxList.isNotEmpty()) {
-                TextLineSeparator(stringResource(R.string.available))
-                RidersCheckboxCard(availableRidersCheckboxList)
-            }
-
-            // Section with only if_needed riders
-            if (ifNeededRidersCheckboxList.isNotEmpty()) {
-                TextLineSeparator(stringResource(R.string.if_needed))
-                RidersCheckboxCard(ifNeededRidersCheckboxList)
-            }
-
-            // Buttons for action "Save Draft" and "Submit" choice
-            ButtonDraftAndSubmit({
-                val listOfWorkingRiders =
-                    availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
-                    ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
-
-                val workDay : WorkDay = WorkDay(listOfWorkingRiders)
-                workDay.workDayDate = selectedDate
-
-                workDay.insertOrUpdate(context)
-            }) {
-                Message(
-                    senderID = globalUser!!.id,
-                    receiverID = "0",
-                    body = defaultMessage,
-                    type = Message.MessageType.NOTIFICATION.displayName
-                ).send(context)
-            }
-        }
-    }
-}
 
 
 

@@ -101,7 +101,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                     }
                     composable("shift") {
                         //selectedItem = navItems[1]
-                        ShiftsScreen()
+                        ShiftsScreenV1()
                     }
                     composable("riders") {
                         //selectedItem = navItems[2]
