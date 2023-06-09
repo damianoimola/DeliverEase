@@ -111,6 +111,7 @@ fun ShiftsScreen() {
                 permanent && nonPermanent && user.id != "0"
             }
 
+
             // filter all users that if needed will come
             ifNeededRidersList = globalAllUsers.filter {  user ->
                 val permanent = user.permanentConstraints.firstOrNull {
