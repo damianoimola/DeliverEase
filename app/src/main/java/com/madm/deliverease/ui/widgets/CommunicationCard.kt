@@ -195,7 +195,7 @@ fun CommunicationCard(
                                 contentColor = CustomTheme.colors.onPrimary,
                             )
                         ) {
-                            Text(stringResource(R.string.send), style = CustomTheme.typography.body1)
+                            Text(stringResource(R.string.send), style = CustomTheme.typography.button)
                         }
                         Spacer(Modifier.width(4.dp))
                         Button(

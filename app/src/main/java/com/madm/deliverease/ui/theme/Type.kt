@@ -45,7 +45,7 @@ val gilroy = FontFamily(
 val Typography = Typography(
     defaultFontFamily = gilroy,
     // App title top bar
-    h1 = TextStyle(textAlign = TextAlign.Center, fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 35.sp),
+    h1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 35.sp),
     // TODO Ralisin: set it
     h2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
     // TODO Ralisin: set it
@@ -53,8 +53,8 @@ val Typography = Typography(
     h3 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
     // TODO Ralisin: set it
     h4 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 20.sp),
-    // TODO Ralisin: set it
-    h5 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 20.sp),
+    // Used on setting preferences titles
+    h5 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 18.sp),
     // TODO Ralisin: set it
     h6 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 16.sp),
     // TODO Ralisin: set it

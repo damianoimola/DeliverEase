@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
@@ -44,15 +45,21 @@ fun RidersScreen() {
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = nonePadding, vertical = smallPadding)
+                .padding(horizontal = nonePadding, vertical = smallPadding),
+            backgroundColor = CustomTheme.colors.surface
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
+                    .padding(nonePadding, smallPadding, nonePadding, nonePadding)
             ) {
-                Text(stringResource(R.string.list_of_your_riders), style = TextStyle(fontSize = 20.sp)) // TODO Ralisin: add theme typography
+                Text(
+                    stringResource(R.string.list_of_your_riders),
+                    style = CustomTheme.typography.h3,
+                    color = CustomTheme.colors.onSurface
+                )
                 SwipeToRevealRiderList(ArrayList(riderList), 520.dp)
             }
         }
@@ -62,9 +69,16 @@ fun RidersScreen() {
                 onClick = { showCustomDialog = !showCustomDialog },
                 modifier = Modifier
                     .wrapContentSize()
-                    .weight(1f)
+                    .weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = CustomTheme.colors.primary,
+                    contentColor = CustomTheme.colors.onPrimary,
+                )
             ) {
-                Text(text = stringResource(R.string.hire_new_rider)) // TODO Ralisin: add theme typography
+                Text(
+                    text = stringResource(R.string.hire_new_rider),
+                    style = CustomTheme.typography.button
+                )
             }
         }
     }

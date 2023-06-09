@@ -87,6 +87,7 @@ fun CustomTopAppBar(){
             text = stringResource(R.string.app_name),
             modifier = Modifier.fillMaxWidth(),
             style = CustomTheme.typography.h1,
+            textAlign = TextAlign.Center,
             color = CustomTheme.colors.onBackground
         )
     }

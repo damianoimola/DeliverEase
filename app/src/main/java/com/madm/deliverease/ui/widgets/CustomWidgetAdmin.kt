@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.widgets
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
@@ -34,6 +35,7 @@ fun SwipeToRevealRiderList(
     maxHeight: Dp
 ) {
     val context = LocalContext.current
+
     LazyColumn(
         Modifier
             .padding(smallPadding)
@@ -43,16 +45,25 @@ fun SwipeToRevealRiderList(
             Box(Modifier.fillMaxWidth()) {
                 var isRevealed by remember { mutableStateOf(false) }
 
+                // Button icons behind rider name
                 ActionsRow(
-                    actionIconSize = 56.dp,
-                    onDelete = { isRevealed = false; riderList.remove(rider) }, // TODO Ralisin: remove rider from Rest API
-                    onEdit = { Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show() },
+                    actionIconSize = 56.dp, // TODO Ralisin: want we leave constant size here?
+                    onDelete = {
+                        isRevealed = false
+                    }, // TODO Ralisin: remove rider from Rest API
+                    onEdit = {
+                        isRevealed = false
+                        Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show()
+                    } // TODO Ralisin: implement edit rider option
                 )
 
                 DroppableListItemCard(
                     rider = rider,
                     isRevealed = isRevealed,
                     minDragAmount = 16,
+                    colorBackgroundItem = CustomTheme.colors.tertiary,
+                    colorBackgroundItemExpanded = CustomTheme.colors.tertiaryVariant,
+                    colorContent = CustomTheme.colors.onTertiary,
                     onExpand = {isRevealed = true},
                     onCollapse = { isRevealed = false }
                 ) {
@@ -72,9 +83,10 @@ fun DroppableListItemCard(
     onCollapse: () -> Unit,
     cardHeight: Dp = 56.dp,
     cardOffset: Float = 120f.dp(),
-    minDragAmount: Int = 20,
-    colorBackgroundItem: Color = Color(0xFFBDE7EC), /* TODO Ralisin: Set color theme */
-    colorBackgroundItemExpanded: Color = Color(0xFFD1A3FF), /* TODO Ralisin: Set color theme */
+    minDragAmount: Int = 550,
+    colorBackgroundItem: Color = Color(0xFFBDE7EC),
+    colorBackgroundItemExpanded: Color = Color(0xFFD1A3FF),
+    colorContent: Color = Color.White,
     animationDuration: Int = 200,
     content: @Composable (User) -> Unit,
 ) {
@@ -109,12 +121,13 @@ fun DroppableListItemCard(
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { _, dragAmount ->
                     when {
-                        dragAmount <= minDragAmount -> onExpand()
-                        dragAmount > -minDragAmount -> onCollapse()
+                        dragAmount > minDragAmount -> onCollapse()
+                        dragAmount < -minDragAmount -> onExpand()
                     }
                 }
             },
-        backgroundColor = cardBgColor, // TODO Ralisin: set theme color
+        contentColor = colorContent,
+        backgroundColor = cardBgColor,
         shape = remember { Shapes.small },
         elevation = cardElevation,
         content = { content(rider) }

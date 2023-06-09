@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -78,7 +79,7 @@ fun RiderRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clip(Shapes.medium)
+            .clip(CustomTheme.shapes.medium)
             .padding(mediumPadding)
     ) {
         Icon(
@@ -91,17 +92,17 @@ fun RiderRow(
                 horizontalArrangement = Arrangement.Start,
                 modifier = Modifier.weight(1f)
             ) {
-                Divider(Modifier.width(smallPadding), CustomTheme.colors.onSurface)
+                Divider(Modifier.width(smallPadding), Color.Transparent)
                 Text(
                     rider.name!!,
                     style = CustomTheme.typography.body1,
-                    color = CustomTheme.colors.onSurface
+                    color = CustomTheme.colors.onTertiary
                 )
-                Divider(Modifier.width(smallPadding), CustomTheme.colors.onSurface)
+                Divider(Modifier.width(smallPadding), Color.Transparent)
                 Text(
                     rider.surname!!,
                     style = CustomTheme.typography.body1,
-                    color = CustomTheme.colors.onSurface
+                    color = CustomTheme.colors.onTertiary
                 )
             }
         else

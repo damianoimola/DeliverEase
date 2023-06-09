@@ -44,4 +44,5 @@
     <string name="new_communication">New communication</string>
     <string name="exit">Exit</string>
     <string name="exiting_question">Are you sure to exit ?</string>
+    <string name="logout">Logout</string>
 </resources>
