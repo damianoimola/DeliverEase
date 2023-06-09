@@ -21,8 +21,7 @@ fun HomeScreen() {
     var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
     var isPlaying = rememberSaveable { mutableStateOf (false) }
 
-    val messagesManager : MessagesManager =
-        MessagesManager(globalUser!!.id!!, LocalContext.current)
+    val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
         communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }.toMutableList()
@@ -33,10 +32,7 @@ fun HomeScreen() {
     }
 
 
-
-
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//        MyPageHeader()
         CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying)
         ShiftChangeCard(shiftRequestList, Modifier.weight(1f))
     }

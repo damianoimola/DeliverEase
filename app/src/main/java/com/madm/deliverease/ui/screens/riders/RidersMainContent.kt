@@ -23,6 +23,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.madm.deliverease.R
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.ConfirmExitingApp
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
@@ -59,10 +60,10 @@ fun RidersMainContent(logoutCallback : () -> Unit){
 
 
     Scaffold(
+        backgroundColor = CustomTheme.colors.background,
+        topBar = { CustomTopAppBar() },
         content = {
-            Box(modifier = Modifier
-                .padding(it)
-            ){
+            Box(Modifier.padding(it)){
                 // navigation host holds all of the navigation destinations within the app
                 // calling "navController.navigate("home")" you can travel through app
                 // It can handle parameters.
@@ -118,9 +119,6 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                     .fillMaxWidth()
             )
         },
-        topBar = {
-            CustomTopAppBar()
-        }
     )
     BackHandler(enabled = true) {
         previousSelectedItem = selectedItem

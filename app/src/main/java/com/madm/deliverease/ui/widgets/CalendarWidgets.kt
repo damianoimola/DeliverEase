@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.widgets
 
 import android.os.Parcelable
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
@@ -117,13 +119,15 @@ fun MonthSelector(
                 "${MonthMap[selectedMonth]} $currentYear"
             else
                 "${MonthMap[selectedMonth]} ${currentYear + 1}",
-            onValueChange = { },
+            onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
+                backgroundColor = CustomTheme.colors.backgroundVariant,
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                textColor = CustomTheme.colors.onBackgroundVariant,
+                trailingIconColor = CustomTheme.colors.onBackgroundVariant
             ),
             modifier = Modifier.width(IntrinsicSize.Min)
         )
@@ -131,7 +135,9 @@ fun MonthSelector(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.width(IntrinsicSize.Min)
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .background(CustomTheme.colors.backgroundVariant)
         ) {
             months.forEach { option ->
                 // menu item
@@ -140,13 +146,21 @@ fun MonthSelector(
                         isNextYearSelected = option < months[0]
                         function(option, isNextYearSelected)
                         expanded = false
-                    }
+                    },
                 ) {
                     if(option < months[0]) {
-                        Text(text = "${MonthMap[option]} ${currentYear + 1}")
+                        Text(
+                            "${MonthMap[option]} ${currentYear + 1}",
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onBackgroundVariant
+                        )
                     }
                     else {
-                        Text(text = "${MonthMap[option]} $currentYear")
+                        Text(
+                            "${MonthMap[option]} $currentYear",
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onBackgroundVariant
+                        )
                     }
                 }
             }
@@ -211,7 +225,6 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
-
     ){
         mondaysList.forEach {
             Button(
@@ -220,21 +233,20 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
                     selectedWeekString = it
                     // update the list of days of the selected week
                     daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
-
                 },
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 2.dp
-                ),
+//                elevation = ButtonDefaults.elevation(
+//                    defaultElevation = 6.dp,
+//                    pressedElevation = 8.dp,
+//                    disabledElevation = 2.dp
+//                ),
                 modifier = Modifier
                     .padding(smallPadding, smallPadding)
                     .clip(shape = RoundedCornerShape(20)),
                 colors = ButtonDefaults.buttonColors(
-                    if (selectedWeekString == it) Color(0xFFFF9800)
-                    else Color(0xFFFF5722)
+                    backgroundColor = if (selectedWeekString == it) CustomTheme.colors.tertiary else CustomTheme.colors.primary,
+                    contentColor = if (selectedWeekString == it) CustomTheme.colors.onTertiary else CustomTheme.colors.onPrimary,
                 ),
-                border = BorderStroke(width = 1.dp, color = Color.Red),
+                border = BorderStroke(width = 1.dp, color = if (selectedWeekString == it) CustomTheme.colors.primary else CustomTheme.colors.tertiary),
                 shape = RoundedCornerShape(20)
             ) {
                 Text(

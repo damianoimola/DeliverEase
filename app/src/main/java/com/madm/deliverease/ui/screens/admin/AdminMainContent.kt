@@ -75,7 +75,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
         backgroundColor = CustomTheme.colors.background,
         topBar = { CustomTopAppBar() },
         content = {
-            Box(modifier = Modifier.padding(it)){
+            Box(Modifier.padding(it)){
                 // navigation host holds all of the navigation destinations within the app
                 // calling "navController.navigate("home")" you can travel through app
                 // It can handle parameters.
