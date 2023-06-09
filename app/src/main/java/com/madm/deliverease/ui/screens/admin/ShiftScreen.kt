@@ -66,11 +66,14 @@ fun ShiftsScreen() {
     availableRidersList = globalAllUsers.filter {  user ->
         val permanent = user.permanentConstraints.firstOrNull {
             it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+            &&
+            it.type!!.lowercase() != "open"
         } == null
 
         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            // TODO: "OPEN"
             it.constraintDate == selectedDate
+            &&
+            it.type!!.lowercase() != "open"
         } == null
 
         permanent && nonPermanent && user.id != "0"
@@ -85,7 +88,9 @@ fun ShiftsScreen() {
         } != null
 
         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.constraintDate == selectedDate && it.type == "light"
+            it.constraintDate == selectedDate
+            &&
+            it.type == "light"
         } != null
 
         (permanent || nonPermanent) && user.id != "0"
