@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
@@ -239,7 +240,10 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
             ) {
                 Text(
                     text = it,
-                    color = Color.White
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = gilroy
+                    )
                 )
             }
         }
@@ -253,7 +257,8 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
             text = "Week: ",
             style = TextStyle(
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Normal,
+                fontFamily = gilroy
             )
         )
         Text(
@@ -261,7 +266,8 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFF9800)
+                color = Color(0xFFFF9800),
+                fontFamily = gilroy
             )
         )
     }

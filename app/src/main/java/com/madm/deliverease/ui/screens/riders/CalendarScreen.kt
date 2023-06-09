@@ -102,9 +102,7 @@ fun CalendarScreen(){
                     previousWeekDay = weekDay
                 }
 
-            )  {
-                if(it) showCustomDialog = true else showCustomDialog = false
-            }
+            )  { showCustomDialog = it }
             swap.value = false
         }
     }
