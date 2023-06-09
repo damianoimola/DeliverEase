@@ -25,51 +25,6 @@ import androidx.compose.runtime.remember
         On Error color of text and icons displayed on top of the error color.
  */
 
-/*
-private val DarkColorPalette = darkColors(
-    // background colors
-    background = darkBackground,
-    surface = darkBackground,
-    primary = darkDetails,
-    primaryVariant = darkDetails,
-    secondary = darkEnhancedDetails,
-
-    // typography and icon colors
-    onBackground = darkTextColor,
-    onSurface = darkTextColor,
-    onPrimary = darkTextColor,
-    onSecondary = darkTextColor,
-)
-
-private val LightColorPalette = lightColors(
-    // background colors
-    background = lightBackground,
-    surface = lightBackground,
-    primary = lightDetails,
-    primaryVariant = lightDetails,
-    secondary = lightEnhancedDetails,
-
-    // typography and icon colors
-    onBackground = lightTextColor,
-    onSurface = lightTextColor,
-    onPrimary = lightTextColor,
-    onSecondary = lightTextColor,
-)
- */
-
-/*
-private val DarkColorPalette = darkColors()
-
-private val LightColorPalette = lightColors(
-    background = lightBackground,
-    surface = lightSurface,
-    primary = lightPrimary,
-    primaryVariant = lightPrimaryVariant,
-
-    onPrimary = lightOnPrimary,
-)
- */
-
 var lightColorsPalette = CustomThemeColors(
     primary = lightPrimary,
     primaryVariant = lightPrimaryVariant,

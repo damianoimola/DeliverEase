@@ -1,8 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,54 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
-
-@Composable
-fun MyPageHeader(modifier: Modifier = Modifier){
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = smallPadding),
-    ){
-        Image(
-            painter = painterResource(id = R.drawable.logo_dark_icon_hd),
-            contentDescription = "Logo",//stringResource(R.string.logo),
-            modifier = Modifier
-                .size((LocalConfiguration.current.screenWidthDp.dp), 50.dp)
-                .padding(0.dp),
-            contentScale = ContentScale.FillHeight,
-            alignment = Alignment.CenterStart,
-        )
-        Text(
-            text = stringResource(R.string.app_name),
-            modifier = Modifier.fillMaxWidth(),
-            style = TextStyle(
-                textAlign = TextAlign.Center,
-                fontSize = 35.sp,
-                fontFamily = gilroy,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black // TODO Ralisin: set text color
-            )
-
-        )
-    }
-}
-
 
 @Composable
 fun MyOutlinedTextField(
@@ -75,11 +33,6 @@ fun MyOutlinedTextField(
         onValueChange = { field.value = it },
         modifier = Modifier
             .padding(bottom = smallPadding)
-            /*.border(
-                BorderStroke(2.dp, Color(0xFFD8D8D8)),
-                shape = RoundedCornerShape(50)
-            )
-            .clip(RoundedCornerShape(50))*/
             .fillMaxWidth(),
         label = {
             Text(text = label)
@@ -94,7 +47,7 @@ fun MyOutlinedTextField(
         ),
         singleLine = true,
         maxLines = 1,
-        textStyle = CustomTheme.typography.h5,
+        textStyle = CustomTheme.typography.body1,
         shape = RoundedCornerShape(20.dp),
         colors = TextFieldDefaults.textFieldColors(
             textColor = CustomTheme.colors.onBackground,
@@ -137,7 +90,7 @@ fun MyButton(
         Text(
             text = text,
             modifier = Modifier.padding(6.dp),
-            style = CustomTheme.typography.h6
+            style = CustomTheme.typography.button
         )
     }
 }

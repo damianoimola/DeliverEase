@@ -20,9 +20,9 @@ val lightOnSecondary = Color.Black // TODO Ralisin: set it
 val lightOnSecondaryVariant = Color.Black // TODO Ralisin: set it
 val lightOnTertiary = Color.Black // TODO Ralisin: set it
 val lightOnTertiaryVariant = Color.Black // TODO Ralisin: set it
-val lightOnBackground = Color(0xFF263330) // Color of text on background
+val lightOnBackground = Color(0xFF263330) // Color of items on background
 val lightOnBackgroundVariant = Color(0xFF686868) // Secondary color of text on background
-val lightOnSurface = Color.Black // TODO Ralisin: set it
+val lightOnSurface = Color(0xFF263330) // Color of items on surface
 val lightOnError = Color.White // TODO Ralisin: set it
 
 // Dark theme
@@ -43,7 +43,7 @@ val darkOnSecondary = Color.Black // TODO Ralisin: set it
 val darkOnSecondaryVariant = Color.Black // TODO Ralisin: set it
 val darkOnTertiary = Color.Black // TODO Ralisin: set it
 val darkOnTertiaryVariant = Color.Black // TODO Ralisin: set it
-val darkOnBackground = Color(0xFFFFFDFF) // Color of text on background
-val darkOnBackgroundVariant = Color(0xFF7E7D7D) // Color of text on background
-val darkOnSurface = Color.Black // TODO Ralisin: set it
+val darkOnBackground = Color(0xFFFFFDFF) // Color of items on background
+val darkOnBackgroundVariant = Color(0xFF7E7D7D) // Color of items on background
+val darkOnSurface = Color(0xFFFFFDFF) // Color of items on surface
 val darkOnError = Color.White // TODO Ralisin: set it

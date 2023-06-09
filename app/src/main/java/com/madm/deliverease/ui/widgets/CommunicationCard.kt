@@ -25,12 +25,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
@@ -62,7 +60,7 @@ fun CommunicationCard(
         backgroundColor = CustomTheme.colors.surface
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // Top card bar
+            // Top card bar with title and iconButton to show text field
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -71,8 +69,9 @@ fun CommunicationCard(
             ) {
                 Text(
                     stringResource(R.string.communication_title),
-                    style = CustomTheme.typography.h4,
-                    textAlign = TextAlign.Center
+                    style = CustomTheme.typography.h3,
+                    textAlign = TextAlign.Center,
+                    color = CustomTheme.colors.onSurface
                 )
                 if(showAddButton) {
                     Row(
@@ -133,6 +132,7 @@ fun CommunicationCard(
                         keyboardActions = KeyboardActions(
                             onDone = {focusManager.clearFocus()},
                         ),
+                        textStyle = CustomTheme.typography.body1,
                         colors = TextFieldDefaults.textFieldColors(
                             textColor = CustomTheme.colors.onBackground,
                             backgroundColor = CustomTheme.colors.surface,
@@ -143,6 +143,7 @@ fun CommunicationCard(
                             unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
                             placeholderColor = CustomTheme.colors.onBackgroundVariant
                         ),
+                        label = { Text(stringResource(R.string.new_communication)) }
                     )
                     Row(
                         horizontalArrangement = Arrangement.End,
@@ -188,16 +189,24 @@ fun CommunicationCard(
 
                                 textFieldValue.value = ""
                                 isPlaying.value = false
-                            }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = CustomTheme.colors.primary,
+                                contentColor = CustomTheme.colors.onPrimary,
+                            )
                         ) {
-                            Text(stringResource(R.string.send))
+                            Text(stringResource(R.string.send), style = CustomTheme.typography.body1)
                         }
                         Spacer(Modifier.width(4.dp))
                         Button(
                             onClick = {
                                 textFieldValue.value = ""
                                 showTextField.value = !showTextField.value
-                            }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = CustomTheme.colors.primary,
+                                contentColor = CustomTheme.colors.onPrimary,
+                            )
                         ) {
                             Text(stringResource(R.string.cancel))
                         }
@@ -206,13 +215,18 @@ fun CommunicationCard(
             }
 
             // Text if have not any notification
-            if(communicationList.isEmpty()) Text(stringResource(R.string.no_communications), style = TextStyle(fontSize = 18.sp))
+            if(communicationList.isEmpty()) Text(stringResource(R.string.no_communications), style = CustomTheme.typography.body1)
 
             // CommunicationList
             LazyColumn(
                 content = {
                     items(communicationList) { item ->
-                        Card(Modifier.padding(smallPadding)) {
+                        Card(
+                            Modifier.padding(smallPadding),
+                            backgroundColor = CustomTheme.colors.surface,
+                            contentColor = CustomTheme.colors.onSurface,
+                            elevation = extraSmallCardElevation
+                        ) {
                             CustomCommunication(item.body!!, item.date)
                         }
                     }
@@ -233,13 +247,13 @@ fun CustomCommunication(
             .fillMaxWidth()
             .padding(smallPadding)
     ) {
-        Text(noticeText)
+        Text(noticeText, style = CustomTheme.typography.body1)
         Spacer(modifier = Modifier.height(2.dp))
         Row(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(stringResource(R.string.publishedOn) + publishDate) /* TODO: set to typography */
+            Text(stringResource(R.string.publishedOn) + publishDate, style = CustomTheme.typography.body2)
         }
     }
 }

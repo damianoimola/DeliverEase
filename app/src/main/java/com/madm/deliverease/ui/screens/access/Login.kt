@@ -13,15 +13,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.User
@@ -103,7 +100,7 @@ fun ClassicLogin(
         PizzaLoaderDialog(isPlaying = isPlaying)
     }
 
-    Column(Modifier.padding(mediumPadding)) {
+    Column(Modifier.padding(mediumPadding), horizontalAlignment = Alignment.CenterHorizontally) {
         MyOutlinedTextField(
             field = username,
             isError = isError,
@@ -115,17 +112,18 @@ fun ClassicLogin(
             label = stringResource(R.string.password),
             onDone = { focusManager.clearFocus() })
 
-        if(isError)
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    stringResource(R.string.wrong_username_password) +"\n"+ stringResource(R.string.please_try_again),
-                    style = CustomTheme.typography.h5,
-                    color = CustomTheme.colors.error
-                )
-            }
+        if(isError) {
+            Text(
+                stringResource(R.string.wrong_username_password),
+                style = CustomTheme.typography.body1,
+                color = CustomTheme.colors.error
+            )
+            Text(
+                stringResource(R.string.please_try_again),
+                style = CustomTheme.typography.body1,
+                color = CustomTheme.colors.error
+            )
+        }
 
         LoginButton(
             username = username,

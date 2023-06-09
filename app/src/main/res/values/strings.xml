@@ -41,4 +41,5 @@
     <string name="confirmation_change">Do you want to change your shift with </string>
     <string name="wrong_username_password">Wrong Username or Password.</string>
     <string name="please_try_again">Please try again.</string>
+    <string name="new_communication">New communication</string>
 </resources>
