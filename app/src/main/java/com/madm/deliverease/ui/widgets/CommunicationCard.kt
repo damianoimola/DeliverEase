@@ -143,7 +143,7 @@ fun CommunicationCard(
                             unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
                             placeholderColor = CustomTheme.colors.onBackgroundVariant
                         ),
-                        label = { Text(stringResource(R.string.new_communication)) }
+                        placeholder = { Text(stringResource(R.string.new_communication)) }
                     )
                     Row(
                         horizontalArrangement = Arrangement.End,
@@ -215,7 +215,11 @@ fun CommunicationCard(
             }
 
             // Text if have not any notification
-            if(communicationList.isEmpty()) Text(stringResource(R.string.no_communications), style = CustomTheme.typography.body1)
+            if(communicationList.isEmpty()) Text(
+                stringResource(R.string.no_communications),
+                style = CustomTheme.typography.body1,
+                color = CustomTheme.colors.onSurface
+            )
 
             // CommunicationList
             LazyColumn(
@@ -226,9 +230,7 @@ fun CommunicationCard(
                             backgroundColor = CustomTheme.colors.surface,
                             contentColor = CustomTheme.colors.onSurface,
                             elevation = extraSmallCardElevation
-                        ) {
-                            CustomCommunication(item.body!!, item.date)
-                        }
+                        ) { CustomCommunication(item.body!!, item.date) }
                     }
                 }
             )

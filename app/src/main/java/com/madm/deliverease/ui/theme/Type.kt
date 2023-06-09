@@ -6,6 +6,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 
@@ -43,8 +44,8 @@ val gilroy = FontFamily(
 
 val Typography = Typography(
     defaultFontFamily = gilroy,
-    // TODO Ralisin: set it
-    h1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
+    // App title top bar
+    h1 = TextStyle(textAlign = TextAlign.Center, fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 35.sp),
     // TODO Ralisin: set it
     h2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
     // TODO Ralisin: set it

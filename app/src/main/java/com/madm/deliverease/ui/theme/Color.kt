@@ -32,9 +32,9 @@ val darkSecondary = Color(0xFF03DAC6) // TODO Ralisin: set it
 val darkSecondaryVariant = Color(0xFF018786) // TODO Ralisin: set it
 val darkTertiary = Color(0xFF0BB43B) // TODO Ralisin: set it
 val darkTertiaryVariant = Color(0xFF077526) // TODO Ralisin: set it
-val darkBackground = Color(0xFF141414)//Color(0xFF161D1B) // Color of app background
-val darkBackgroundVariant = Color(0xFF2E2E2E) // TODO Ralisin: set it
-val darkSurface = Color(0xFF2E2E2E) // TODO Ralisin: set it // Color of widget background
+val darkBackground = Color(0xFF1D1D1D)//Color(0xFF161D1B) // Color of app background
+val darkBackgroundVariant = Color(0xFF272727) // TODO Ralisin: set it
+val darkSurface = Color(0xFF2E2E2E) // Color of items on background
 val darkError = Color(0xFFB00020) // TODO Ralisin: set it
 
 val darkOnPrimary = Color(0xFFFFFDFF) // TODO Ralisin: set it

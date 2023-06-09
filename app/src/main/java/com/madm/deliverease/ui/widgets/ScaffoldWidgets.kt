@@ -82,18 +82,12 @@ fun CustomTopAppBar(){
                 .padding(0.dp),
             contentScale = ContentScale.FillHeight,
             alignment = Alignment.CenterStart,
-        )
+        ) // TODO Ralisin: set image with theme
         Text(
             text = stringResource(R.string.app_name),
             modifier = Modifier.fillMaxWidth(),
-            style = TextStyle(
-                textAlign = TextAlign.Center,
-                fontSize = 35.sp,
-                fontFamily = gilroy,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black // TODO Ralisin: set text color
-            )
-
+            style = CustomTheme.typography.h1,
+            color = CustomTheme.colors.onBackground
         )
     }
 }
