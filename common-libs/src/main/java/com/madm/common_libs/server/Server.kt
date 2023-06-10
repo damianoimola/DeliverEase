@@ -53,6 +53,8 @@ class Server private constructor (context : Context) {
     // BUILD POST REQUESTS
     inline fun <T> makePostRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) {
         val requestBody = Gson().toJson(objectToSend)
+
+        println("BODY REQUEST: $requestBody")
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpPost().body(requestBody).responseString { _, response, result ->

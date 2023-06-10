@@ -37,26 +37,32 @@ data class Calendar(
 
 
 @Parcelize
-data class WorkDay(
-    @IgnoredOnParcel var riders: List<String>? = null
+class WorkDay(
+    @IgnoredOnParcel var riders: List<String>? = null,
 ) : Parcelable {
 
+    @Transient
     @IgnoredOnParcel
     private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
 
     @IgnoredOnParcel
     var date: String? = null
 
+    @Transient
     @IgnoredOnParcel
     var workDayDate: Date? = null
     set(value){
         field = value
-        this.date = dateFormat.format(value!!)
+        if(value != null)
+            this.date = dateFormat.format(value)
     }
     get() {
         return if(field == null && this.date != null)
             dateFormat.parse(this.date!!)
-        else null
+        else if (field == null && this.date == null)
+            null
+        else
+            field
     }
 
     fun insertOrUpdate(context : Context){

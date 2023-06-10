@@ -87,10 +87,9 @@ fun ShiftsScreenV1() {
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
 
         ButtonDraftAndSubmit({
-//            if(updatedWorkingDays.isNotEmpty()) {
-//                calendarManager.insertDays(updatedWorkingDays)
-//            }
-            println("SENDING UWD $updatedWorkingDays")
+            if(updatedWorkingDays.isNotEmpty()) {
+                calendarManager.insertDays(updatedWorkingDays)
+            }
         }) {
             Message(
                 senderID = globalUser!!.id,
@@ -102,18 +101,19 @@ fun ShiftsScreenV1() {
 
 
         WeekContent(selectedWeek, selectedMonth, selectedYear) { weekDay ->
-            println("WEEK CONTENT")
             // retrieve the selected date in a full format
             val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0)
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
             else
                 Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
+            println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
+
             var availableRidersList : List<User> = listOf()
             var ifNeededRidersList : List<User> = listOf()
 
             // filter all users that are available
-            availableRidersList = globalAllUsers.filter {  user ->
+            availableRidersList = globalAllUsers.filter { user ->
                 val permanent = user.permanentConstraints.firstOrNull {
                     it.dayOfWeek == selectedDateFormatted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
                     &&
@@ -152,8 +152,32 @@ fun ShiftsScreenV1() {
                 ifNeededRidersList = ifNeededRidersList,
                 selectedDate = selectedDateFormatted,
                 workingDays = workingDays
-            ){ riderId ->
+            ){ riderId, isAllocated ->
 
+                var riderList: ArrayList<String> = arrayListOf()
+                val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+                if(tmp != null) riderList = ArrayList(tmp.riders!!)
+
+
+
+
+                if(!isAllocated)
+                    riderList.remove(riderId)
+                else riderList.add(riderId)
+
+
+                val anyWd = updatedWorkingDays.any{ d -> d.workDayDate == selectedDateFormatted }
+
+                if(anyWd){
+                    val wd = updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                    wd.riders?.plus(riderList)?.distinct()
+                } else {
+                    val wd = WorkDay()
+                    wd.riders = riderList
+                    wd.workDayDate = selectedDateFormatted
+
+                    updatedWorkingDays.add(wd)
+                }
             }
         }
     }
@@ -167,9 +191,8 @@ fun RidersAvailabilitiesV1(
     ifNeededRidersList: List<User>,
     selectedDate: Date,
     workingDays: List<WorkDay>,
-    riderSelected : (String) -> Unit
+    riderSelected : (String, Boolean) -> Unit
 ) {
-    println("RIDERS AVAILABILITIES")
     val selectedWorkDay : WorkDay? = workingDays.firstOrNull { it.workDayDate == selectedDate }
 
     val allocatedRiderList : List<User> = if(selectedWorkDay != null)
@@ -184,20 +207,20 @@ fun RidersAvailabilitiesV1(
         ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
     ) }
 
+    println("RIDERS AVAILABILITIES - $selectedDate + $allocatedRiderList")
 
     Column {
         // Card with available riders
         if (availableRidersCheckboxList.isNotEmpty()) {
             TextLineSeparator(stringResource(R.string.available))
-            RidersCheckboxCard(availableRidersCheckboxList) { riderSelected(it) }
+            RidersCheckboxCard(availableRidersCheckboxList) { u, b -> riderSelected(u, b) }
         }
 
         // Section with only if_needed riders
         if (ifNeededRidersCheckboxList.isNotEmpty()) {
             TextLineSeparator(stringResource(R.string.if_needed))
-            RidersCheckboxCard(ifNeededRidersCheckboxList) { riderSelected(it) }
+            RidersCheckboxCard(ifNeededRidersCheckboxList) { u, b -> riderSelected(u, b) }
         }
-
     }
 }
 
@@ -369,7 +392,7 @@ fun TextLineSeparator(text: String) {
 @Composable
 fun RidersCheckboxCard(
     riderCheckBoxList: List<CheckBoxItem>,
-    riderSelected : (String) -> Unit
+    riderSelected : (String, Boolean) -> Unit
 ) {
     Card(
         elevation = mediumCardElevation,
@@ -391,14 +414,14 @@ fun RidersCheckboxCard(
                         .height(20.dp)
                         .clickable {
                             it.isChecked = !it.isChecked
-                            riderSelected(it.user.id!!)
+                            riderSelected(it.user.id!!, it.isChecked)
                         },
                 ) {
                     Checkbox(
                         checked = it.isChecked,
                         onCheckedChange = { isChecked ->
                             it.isChecked = isChecked
-                            riderSelected(it.user.id!!)
+                            riderSelected(it.user.id!!, it.isChecked)
                         },
                         modifier = Modifier.padding(start = 0.dp)
                     )
