@@ -199,13 +199,17 @@ fun RidersAvailabilitiesV1(
         globalAllUsers.filter { user -> user.id in selectedWorkDay.riders!!.toList() }
     else listOf()
 
-    val availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
-        availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-    ) }
+//    val availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
+//        availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+//    ) }
+//
+//    val ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
+//        ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+//    ) }
 
-    val ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
-        ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-    ) }
+    val availableRidersCheckboxList : List<CheckBoxItem> = availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+
+    val ifNeededRidersCheckboxList : List<CheckBoxItem> = ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
 
     println("RIDERS AVAILABILITIES - $selectedDate + $allocatedRiderList")
 
