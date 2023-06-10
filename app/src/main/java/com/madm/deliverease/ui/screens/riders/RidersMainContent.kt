@@ -28,6 +28,9 @@ import com.madm.deliverease.ui.widgets.ConfirmExitingApp
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
 import com.madm.deliverease.ui.widgets.CustomTopAppBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -107,10 +110,11 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    run {
+                    CoroutineScope(Dispatchers.Main).launch {
                         previousSelectedItem = selectedItem
-                        if(previousSelectedItem.position != item.position)
+                        if(item != previousSelectedItem){
                             selectedItem = item
+                        }
                     }
                 },
                 modifier = Modifier

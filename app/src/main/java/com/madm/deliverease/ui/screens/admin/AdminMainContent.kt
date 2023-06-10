@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -27,6 +28,9 @@ import com.madm.deliverease.ui.widgets.ConfirmExitingApp
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
 import com.madm.deliverease.ui.widgets.CustomTopAppBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -119,9 +123,9 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    run {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        previousSelectedItem = selectedItem
                         if(item != previousSelectedItem){
-                            previousSelectedItem = selectedItem
                             selectedItem = item
                         }
                     }
