@@ -74,8 +74,8 @@ fun ShiftsScreenV1() {
 
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.Start
     ) {
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
@@ -154,28 +154,29 @@ fun ShiftsScreenV1() {
                 workingDays = workingDays
             ){ riderId, isAllocated ->
 
-                var riderList: ArrayList<String> = arrayListOf()
-                val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
-                if(tmp != null) riderList = ArrayList(tmp.riders!!)
-
-
-
-
-                if(!isAllocated)
-                    riderList.remove(riderId)
-                else riderList.add(riderId)
-
+                val riderList: ArrayList<String> = arrayListOf()
 
                 val anyWd = updatedWorkingDays.any{ d -> d.workDayDate == selectedDateFormatted }
 
                 if(anyWd){
                     val wd = updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                    wd.riders?.plus(riderList)?.distinct()
+                    wd.riders!!.forEach { riderList.add(it) }
+
+                    if(!isAllocated) riderList.remove(riderId)
+                    else riderList.add(riderId)
+
+                    wd.riders = riderList.distinct()
                 } else {
+                    val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+
+                    if(tmp != null) tmp.riders!!.forEach{ riderList.add(it) }
+
+                    if(!isAllocated) riderList.remove(riderId)
+                    else riderList.add(riderId)
+
                     val wd = WorkDay()
                     wd.riders = riderList
                     wd.workDayDate = selectedDateFormatted
-
                     updatedWorkingDays.add(wd)
                 }
             }
@@ -227,6 +228,37 @@ fun RidersAvailabilitiesV1(
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
