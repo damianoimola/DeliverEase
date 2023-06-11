@@ -12,7 +12,6 @@ data class UserManager(var context: Context) {
     private var usersList : UsersList? = null
     private val s : Server = Server.getInstance(context)
 
-
     fun getUsers(callbackFunction: (MutableList<User>) -> Unit) {
         s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
             this.usersList = ret
@@ -40,6 +39,11 @@ data class User(
     fun registerOrUpdate(context : Context){
         val s : Server = Server.getInstance(context)
         s.makePostRequest<User>(this, Server.RequestKind.USERS)
+    }
+
+    fun unregister(context: Context){
+        val s : Server = Server.getInstance(context)
+        s.makeDeleteRequest<User>(this, Server.RequestKind.USERS)
     }
 }
 

@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.core.content.contentValuesOf
 import androidx.room.Room
 import com.github.kittinunf.fuel.core.isSuccessful
+import com.github.kittinunf.fuel.httpDelete
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.onError
@@ -56,6 +57,20 @@ class Server private constructor (context : Context) {
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpPost().body(requestBody).responseString { _, response, result ->
+            callbackFunction(response.isSuccessful)
+            if(!response.isSuccessful){
+                result.onError { println("Request failed: ${it.exception} - ${it.errorData} - ${it.response}") }
+            }
+        }
+    }
+
+
+    // BUILD DELETE REQUESTS
+    inline fun <T> makeDeleteRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) {
+        val requestBody = Gson().toJson(objectToSend)
+        val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
+
+        serverCompleteUrl.httpDelete().body(requestBody).responseString { _, response, result ->
             callbackFunction(response.isSuccessful)
             if(!response.isSuccessful){
                 result.onError { println("Request failed: ${it.exception} - ${it.errorData} - ${it.response}") }
