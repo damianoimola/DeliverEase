@@ -17,18 +17,44 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
+    var workDayList : List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
-    var isPlaying = rememberSaveable { mutableStateOf (false) }
+    val isPlaying = rememberSaveable { mutableStateOf (false) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
-    messagesManager.getReceivedMessages{ list: List<Message> ->
-        communicationList = list.filter { it.messageType == Message.MessageType.NOTIFICATION }.toMutableList()
+    val calendarManager : CalendarManager=
+        CalendarManager(LocalContext.current)
+
+    calendarManager.getDays { days : List<WorkDay> ->
+        workDayList = days
     }
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
-        shiftRequestList = list.filter { it.messageType == Message.MessageType.REQUEST }
+        communicationList = list
+            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+            .sortedByDescending { it.messageDate }
+            .toMutableList()
+    }
+
+    messagesManager.getReceivedMessages{ list: List<Message> ->
+        shiftRequestList = list.filter {
+            it.messageType == Message.MessageType.REQUEST
+            &&
+            it.senderID != globalUser!!.id
+            &&
+            // index 0 = offered day, index 1 = wanted day (by the sender)
+            (
+                workDayList.any { d -> globalUser!!.id in d.riders!! }
+                &&
+                (
+                    it.body!!.split("#")[0] !in workDayList.filter { d -> globalUser!!.id in d.riders!! }.map { d -> d.date }.toList()
+                    &&
+                    it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }.map { d -> d.date }.toList()
+                )
+            )
+        }
     }
 
 

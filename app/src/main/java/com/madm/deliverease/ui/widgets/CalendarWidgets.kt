@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
+import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
@@ -75,6 +76,7 @@ fun Int.integerToTwoDigit() : String {
     else "$this"
 }
 
+
 fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
     val lastOfMonth = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth())
@@ -95,6 +97,9 @@ fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
 
     return mondays
 }
+
+
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -117,7 +122,7 @@ fun MonthSelector(
                 "${MonthMap[selectedMonth]} $currentYear"
             else
                 "${MonthMap[selectedMonth]} ${currentYear + 1}",
-            onValueChange = {},
+            onValueChange = { },
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = TextFieldDefaults.textFieldColors(
@@ -204,24 +209,21 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
 
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
-//    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
-
     // list of all mondays (first day of week) of the selected month
-    val mondaysList = getMondays(
-        selectedYear,
-        (selectedMonth + 1)%12,
-        afterCurrentDay
-    )
-        .toList()
-        .toIntArray()
-        .map { i -> i.integerToTwoDigit() }
+    val mondaysList =
+        getMondays(selectedYear, (selectedMonth % 12) + 1, afterCurrentDay)
+            .toList()
+            .toIntArray()
+            .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    // TODO: secondo me serve il %12 (DAMIANO)
-    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
+    var daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
 
     // the selected week
-    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek-1]) }
+    var selectedWeekString = mondaysList[selectedWeek-1]
+    println("################# SELECTED WEEK $selectedWeek")
+    println("################# MONDAY LIST $mondaysList")
+    println("################# SELECTED WEEK STRING $selectedWeekString")
 
     Row (
         modifier = Modifier
@@ -251,7 +253,13 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
                 border = BorderStroke(width = 1.dp, color = if (selectedWeekString == it) CustomTheme.colors.primary else CustomTheme.colors.tertiary),
                 shape = RoundedCornerShape(20)
             ) {
-                Text(text = it)
+                Text(
+                    text = it,
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = gilroy
+                    )
+                )
             }
         }
     }

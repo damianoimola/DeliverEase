@@ -38,15 +38,22 @@ fun CalendarScreen(){
 
     //variable used to change interface when the change shift button is clicked
     val swap = remember{ mutableStateOf(false)}
+
     //variable used to store the date of the day we would like to trade
-    var clickedWeekday: WeekDay? by remember { mutableStateOf(null) }
+    var clickedWeekday: WeekDay? by remember {
+        mutableStateOf(null)
+    }
+
     //variable used to store the date of the day we would like to change
-    var previousWeekDay: WeekDay ? by remember { mutableStateOf(null) }
+    var previousWeekDay: WeekDay ? by remember {
+        mutableStateOf(null)
+    }
 
     // getting API data
     var shiftList : List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
 
-    val calendarManager = CalendarManager(LocalContext.current)
+    val calendarManager : CalendarManager =
+        CalendarManager(LocalContext.current)
 
     calendarManager.getDays{ list: List<WorkDay> ->
         shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }
@@ -66,6 +73,7 @@ fun CalendarScreen(){
                 currentYear + 1
             else currentYear
             selectedMonth = month
+            selectedWeek = 1
         }
         //horizontal weekList
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
@@ -97,9 +105,7 @@ fun CalendarScreen(){
                     previousWeekDay = weekDay
                 }
 
-            )  {
-                if(it) showCustomDialog = true else showCustomDialog = false
-            }
+            )  { showCustomDialog = it }
             swap.value = false
         }
     }
@@ -117,7 +123,7 @@ fun CalendarScreen(){
  */
 @Composable
 fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, setWeekDay: ()->Unit, setPreviousWeekday: () -> Unit, ShowDialog: (Boolean) -> Unit){
-    // TODO Ralisin: set theme
+
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20))

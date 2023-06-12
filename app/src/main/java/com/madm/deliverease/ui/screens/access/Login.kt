@@ -1,6 +1,10 @@
 package com.madm.deliverease.ui.screens.access
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,12 +17,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.User
@@ -30,6 +37,8 @@ import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
 
+
+
 @Composable
 fun LoginScreen(
     goToRiderHome: () -> Unit,
@@ -38,6 +47,7 @@ fun LoginScreen(
     println("########### LOGIN") // TODO Ralisin: remove on deploy version
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
+
 
     Column(
         modifier = Modifier
@@ -131,8 +141,8 @@ fun ClassicLogin(
                 focusManager.clearFocus()
                 isError = false
                 isPlaying.value = true
-                val userManager = UserManager(context)
-                userManager.getUsers { list ->
+                val userManager: UserManager = UserManager(context)
+                val isOnline = userManager.getUsers { list ->
                     user.value = list.firstOrNull { user ->
                         (user.email == username.value) && (user.password == password.value)
                     }
@@ -143,10 +153,13 @@ fun ClassicLogin(
                     Thread.sleep(2500)
                     isError = (user.value == null)
                 }
+
+                if(!isOnline) isPlaying.value = false
             }
         )
     }
 }
+
 
 @Preview
 @Composable
@@ -203,3 +216,4 @@ fun saveAccess(
 
     editor.apply()
 }
+

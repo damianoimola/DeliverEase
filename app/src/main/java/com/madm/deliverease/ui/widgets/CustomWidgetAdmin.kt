@@ -2,7 +2,6 @@ package com.madm.deliverease.ui.widgets
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
@@ -32,7 +31,9 @@ val density: Float get() = Resources.getSystem().displayMetrics.density
 @Composable
 fun SwipeToRevealRiderList(
     riderList: ArrayList<User>,
-    maxHeight: Dp
+    maxHeight: Dp,
+    deleteButtonClicked: () -> Unit = {},
+    editButtonClicked: (User) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -52,9 +53,11 @@ fun SwipeToRevealRiderList(
                         isRevealed = false
                         rider.unregister(context)
                         riderList.remove(rider)
+                        deleteButtonClicked()
                     }, // TODO Ralisin: remove rider from Rest API
                     onEdit = {
                         isRevealed = false
+                        editButtonClicked(rider)
                         Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show()
                     } // TODO Ralisin: implement edit rider option
                 )

@@ -2,6 +2,7 @@ package com.madm.common_libs.model
 
 import android.content.Context
 import android.os.Parcelable
+import com.madm.common_libs.network.NetworkConnection
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -16,11 +17,27 @@ data class CalendarManager (
     private val s: Server = Server.getInstance(context)
 
 
-    fun getDays(callbackFunction: (List<WorkDay>) -> Unit) {
-        s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
-            this.calendar = ret
-            callbackFunction(this.calendar!!.days)
+
+    fun insertDays(workDays : List<WorkDay>) : Boolean {
+        val s : Server = Server.getInstance(context)
+
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
+            return true
         }
+        return false
+    }
+
+
+    fun getDays(callbackFunction: (List<WorkDay>) -> Unit) : Boolean {
+        if (NetworkConnection.isUserOnline(context)) {
+            s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
+                this.calendar = ret
+                callbackFunction(this.calendar!!.days)
+            }
+            return true
+        }
+        return false
     }
 }
 
@@ -30,30 +47,41 @@ data class Calendar(
 
 
 @Parcelize
-data class WorkDay(
-    @IgnoredOnParcel var riders: List<String>? = null
+class WorkDay(
+    @IgnoredOnParcel var riders: List<String>? = null,
 ) : Parcelable {
 
+    @Transient
     @IgnoredOnParcel
     private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
 
     @IgnoredOnParcel
     var date: String? = null
 
+    @Transient
     @IgnoredOnParcel
     var workDayDate: Date? = null
     set(value){
         field = value
-        this.date = dateFormat.format(value!!)
+        if(value != null)
+            this.date = dateFormat.format(value)
     }
     get() {
         return if(field == null && this.date != null)
             dateFormat.parse(this.date!!)
-        else null
+        else if (field == null && this.date == null)
+            null
+        else
+            field
     }
 
-    fun insertOrUpdate(context : Context){
+    fun insertOrUpdate(context : Context) : Boolean{
         val s : Server = Server.getInstance(context)
-        s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
+
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
+            return true
+        }
+        return false
     }
 }

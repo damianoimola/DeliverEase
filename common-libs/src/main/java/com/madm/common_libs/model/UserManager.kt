@@ -2,6 +2,7 @@ package com.madm.common_libs.model
 
 import android.content.Context
 import android.os.Parcelable
+import com.madm.common_libs.network.NetworkConnection
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -12,12 +13,17 @@ data class UserManager(var context: Context) {
     private var usersList : UsersList? = null
     private val s : Server = Server.getInstance(context)
 
-    fun getUsers(callbackFunction: (MutableList<User>) -> Unit) {
-        s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
-            this.usersList = ret
 
-            callbackFunction(this.usersList!!.users.toMutableList())
+    fun getUsers(callbackFunction: (MutableList<User>) -> Unit) : Boolean {
+        if(NetworkConnection.isUserOnline(this.context)) {
+            s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
+                this.usersList = ret
+
+                callbackFunction(this.usersList!!.users.toMutableList())
+            }
+            return true
         }
+        return false
     }
 }
 
@@ -36,9 +42,14 @@ data class User(
     @IgnoredOnParcel var permanentConstraints: ArrayList<PermanentConstraint> = arrayListOf(),
     @IgnoredOnParcel var nonPermanentConstraints: ArrayList<NonPermanentConstraint> = arrayListOf()
 ) : Parcelable {
-    fun registerOrUpdate(context : Context){
+    fun registerOrUpdate(context : Context) : Boolean {
         val s : Server = Server.getInstance(context)
-        s.makePostRequest<User>(this, Server.RequestKind.USERS)
+
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makePostRequest<User>(this, Server.RequestKind.USERS)
+            return true
+        }
+        return false
     }
 
     fun unregister(context: Context){
