@@ -24,10 +24,10 @@ fun PizzaLoader(isPlaying: MutableState<Boolean>){
     val progress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = isPlaying.value)
-    LaunchedEffect(key1 = progress){
+    /*LaunchedEffect(key1 = progress){
         if(progress == 1f)
             isPlaying.value = false
-    }
+    }*/
 
     Row(
         modifier = Modifier.fillMaxWidth(),
