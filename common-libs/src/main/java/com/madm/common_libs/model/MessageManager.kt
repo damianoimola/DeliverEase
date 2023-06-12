@@ -15,25 +15,17 @@ data class MessagesManager(var receiverId : String, var context: Context){
     private val s : Server = Server.getInstance(context)
 
     fun getAllMessages(callbackFunction: (List<Message>?) -> Unit) : Boolean {
-        if(NetworkConnection.isUserOnline(context)) {
-            s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
+        return s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
                 this.messageList = ret
                 callbackFunction(this.messageList?.messages)
             }
-            return true
-        }
-        return false
     }
 
     fun getReceivedMessages(callbackFunction: (List<Message>) -> Unit) : Boolean {
-        if(NetworkConnection.isUserOnline(context)) {
-            s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
+        return s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
                 this.messageList = ret
                 callbackFunction(this.messageList!!.messages.filter { it.receiverID == this.receiverId || it.receiverID == "0" })
             }
-            return true
-        }
-        return false
     }
 }
 
@@ -86,11 +78,7 @@ data class Message(
     fun send(context : Context, callbackFunction: (Boolean) -> Unit = { }) : Boolean{
         val s : Server = Server.getInstance(context)
 
-        if(NetworkConnection.isUserOnline(context)) {
-            s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES, callbackFunction)
-            return true
-        }
-        return false
+        return s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES, callbackFunction)
     }
 }
 

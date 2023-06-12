@@ -15,15 +15,11 @@ data class UserManager(var context: Context) {
 
 
     fun getUsers(callbackFunction: (MutableList<User>) -> Unit) : Boolean {
-        if(NetworkConnection.isUserOnline(this.context)) {
-            s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
+        return s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
                 this.usersList = ret
 
                 callbackFunction(this.usersList!!.users.toMutableList())
             }
-            return true
-        }
-        return false
     }
 }
 
@@ -45,16 +41,12 @@ data class User(
     fun registerOrUpdate(context : Context) : Boolean {
         val s : Server = Server.getInstance(context)
 
-        if(NetworkConnection.isUserOnline(context)) {
-            s.makePostRequest<User>(this, Server.RequestKind.USERS)
-            return true
-        }
-        return false
+        return s.makePostRequest<User>(this, Server.RequestKind.USERS)
     }
 
-    fun unregister(context: Context){
+    fun unregister(context: Context) : Boolean {
         val s : Server = Server.getInstance(context)
-        s.makeDeleteRequest<User>(this, Server.RequestKind.USERS)
+        return s.makeDeleteRequest<User>(this, Server.RequestKind.USERS)
     }
 }
 
