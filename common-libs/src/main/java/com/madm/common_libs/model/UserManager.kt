@@ -2,6 +2,7 @@ package com.madm.common_libs.model
 
 import android.content.Context
 import android.os.Parcelable
+import com.madm.common_libs.network.NetworkConnection
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -13,12 +14,12 @@ data class UserManager(var context: Context) {
     private val s : Server = Server.getInstance(context)
 
 
-    fun getUsers(callbackFunction: (MutableList<User>) -> Unit) {
-        s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
-            this.usersList = ret
+    fun getUsers(callbackFunction: (MutableList<User>) -> Unit) : Boolean {
+        return s.makeGetRequest<UsersList>(Server.RequestKind.USERS) { ret ->
+                this.usersList = ret
 
-            callbackFunction(this.usersList!!.users.toMutableList())
-        }
+                callbackFunction(this.usersList!!.users.toMutableList())
+            }
     }
 }
 
@@ -37,9 +38,15 @@ data class User(
     @IgnoredOnParcel var permanentConstraints: ArrayList<PermanentConstraint> = arrayListOf(),
     @IgnoredOnParcel var nonPermanentConstraints: ArrayList<NonPermanentConstraint> = arrayListOf()
 ) : Parcelable {
-    fun registerOrUpdate(context : Context){
+    fun registerOrUpdate(context : Context) : Boolean {
         val s : Server = Server.getInstance(context)
-        s.makePostRequest<User>(this, Server.RequestKind.USERS)
+
+        return s.makePostRequest<User>(this, Server.RequestKind.USERS)
+    }
+
+    fun unregister(context: Context) : Boolean {
+        val s : Server = Server.getInstance(context)
+        return s.makeDeleteRequest<User>(this, Server.RequestKind.USERS)
     }
 }
 

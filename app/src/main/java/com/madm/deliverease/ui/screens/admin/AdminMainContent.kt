@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -22,11 +23,15 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.madm.deliverease.R
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.widgets.ConfirmExitingApp
 import com.madm.deliverease.ui.widgets.CustomBottomAppBar
 import com.madm.deliverease.ui.widgets.CustomNavItem
 import com.madm.deliverease.ui.widgets.CustomTopAppBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -71,10 +76,10 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
         ConfirmExitingApp() { showExitingDialog = false }
 
     Scaffold(
+        backgroundColor = CustomTheme.colors.background,
+        topBar = { CustomTopAppBar() },
         content = {
-            Box(modifier = Modifier
-                .padding(it)
-            ){
+            Box(Modifier.padding(it)){
                 // navigation host holds all of the navigation destinations within the app
                 // calling "navController.navigate("home")" you can travel through app
                 // It can handle parameters.
@@ -101,7 +106,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                     }
                     composable("shift") {
                         //selectedItem = navItems[1]
-                        ShiftsScreen()
+                        ShiftsScreenV1()
                     }
                     composable("riders") {
                         //selectedItem = navItems[2]
@@ -119,9 +124,9 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    run {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        previousSelectedItem = selectedItem
                         if(item != previousSelectedItem){
-                            previousSelectedItem = selectedItem
                             selectedItem = item
                         }
                     }
@@ -130,9 +135,6 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                     .clip(RoundedCornerShape(20, 20, 0, 0))
                     .fillMaxWidth()
             )
-        },
-        topBar = {
-            CustomTopAppBar()
         }
     )
     BackHandler(enabled = true) {

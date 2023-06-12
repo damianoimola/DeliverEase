@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.widgets.*
 import java.time.LocalDate
 import java.time.ZoneId
@@ -61,7 +62,6 @@ fun ShiftPreferenceScreen(){
     val context = LocalContext.current
 
     Column {
-//        MyPageHeader()
         MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
             selectedYear = if (isNextYear)
                 currentYear + 1
@@ -180,19 +180,31 @@ fun ShiftOptions(
                                 onOptionSelected(text)
                                 actualOption = radioOptions.indexOf(text)
                             },
-                            modifier = Modifier.padding(start = 4.dp)
+                            modifier = Modifier.padding(start = 4.dp),
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = CustomTheme.colors.secondary,
+                                unselectedColor = CustomTheme.colors.secondaryVariant
+                            )
                         )
                     } else {
                         Checkbox(
                             checked = checkedState,
-                            onCheckedChange = {
-                                checkedState = it
-                            },
-                            modifier = Modifier.padding(start = 4.dp)
+                            onCheckedChange = { checkedState = it },
+                            modifier = Modifier.padding(start = 4.dp),
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = CustomTheme.colors.secondary,
+                                uncheckedColor = CustomTheme.colors.secondaryVariant,
+                                checkmarkColor = CustomTheme.colors.onSecondary
+                            )
                         )
                     }
 
-                    Text(text = text, modifier = Modifier.padding(start = 4.dp))
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(start = 4.dp),
+                        style = CustomTheme.typography.body1,
+                        color = CustomTheme.colors.onBackground
+                    )
                 }
             }
 
@@ -208,11 +220,17 @@ fun ShiftOptions(
                                 checkedState
                             )
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = CustomTheme.colors.primary,
+                            contentColor = CustomTheme.colors.onPrimary,
+                        )
                     ) {
                         Text(
                             stringResource(R.string.save_your_preference),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onPrimary
                         )
                     }
                 }

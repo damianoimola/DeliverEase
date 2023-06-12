@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.widgets
 
 import android.os.Parcelable
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,10 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.R
+import com.madm.deliverease.ui.theme.CustomTheme
+import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
@@ -121,9 +126,11 @@ fun MonthSelector(
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
+                backgroundColor = CustomTheme.colors.backgroundVariant,
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                textColor = CustomTheme.colors.onBackgroundVariant,
+                trailingIconColor = CustomTheme.colors.onBackgroundVariant
             ),
             modifier = Modifier.width(IntrinsicSize.Min)
         )
@@ -131,7 +138,9 @@ fun MonthSelector(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.width(IntrinsicSize.Min)
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .background(CustomTheme.colors.backgroundVariant)
         ) {
             months.forEach { option ->
                 // menu item
@@ -140,22 +149,27 @@ fun MonthSelector(
                         isNextYearSelected = option < months[0]
                         function(option, isNextYearSelected)
                         expanded = false
-                    }
+                    },
                 ) {
                     if(option < months[0]) {
-                        Text(text = "${MonthMap[option]} ${currentYear + 1}")
+                        Text(
+                            "${MonthMap[option]} ${currentYear + 1}",
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onBackgroundVariant
+                        )
                     }
                     else {
-                        Text(text = "${MonthMap[option]} $currentYear")
+                        Text(
+                            "${MonthMap[option]} $currentYear",
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onBackgroundVariant
+                        )
                     }
                 }
             }
         }
     }
 }
-
-
-
 
 @Composable
 fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit){
@@ -173,11 +187,18 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(nonePadding, smallPadding)
             ) {
-                Text(text = "${day.number} ${day.name}")
-                Divider(modifier = Modifier
-                    .fillMaxWidth()
-                    .width(2.dp)
-                    .padding(start = smallPadding))
+                Text(
+                    "${day.number} ${day.name}",
+                    style = CustomTheme.typography.body1,
+                    color = CustomTheme.colors.onBackground
+                )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .width(2.dp)
+                        .padding(start = smallPadding),
+                    color = CustomTheme.colors.onBackground
+                )
             }
 
             content(day)
@@ -188,30 +209,26 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
 
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
-//    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
-
     // list of all mondays (first day of week) of the selected month
-    val mondaysList = getMondays(
-        selectedYear,
-        (selectedMonth + 1)%12,
-        afterCurrentDay
-    )
-        .toList()
-        .toIntArray()
-        .map { i -> i.integerToTwoDigit() }
+    val mondaysList =
+        getMondays(selectedYear, (selectedMonth % 12) + 1, afterCurrentDay)
+            .toList()
+            .toIntArray()
+            .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    // TODO: secondo me serve il %12 (DAMIANO)
-    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
+    var daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
 
     // the selected week
-    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek-1]) }
+    var selectedWeekString = mondaysList[selectedWeek-1]
+    println("################# SELECTED WEEK $selectedWeek")
+    println("################# MONDAY LIST $mondaysList")
+    println("################# SELECTED WEEK STRING $selectedWeekString")
 
     Row (
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
-
     ){
         mondaysList.forEach {
             Button(
@@ -220,26 +237,28 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
                     selectedWeekString = it
                     // update the list of days of the selected week
                     daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
-
                 },
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 6.dp,
-                    pressedElevation = 8.dp,
-                    disabledElevation = 2.dp
-                ),
+//                elevation = ButtonDefaults.elevation(
+//                    defaultElevation = 6.dp,
+//                    pressedElevation = 8.dp,
+//                    disabledElevation = 2.dp
+//                ),
                 modifier = Modifier
                     .padding(smallPadding, smallPadding)
                     .clip(shape = RoundedCornerShape(20)),
                 colors = ButtonDefaults.buttonColors(
-                    if (selectedWeekString == it) Color(0xFFFF9800)
-                    else Color(0xFFFF5722)
+                    backgroundColor = if (selectedWeekString == it) CustomTheme.colors.tertiary else CustomTheme.colors.primary,
+                    contentColor = if (selectedWeekString == it) CustomTheme.colors.onTertiary else CustomTheme.colors.onPrimary,
                 ),
-                border = BorderStroke(width = 1.dp, color = Color.Red),
+                border = BorderStroke(width = 1.dp, color = if (selectedWeekString == it) CustomTheme.colors.primary else CustomTheme.colors.tertiary),
                 shape = RoundedCornerShape(20)
             ) {
                 Text(
                     text = it,
-                    color = Color.White
+                    color = Color.White,
+                    style = TextStyle(
+                        fontFamily = gilroy
+                    )
                 )
             }
         }
@@ -250,19 +269,14 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
         horizontalArrangement = Arrangement.Start
     ){
         Text(
-            text = "Week: ",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Normal
-            )
+            text = stringResource(R.string.week),
+            style = CustomTheme.typography.h4,
+            color = CustomTheme.colors.onBackground
         )
         Text(
             text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFF9800)
-            )
+            style = CustomTheme.typography.h2,
+            color = CustomTheme.colors.tertiary
         )
     }
 }

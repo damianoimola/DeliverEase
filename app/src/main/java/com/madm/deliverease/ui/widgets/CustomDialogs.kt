@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun HireNewRiderDialog(onDismiss: () -> Unit) {
+fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     var riderName by rememberSaveable { mutableStateOf("") }
     var riderSurname by rememberSaveable { mutableStateOf("") }
@@ -128,7 +128,7 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
 
                                 newUser.registerOrUpdate(context)       // updating server info
                                 onDismiss()
-                                globalAllUsers.add(newUser)             // updating ui with the new rider
+                                callbackFunction(newUser)
 
                                 Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
                             }
@@ -145,6 +145,129 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
         }
     }
 }
+
+
+@Composable
+fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    var riderName by rememberSaveable { mutableStateOf(user.name!!) }
+    var riderSurname by rememberSaveable { mutableStateOf(user.surname!!) }
+    var riderEmail by rememberSaveable { mutableStateOf(user.email!!) }
+    var riderPassword by rememberSaveable { mutableStateOf(user.password!!) }
+
+    var isNameError by rememberSaveable { mutableStateOf(false) }
+    var isSurnameError by rememberSaveable { mutableStateOf(false) }
+    var isEmailError by rememberSaveable { mutableStateOf(false) }
+    var isPasswordError by rememberSaveable { mutableStateOf(false) }
+
+
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = false
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .wrapContentWidth()
+                .wrapContentHeight(),
+            shape = MaterialTheme.shapes.large
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                // DialogBox title
+                Row (modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Edit Rider",
+                        style = TextStyle(
+                            fontFamily = gilroy,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
+
+                TextField(
+                    value = riderName,
+                    onValueChange = { riderName = it },
+                    placeholder = { Text(text = "Name*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isNameError
+                )
+
+                TextField(
+                    value = riderSurname,
+                    onValueChange = { riderSurname = it },
+                    placeholder = { Text(text = "Surname*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isSurnameError
+                )
+
+                TextField(
+                    value = riderEmail,
+                    onValueChange = { riderEmail = it },
+                    placeholder = { Text(text = "E-mail*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isEmailError
+                )
+
+                TextField(
+                    value = riderPassword,
+                    onValueChange = { riderPassword = it },
+                    placeholder = { Text(text = "Password*") },
+                    modifier = Modifier.padding(smallPadding),
+                    isError = isPasswordError
+                )
+
+                // Buttons
+                Row (modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { onDismiss() },
+                        content = { Text(text = "Close") },
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(8.dp)
+                    )
+                    Button(
+                        onClick = {
+                            isNameError = riderName.isEmpty()
+                            isSurnameError = riderSurname.isEmpty()
+                            isEmailError = riderEmail.isEmpty()
+                            isPasswordError = riderPassword.isEmpty()
+
+                            if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
+                                val newUser = User(
+                                    id = user.id,
+                                    name = riderName,
+                                    surname = riderSurname,
+                                    email = riderEmail,
+                                    password = riderPassword,
+                                    permanentConstraints = user.permanentConstraints,
+                                    nonPermanentConstraints = user.nonPermanentConstraints
+                                )
+
+                                newUser.registerOrUpdate(context)       // updating server info
+                                onDismiss()
+                                callbackFunction(user, newUser)
+
+                                Toast.makeText(context, "MODIFIED, HURRAY!!", Toast.LENGTH_SHORT).show()
+                            }
+                            else
+                                Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
+                        },
+                        content = { Text(text = "Hire") },
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(8.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 
 
 @Composable

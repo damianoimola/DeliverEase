@@ -36,38 +36,6 @@ import com.madm.deliverease.ui.theme.*
 import kotlin.system.exitProcess
 
 @Composable
-fun MyPageHeader(modifier: Modifier = Modifier){
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = smallPadding),
-    ){
-        Image(
-            painter = painterResource(id = R.drawable.logo_dark_icon_hd),
-            contentDescription = "Logo",//stringResource(R.string.logo),
-            modifier = Modifier
-                .size((LocalConfiguration.current.screenWidthDp.dp), 50.dp)
-                .padding(0.dp),
-            contentScale = ContentScale.FillHeight,
-            alignment = Alignment.CenterStart,
-        )
-        Text(
-            text = stringResource(R.string.app_name),
-            modifier = Modifier.fillMaxWidth(),
-            style = TextStyle(
-                textAlign = TextAlign.Center,
-                fontSize = 35.sp,
-                fontFamily = gilroy,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black // TODO Ralisin: set text color
-            )
-
-        )
-    }
-}
-
-
-@Composable
 fun MyOutlinedTextField(
     field: MutableState<String>,
     isError: Boolean,
@@ -79,11 +47,6 @@ fun MyOutlinedTextField(
         onValueChange = { field.value = it },
         modifier = Modifier
             .padding(bottom = smallPadding)
-            /*.border(
-                BorderStroke(2.dp, Color(0xFFD8D8D8)),
-                shape = RoundedCornerShape(50)
-            )
-            .clip(RoundedCornerShape(50))*/
             .fillMaxWidth(),
         label = {
             Text(text = label)
@@ -98,18 +61,17 @@ fun MyOutlinedTextField(
         ),
         singleLine = true,
         maxLines = 1,
-        textStyle = TextStyle(
-            fontFamily = gilroy,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xff131b31) // TODO Ralisin: set outlinedTextField color
-        ),
+        textStyle = CustomTheme.typography.body1,
         shape = RoundedCornerShape(20.dp),
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color(0xff131b31), // TODO Ralisin: set text field color
-            backgroundColor = Color.Transparent,
-            cursorColor = Color(0xff131b31),
-            focusedIndicatorColor = Color.Gray
+            textColor = CustomTheme.colors.onBackground,
+            backgroundColor = CustomTheme.colors.surface,
+            cursorColor = CustomTheme.colors.onBackground,
+            focusedLabelColor = CustomTheme.colors.onBackground,
+            focusedIndicatorColor = CustomTheme.colors.onBackground,
+            unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+            unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+            placeholderColor = CustomTheme.colors.onBackgroundVariant
         ),
         isError = isError,
     )
@@ -125,21 +87,25 @@ fun MyButton(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = mediumPadding, end = mediumPadding, bottom = mediumPadding)
-            .border(BorderStroke(2.dp, Color(0xFFD8D8D8)), shape = RoundedCornerShape(50)),
-        shape = Shapes.medium,//RoundedCornerShape(6.dp),
+            .padding(start = mediumPadding, end = mediumPadding, bottom = mediumPadding),
+        shape = RoundedCornerShape(50),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
-            contentColor = Color(0xff131b31), // TODO Ralisin: button color
+            backgroundColor = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground
         ),
-        elevation = ButtonDefaults.elevation(0.dp, 0.dp)
+        elevation = ButtonDefaults.elevation(0.dp, 0.dp),
+        border = BorderStroke(1.dp, CustomTheme.colors.onBackground)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = imgId),
             contentDescription = text,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
         )
-        Text(text = text, modifier = Modifier.padding(6.dp))
+        Text(
+            text = text,
+            modifier = Modifier.padding(6.dp),
+            style = CustomTheme.typography.button
+        )
     }
 }
 
@@ -154,15 +120,14 @@ fun LoginButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = smallPadding)
-            .clip(RoundedCornerShape(50))
-            .border(
-                BorderStroke(2.dp, Color(0xFFD8D8D8)),
-                shape = RoundedCornerShape(50)
-            ),
-        shape = RoundedCornerShape(6.dp),
+            .clip(RoundedCornerShape(50)),
+        border = BorderStroke(1.dp, CustomTheme.colors.onBackground),
+        shape = RoundedCornerShape(50.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
-            contentColor = Color(0xff131b31)
+            backgroundColor = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground,
+            disabledBackgroundColor = CustomTheme.colors.backgroundVariant,
+            disabledContentColor = CustomTheme.colors.onBackgroundVariant
         ),
         elevation = ButtonDefaults.elevation(0.dp, 0.dp),
         enabled = username.value.isNotBlank() && password.value.isNotBlank(),

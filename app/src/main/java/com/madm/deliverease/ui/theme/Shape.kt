@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
 
 val Shapes = Shapes(
@@ -9,3 +10,5 @@ val Shapes = Shapes(
     medium = RoundedCornerShape(6.dp),
     large = RoundedCornerShape(8.dp)
 )
+
+val LocalShapes = staticCompositionLocalOf { Shapes }
