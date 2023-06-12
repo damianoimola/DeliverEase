@@ -16,6 +16,7 @@ import com.github.kittinunf.result.onError
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.madm.common_libs.R
+import com.madm.common_libs.network.NetworkConnection
 
 
 class Server private constructor (context : Context) {
@@ -55,7 +56,11 @@ class Server private constructor (context : Context) {
 
 
     // BUILD POST REQUESTS
-    inline fun <T> makePostRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) {
+    inline fun <T> makePostRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }): Boolean {
+
+        if(!NetworkConnection.isUserOnline(context))
+            return false
+
         val requestBody = Gson().toJson(objectToSend)
 
         println("BODY REQUEST: $requestBody")
@@ -67,11 +72,17 @@ class Server private constructor (context : Context) {
                 result.onError { println("Request failed: ${it.exception} - ${it.errorData} - ${it.response}") }
             }
         }
+
+        return true
     }
 
 
     // BUILD DELETE REQUESTS
-    inline fun <T> makeDeleteRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) {
+    inline fun <T> makeDeleteRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) : Boolean {
+
+        if(!NetworkConnection.isUserOnline(context))
+            return false
+
         val requestBody = Gson().toJson(objectToSend)
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
@@ -81,11 +92,17 @@ class Server private constructor (context : Context) {
                 result.onError { println("Request failed: ${it.exception} - ${it.errorData} - ${it.response}") }
             }
         }
+
+        return true
     }
 
 
     // BUILD GET REQUESTS
-    inline fun <reified T> makeGetRequest(kind : RequestKind, crossinline callbackFunction: (T) -> Unit){
+    inline fun <reified T> makeGetRequest(kind : RequestKind, crossinline callbackFunction: (T) -> Unit) : Boolean {
+
+        if(!NetworkConnection.isUserOnline(context))
+            return false
+
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpGet().responseString { _, response, result ->
@@ -96,6 +113,8 @@ class Server private constructor (context : Context) {
                 result.onError { println("Request failed: ${it.exception}") }
             }
         }
+
+        return true
     }
 
 
@@ -104,7 +123,11 @@ class Server private constructor (context : Context) {
     inline fun <reified T> makeListsGetRequest(
         kind : RequestKind,
         crossinline callbackFunction: (List<T>) -> Unit
-    ) {
+    ) : Boolean {
+
+        if(!NetworkConnection.isUserOnline(context))
+            return false
+
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpGet().responseString { _, response, result ->
@@ -116,5 +139,7 @@ class Server private constructor (context : Context) {
                 result.onError { println("Request failed: ${it.exception}") }
             }
         }
+
+        return true
     }
 }

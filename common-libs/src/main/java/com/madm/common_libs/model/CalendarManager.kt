@@ -21,23 +21,16 @@ data class CalendarManager (
     fun insertDays(workDays : List<WorkDay>) : Boolean {
         val s : Server = Server.getInstance(context)
 
-        if(NetworkConnection.isUserOnline(context)) {
-            s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
-            return true
-        }
-        return false
+        return s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
     }
 
 
     fun getDays(callbackFunction: (List<WorkDay>) -> Unit) : Boolean {
-        if (NetworkConnection.isUserOnline(context)) {
-            s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
+
+        return s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
                 this.calendar = ret
                 callbackFunction(this.calendar!!.days)
             }
-            return true
-        }
-        return false
     }
 }
 
@@ -78,10 +71,6 @@ class WorkDay(
     fun insertOrUpdate(context : Context) : Boolean{
         val s : Server = Server.getInstance(context)
 
-        if(NetworkConnection.isUserOnline(context)) {
-            s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
-            return true
-        }
-        return false
+        return s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
     }
 }
