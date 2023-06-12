@@ -50,7 +50,8 @@ fun SwipeToRevealRiderList(
                     actionIconSize = 56.dp, // TODO Ralisin: want we leave constant size here?
                     onDelete = {
                         isRevealed = false
-                        rider.unregister(context); riderList.remove(rider)
+                        rider.unregister(context)
+                        riderList.remove(rider)
                     }, // TODO Ralisin: remove rider from Rest API
                     onEdit = {
                         isRevealed = false
