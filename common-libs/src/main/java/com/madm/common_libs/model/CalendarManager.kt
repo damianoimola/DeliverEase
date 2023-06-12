@@ -2,6 +2,7 @@ package com.madm.common_libs.model
 
 import android.content.Context
 import android.os.Parcelable
+import com.madm.common_libs.network.NetworkConnection
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -17,17 +18,26 @@ data class CalendarManager (
 
 
 
-    fun insertDays(workDays : List<WorkDay>) {
+    fun insertDays(workDays : List<WorkDay>) : Boolean {
         val s : Server = Server.getInstance(context)
-        s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
+
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
+            return true
+        }
+        return false
     }
 
 
-    fun getDays(callbackFunction: (List<WorkDay>) -> Unit) {
-        s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
-            this.calendar = ret
-            callbackFunction(this.calendar!!.days)
+    fun getDays(callbackFunction: (List<WorkDay>) -> Unit) : Boolean {
+        if (NetworkConnection.isUserOnline(context)) {
+            s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
+                this.calendar = ret
+                callbackFunction(this.calendar!!.days)
+            }
+            return true
         }
+        return false
     }
 }
 
@@ -65,8 +75,13 @@ class WorkDay(
             field
     }
 
-    fun insertOrUpdate(context : Context){
+    fun insertOrUpdate(context : Context) : Boolean{
         val s : Server = Server.getInstance(context)
-        s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
+
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
+            return true
+        }
+        return false
     }
 }

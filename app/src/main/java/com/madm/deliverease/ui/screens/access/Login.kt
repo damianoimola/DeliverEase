@@ -139,26 +139,23 @@ fun ClassicLogin(
             username = username,
             password = password,
             onClick = {
-                if(isOnline(context)) {
-                    focusManager.clearFocus()
-                    isError = false
-                    isPlaying.value = true
-                    val userManager: UserManager = UserManager(context)
-                    userManager.getUsers { list ->
-                        println("USER LIST: $list")
-                        user.value = list.firstOrNull { user ->
-                            (user.email == username.value) && (user.password == password.value)
-                        }
-                        globalAllUsers = list
-                        saveAccess(context, user.value)
-
-                        // to show login animation
-                        Thread.sleep(2500)
-                        println("USER: $user")
-                        isError = (user.value == null)
+                focusManager.clearFocus()
+                isError = false
+                isPlaying.value = true
+                val userManager: UserManager = UserManager(context)
+                val isOnline = userManager.getUsers { list ->
+                    user.value = list.firstOrNull { user ->
+                        (user.email == username.value) && (user.password == password.value)
                     }
-                } else Toast.makeText(context, "Network capabilities status: OFF", Toast.LENGTH_SHORT).show()
+                    globalAllUsers = list
+                    saveAccess(context, user.value)
 
+                    // to show login animation
+                    Thread.sleep(2500)
+                    isError = (user.value == null)
+                }
+
+                if(!isOnline) isPlaying.value = false
             }
         )
     }
@@ -219,21 +216,3 @@ fun saveAccess(
     editor.apply()
 }
 
-
-fun isOnline(context: Context): Boolean {
-    val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-    val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-
-    if (capabilities != null) {
-        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-            Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-            return true
-        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-            Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-            return true
-        }
-    }
-    return false
-}

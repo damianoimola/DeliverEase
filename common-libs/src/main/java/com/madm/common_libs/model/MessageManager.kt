@@ -2,6 +2,7 @@ package com.madm.common_libs.model
 
 import android.content.Context
 import android.os.Parcelable
+import com.madm.common_libs.network.NetworkConnection
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -13,38 +14,26 @@ data class MessagesManager(var receiverId : String, var context: Context){
     private var messageList: MessageList? = null
     private val s : Server = Server.getInstance(context)
 
-    fun getAllMessages(callbackFunction: (List<Message>?) -> Unit) {
-        s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
-            this.messageList = ret
-            callbackFunction(this.messageList?.messages)
+    fun getAllMessages(callbackFunction: (List<Message>?) -> Unit) : Boolean {
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
+                this.messageList = ret
+                callbackFunction(this.messageList?.messages)
+            }
+            return true
         }
+        return false
     }
 
-    fun getReceivedMessages(callbackFunction: (List<Message>) -> Unit) {
-        s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
-            this.messageList = ret
-            callbackFunction(this.messageList!!.messages.filter { it.receiverID == this.receiverId || it.receiverID == "0" })
+    fun getReceivedMessages(callbackFunction: (List<Message>) -> Unit) : Boolean {
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
+                this.messageList = ret
+                callbackFunction(this.messageList!!.messages.filter { it.receiverID == this.receiverId || it.receiverID == "0" })
+            }
+            return true
         }
-    }
-
-    fun getSentMessages(senderId: String, callbackFunction: (List<Message>) -> Unit){
-        s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
-            this.messageList = ret
-            callbackFunction(this.messageList!!.messages.filter { it.senderID == senderId })
-        }
-    }
-
-    fun getConversationMessages(senderId: String, callbackFunction: (List<Message>) -> Unit) {
-        s.makeGetRequest<MessageList>(Server.RequestKind.MESSAGES) { ret ->
-            this.messageList = ret
-            callbackFunction(
-                this.messageList!!.messages.filter {
-                    (it.senderID == senderId && it.receiverID == this.receiverId)
-                    ||
-                    (it.senderID == this.receiverId && it.receiverID == senderId)
-                }
-            )
-        }
+        return false
     }
 }
 
@@ -94,9 +83,14 @@ data class Message(
     }
 
 
-    fun send(context : Context, callbackFunction: (Boolean) -> Unit = { }){
+    fun send(context : Context, callbackFunction: (Boolean) -> Unit = { }) : Boolean{
         val s : Server = Server.getInstance(context)
-        s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES, callbackFunction)
+
+        if(NetworkConnection.isUserOnline(context)) {
+            s.makePostRequest<Message>(this, Server.RequestKind.MESSAGES, callbackFunction)
+            return true
+        }
+        return false
     }
 }
 

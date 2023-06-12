@@ -2,6 +2,9 @@ package com.madm.common_libs.server
 
 import android.content.Context
 import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.contentValuesOf
 import androidx.room.Room
@@ -71,7 +74,7 @@ class Server private constructor (context : Context) {
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpGet().responseString { _, response, result ->
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 val data = result.get()
                 callbackFunction(Gson().fromJson(data, T::class.java))
             } else {
@@ -90,7 +93,7 @@ class Server private constructor (context : Context) {
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpGet().responseString { _, response, result ->
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 val data = result.get()
                 val itemType = object : TypeToken<List<T>>() {}.type
                 callbackFunction(Gson().fromJson(data, itemType))
