@@ -73,7 +73,6 @@ fun Int.integerToTwoDigit() : String {
     else "$this"
 }
 
-
 fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
     val lastOfMonth = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth())
@@ -94,9 +93,6 @@ fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
 
     return mondays
 }
-
-
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -168,9 +164,6 @@ fun MonthSelector(
     }
 }
 
-
-
-
 @Composable
 fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit){
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
@@ -187,11 +180,18 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(nonePadding, smallPadding)
             ) {
-                Text(text = "${day.number} ${day.name}")
-                Divider(modifier = Modifier
-                    .fillMaxWidth()
-                    .width(2.dp)
-                    .padding(start = smallPadding))
+                Text(
+                    "${day.number} ${day.name}",
+                    style = CustomTheme.typography.body1,
+                    color = CustomTheme.colors.onBackground
+                )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .width(2.dp)
+                        .padding(start = smallPadding),
+                    color = CustomTheme.colors.onBackground
+                )
             }
 
             content(day)
