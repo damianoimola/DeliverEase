@@ -47,7 +47,7 @@ val Typography = Typography(
     // App title top bar
     h1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 35.sp),
     // TODO Ralisin: set it
-    h2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
+    h2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
     // TODO Ralisin: set it
     // Card title
     h3 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),

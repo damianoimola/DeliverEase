@@ -16,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.nonePadding
@@ -249,10 +251,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
                 border = BorderStroke(width = 1.dp, color = if (selectedWeekString == it) CustomTheme.colors.primary else CustomTheme.colors.tertiary),
                 shape = RoundedCornerShape(20)
             ) {
-                Text(
-                    text = it,
-                    color = Color.White
-                )
+                Text(text = it)
             }
         }
     }
@@ -262,19 +261,14 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
         horizontalArrangement = Arrangement.Start
     ){
         Text(
-            text = "Week: ",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Normal
-            )
+            text = stringResource(R.string.week),
+            style = CustomTheme.typography.h4,
+            color = CustomTheme.colors.onBackground
         )
         Text(
             text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFF9800)
-            )
+            style = CustomTheme.typography.h2,
+            color = CustomTheme.colors.tertiary
         )
     }
 }

@@ -71,7 +71,7 @@ fun CalendarScreen(){
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
         //divider
         WeekContent(selectedWeek, selectedMonth, selectedYear) { weekDay ->
-            ShiftRow(
+            ShiftRow( // TODO Ralisin: set theme
                 shiftList.any {
                     var selectedDate: LocalDate? = null
 
@@ -117,7 +117,7 @@ fun CalendarScreen(){
  */
 @Composable
 fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, setWeekDay: ()->Unit, setPreviousWeekday: () -> Unit, ShowDialog: (Boolean) -> Unit){
-
+    // TODO Ralisin: set theme
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20))
