@@ -66,12 +66,6 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     return weekDays
 }
 
-fun Int.integerToTwoDigit() : String {
-    return if(this < 10)
-        "0$this"
-    else "$this"
-}
-
 
 fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
@@ -94,7 +88,11 @@ fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
     return mondays
 }
 
-
+fun Int.integerToTwoDigit() : String {
+    return if(this < 10)
+        "0$this"
+    else "$this"
+}
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -189,24 +187,21 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
 
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
-//    val currentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)
-
     // list of all mondays (first day of week) of the selected month
-    val mondaysList = getMondays(
-        selectedYear,
-        (selectedMonth + 1)%12,
-        afterCurrentDay
-    )
-        .toList()
-        .toIntArray()
-        .map { i -> i.integerToTwoDigit() }
+    val mondaysList =
+        getMondays(selectedYear, (selectedMonth % 12) + 1, afterCurrentDay)
+            .toList()
+            .toIntArray()
+            .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    // TODO: secondo me serve il %12 (DAMIANO)
-    var daysList by rememberSaveable { mutableStateOf(getWeekDays(selectedYear, selectedMonth+1, selectedWeek)) }
+    var daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
 
     // the selected week
-    var selectedWeekString by rememberSaveable { mutableStateOf(mondaysList[selectedWeek-1]) }
+    var selectedWeekString = mondaysList[selectedWeek-1]
+    println("################# SELECTED WEEK $selectedWeek")
+    println("################# MONDAY LIST $mondaysList")
+    println("################# SELECTED WEEK STRING $selectedWeekString")
 
     Row (
         modifier = Modifier

@@ -38,10 +38,12 @@ fun CalendarScreen(){
 
     //variable used to change interface when the change shift button is clicked
     val swap = remember{ mutableStateOf(false)}
+
     //variable used to store the date of the day we would like to trade
     var clickedWeekday: WeekDay? by remember {
         mutableStateOf(null)
     }
+
     //variable used to store the date of the day we would like to change
     var previousWeekDay: WeekDay ? by remember {
         mutableStateOf(null)
@@ -71,6 +73,7 @@ fun CalendarScreen(){
                 currentYear + 1
             else currentYear
             selectedMonth = month
+            selectedWeek = 1
         }
         //horizontal weekList
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
