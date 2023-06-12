@@ -16,11 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.madm.deliverease.*
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
@@ -30,10 +26,10 @@ import com.madm.deliverease.ui.widgets.PreferencesSetting
 @Composable
 fun SettingScreen(logoutCallback: () -> Unit) {
     val sharedPreferences = LocalContext.current.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
-    var minRiderPerWeek = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)) }
-    var maxRiderPerWeek = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)) }
-    var minRiderPerDay = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MIN_DAY, 0)) }
-    var maxRiderPerDay = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MAX_DAY, 0)) }
+    val minRiderPerWeek = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)) }
+    val maxRiderPerWeek = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)) }
+    val minRiderPerDay = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MIN_DAY, 0)) }
+    val maxRiderPerDay = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MAX_DAY, 0)) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -155,29 +151,6 @@ fun SettingScreen(logoutCallback: () -> Unit) {
     }
 }
 
-// TODO Ralisin: can we delete it?
-@Composable
-fun SettingCard(content: @Composable () -> Unit){
-    Card(
-        elevation = mediumCardElevation,
-        shape = Shapes.medium,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(nonePadding, smallPadding),
-
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            content()
-        }
-    }
-
-}
-
-
 @Composable
 fun SettingItem(title: String, inline: Boolean, content: @Composable () -> Unit){
     if(inline){
@@ -253,129 +226,3 @@ fun SetRidersAmount(
         }
     }
 }
-
-// TODO Ralisin to @Damiano: can it be removed?
-@Composable
-fun SettingSection(sectionName : String){
-    Text(
-        sectionName,
-        style = TextStyle(
-            fontFamily = gilroy,
-            fontSize = 30.sp,
-            textAlign = TextAlign.Start,
-            fontWeight = FontWeight.Bold
-        )
-    )
-}
-
-
-// TODO Ralisin: I restructured it, can we delete?
-@Composable
-fun RidersPerWeekConstraint(){
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Button(
-            onClick = { /*TODO*/ },
-        ) {
-            Text(text = "-", Modifier.size(4.dp))
-        }
-
-        Column(
-            modifier = Modifier.height(IntrinsicSize.Min),
-//            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Min")
-            Text(text = "XX")
-        }
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "+")
-        }
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Button(
-            onClick = { /*TODO*/ },
-        ) {
-            Text(text = "-")
-        }
-
-        Column(
-            modifier = Modifier.height(IntrinsicSize.Min),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Max")
-            Text(text = "XX")
-        }
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "+")
-        }
-    }
-}
-
-
-// TODO Ralisin: I restructured it, can we delete?
-@Composable
-fun RidersPerDayConstraint(){
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Button(
-            onClick = { /*TODO*/ },
-        ) {
-            Text(text = "-")
-        }
-
-        Column(
-            modifier = Modifier.height(IntrinsicSize.Min),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Min")
-            Text(text = "XX")
-        }
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "+")
-        }
-    }
-
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Button(
-            onClick = { /*TODO*/ },
-        ) {
-            Text(text = "-")
-        }
-
-        Column(
-            modifier = Modifier.height(IntrinsicSize.Min),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Max")
-            Text(text = "XX")
-        }
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "+")
-        }
-    }
-}
-
