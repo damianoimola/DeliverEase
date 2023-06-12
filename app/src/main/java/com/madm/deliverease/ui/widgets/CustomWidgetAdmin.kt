@@ -31,7 +31,9 @@ val density: Float get() = Resources.getSystem().displayMetrics.density
 @Composable
 fun SwipeToRevealRiderList(
     riderList: ArrayList<User>,
-    maxHeight: Dp
+    maxHeight: Dp,
+    deleteButtonClicked: () -> Unit = {},
+    editButtonClicked: (User) -> Unit = {}
 ) {
     val context = LocalContext.current
     LazyColumn(
@@ -45,8 +47,15 @@ fun SwipeToRevealRiderList(
 
                 ActionsRow(
                     actionIconSize = 56.dp,
-                    onDelete = { isRevealed = false; riderList.remove(rider) }, // TODO Ralisin: remove rider from Rest API
-                    onEdit = { Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show() },
+                    onDelete = {
+                        isRevealed = false;
+                        riderList.remove(rider)
+                        deleteButtonClicked()
+                    }, // TODO Ralisin: remove rider from Rest API
+                    onEdit = {
+                        Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show()
+                        editButtonClicked(rider)
+                    },
                 )
 
                 DroppableListItemCard(

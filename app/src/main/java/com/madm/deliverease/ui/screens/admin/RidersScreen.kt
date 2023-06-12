@@ -30,9 +30,14 @@ fun RidersScreen() {
 
     val riderList : List<User> by rememberSaveable { mutableStateOf(copyOfGlobalUsers) }
 
-    var showCustomDialog by rememberSaveable { mutableStateOf(false) }
+    var showHireDialog by rememberSaveable { mutableStateOf(false) }
+    var showEditDialog by rememberSaveable { mutableStateOf(false) }
+    var selectedRider : User? by rememberSaveable { mutableStateOf(null) }
 
-    if (showCustomDialog) HireNewRiderDialog { showCustomDialog = !showCustomDialog }
+    if (showHireDialog) HireNewRiderDialog { showHireDialog = !showHireDialog }
+
+    if (showEditDialog && selectedRider != null)
+        EditRiderDialog(selectedRider!!) { showEditDialog = !showEditDialog }
 
     Column (
         Modifier
@@ -54,13 +59,20 @@ fun RidersScreen() {
                     .weight(1f)
             ) {
                 Text(stringResource(R.string.list_of_your_riders), style = TextStyle(fontSize = 20.sp)) // TODO Ralisin: add theme typography
-                SwipeToRevealRiderList(ArrayList(riderList), 520.dp)
+                SwipeToRevealRiderList(
+                    ArrayList(riderList.filter { it.id != "0" }),
+                    520.dp,
+                    editButtonClicked = { rider ->
+                        showEditDialog = !showEditDialog
+                        selectedRider = rider
+                    }
+                )
             }
         }
 
         Row {
             Button(
-                onClick = { showCustomDialog = !showCustomDialog },
+                onClick = { showHireDialog = !showHireDialog },
                 modifier = Modifier
                     .wrapContentSize()
                     .weight(1f)
