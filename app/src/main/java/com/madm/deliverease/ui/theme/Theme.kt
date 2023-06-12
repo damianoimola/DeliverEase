@@ -1,11 +1,10 @@
 package com.madm.deliverease.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 
 
 /*
@@ -26,50 +25,79 @@ import androidx.compose.ui.graphics.Color
         On Error color of text and icons displayed on top of the error color.
  */
 
-/*
-private val DarkColorPalette = darkColors(
-    // background colors
-    background = darkBackground,
-    surface = darkBackground,
-    primary = darkDetails,
-    primaryVariant = darkDetails,
-    secondary = darkEnhancedDetails,
-
-    // typography and icon colors
-    onBackground = darkTextColor,
-    onSurface = darkTextColor,
-    onPrimary = darkTextColor,
-    onSecondary = darkTextColor,
-)
-
-private val LightColorPalette = lightColors(
-    // background colors
-    background = lightBackground,
-    surface = lightBackground,
-    primary = lightDetails,
-    primaryVariant = lightDetails,
-    secondary = lightEnhancedDetails,
-
-    // typography and icon colors
-    onBackground = lightTextColor,
-    onSurface = lightTextColor,
-    onPrimary = lightTextColor,
-    onSecondary = lightTextColor,
-)
- */
-
-private val DarkColorPalette = darkColors()
-
-private val LightColorPalette = lightColors(
-    background = lightBackground,
-    surface = lightSurface,
+var lightColorsPalette = CustomThemeColors(
     primary = lightPrimary,
     primaryVariant = lightPrimaryVariant,
-
+    secondary = lightSecondary,
+    secondaryVariant = lightSecondaryVariant,
+    tertiary = lightTertiary,
+    tertiaryVariant = lightTertiaryVariant,
+    background = lightBackground,
+    backgroundVariant = lightBackgroundVariant,
+    surface = lightSurface,
+    error = lightError,
     onPrimary = lightOnPrimary,
+    onPrimaryVariant = lightOnPrimaryVariant,
+    onSecondary = lightOnSecondary,
+    onSecondaryVariant = lightOnSecondaryVariant,
+    onTertiary = lightOnTertiary,
+    onTertiaryVariant = lightOnTertiaryVariant,
+    onBackground = lightOnBackground,
+    onBackgroundVariant = lightOnBackgroundVariant,
+    onSurface = lightOnSurface,
+    onError = lightOnError,
 )
 
+var darkColorPalette = CustomThemeColors(
+    primary = darkPrimary,
+    primaryVariant = darkPrimaryVariant,
+    secondary = darkSecondary,
+    secondaryVariant = darkSecondaryVariant,
+    tertiary = darkTertiary,
+    tertiaryVariant = darkTertiaryVariant,
+    background = darkBackground,
+    backgroundVariant = darkBackgroundVariant,
+    surface = darkSurface,
+    error = darkError,
+    onPrimary = darkOnPrimary,
+    onPrimaryVariant = darkOnPrimaryVariant,
+    onSecondary = darkOnSecondary,
+    onSecondaryVariant = darkOnSecondaryVariant,
+    onTertiary = darkOnTertiary,
+    onTertiaryVariant = darkOnTertiaryVariant,
+    onBackground = darkOnBackground,
+    onBackgroundVariant = darkOnBackgroundVariant,
+    onSurface = darkOnSurface,
+    onError = darkOnError
+)
 
+@Composable
+fun DeliverEaseTheme(
+    shapes: Shapes = CustomTheme.shapes,
+    typography: Typography = CustomTheme.typography,
+    colors: CustomThemeColors = lightColorsPalette,
+    darkColors: CustomThemeColors = darkColorPalette,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
+) {
+    val currentColor = remember { if (darkTheme) darkColors else colors }
+    val rememberedColors = remember { currentColor.copy() }.apply { updateColorsFrom(currentColor) }
+    CompositionLocalProvider(
+        LocalColors provides rememberedColors,
+        LocalShapes provides shapes,
+        LocalTypography provides typography,
+    ) {
+        // To provide text style to app
+        ProvideTextStyle(
+            typography.body1,
+            content = content
+        )
+    }
+}
+
+
+
+/* Old MaterialTheme
 @Composable
 fun DeliverEaseTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) {
@@ -85,3 +113,4 @@ fun DeliverEaseTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compo
         content = content
     )
 }
+ */

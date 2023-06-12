@@ -1,10 +1,12 @@
 package com.madm.deliverease.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 
@@ -42,9 +44,29 @@ val gilroy = FontFamily(
 
 val Typography = Typography(
     defaultFontFamily = gilroy,
-    body1 = TextStyle(
-        fontFamily = gilroy,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-    ),
+    // App title top bar
+    h1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 35.sp),
+    // TODO Ralisin: set it
+    h2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
+    // TODO Ralisin: set it
+    // Card title
+    h3 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
+    // TODO Ralisin: set it
+    h4 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 20.sp),
+    // Used on setting preferences titles
+    h5 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 18.sp),
+    // TODO Ralisin: set it
+    h6 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 16.sp),
+    // TODO Ralisin: set it
+    subtitle1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Medium, fontSize = 18.sp),
+    // TODO Ralisin: set it
+    subtitle2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Medium, fontSize = 18.sp),
+    // Text style basically used in app
+    body1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 16.sp),
+    // Smaller text
+    body2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 14.sp),
+    // Text style for buttons // TODO Ralisin: set it because right now it's equal to h6
+    button = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 16.sp),
 )
+
+val LocalTypography = staticCompositionLocalOf { Typography }

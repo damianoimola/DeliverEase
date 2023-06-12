@@ -16,16 +16,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.ui.theme.*
-import java.time.LocalDate
-import java.time.ZoneId
-import java.util.*
-
-data class ShiftRequest(var changerName: String, var offeredDay: String, var wantedDay: String)
 
 @Composable
 fun ShiftChangeCard(
@@ -39,7 +35,8 @@ fun ShiftChangeCard(
         shape = Shapes.medium,
         modifier = modifier
             .fillMaxSize()
-            .padding(nonePadding, smallPadding)
+            .padding(nonePadding, smallPadding),
+        backgroundColor = CustomTheme.colors.surface
     ) {
         Column(
             modifier = Modifier
@@ -50,14 +47,20 @@ fun ShiftChangeCard(
             //Title
             Text(
                 stringResource(R.string.shiftChangeOffers),
-                style = TextStyle(fontSize = 22.sp), /* TODO: set to typography */
-                modifier = Modifier.padding(nonePadding, nonePadding, nonePadding, smallPadding)
+                style = CustomTheme.typography.h3,
+                textAlign = TextAlign.Center,
+                color = CustomTheme.colors.onSurface
             )
 
             // List of customShift
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 shiftsList.forEach { shift ->
-                    Card(Modifier.padding(nonePadding, smallPadding)) {
+                    Card(
+                        Modifier.padding(nonePadding, smallPadding),
+                        backgroundColor = CustomTheme.colors.surface,
+                        contentColor = CustomTheme.colors.onSurface,
+                        elevation = extraSmallCardElevation
+                    ) {
                         CustomShiftChangeRequest(shift) {
                             Message(
                                 senderID = shift.receiverID,
@@ -78,11 +81,12 @@ fun CustomShiftChangeRequest(
     shiftRequest: Message,
     onAccept: () -> Unit = {}
 ) {
-    val (offeredDay, wantedDay) = shiftRequest.body!!.split("#");
+    val (offeredDay, wantedDay) = shiftRequest.body!!.split("#")
 
     val requestingUserFullName = with(
         globalAllUsers.first { user -> user.id == shiftRequest.senderID!! }
     ){ "$name $surname" }
+
 
     Row(
         Modifier
@@ -95,9 +99,9 @@ fun CustomShiftChangeRequest(
             Modifier
                 .padding(smallPadding)
                 .weight(1f),horizontalAlignment = Alignment.Start) {
-            Text(requestingUserFullName, fontSize = 20.sp, fontFamily = gilroy)
-            Text("Offered: $offeredDay", fontSize = 15.sp, fontFamily = gilroy)
-            Text("Wanted: $wantedDay", fontSize = 15.sp, fontFamily = gilroy)
+            Text(requestingUserFullName, style = CustomTheme.typography.h5)
+            Text(stringResource(R.string.offered) + offeredDay, style = CustomTheme.typography.body2)
+            Text(stringResource(R.string.wanted) + wantedDay, style = CustomTheme.typography.body2)
         }
 
         // Icon button accept
@@ -107,7 +111,11 @@ fun CustomShiftChangeRequest(
             Alignment.CenterVertically
         ){
             IconButton(onClick = { onAccept() }) {
-                Icon(ImageVector.vectorResource(id = R.drawable.accept), "accept")
+                Icon(
+                    ImageVector.vectorResource(id = R.drawable.accept),
+                    contentDescription = "accept",
+                    tint = CustomTheme.colors.primary
+                )
             }
         }
     }

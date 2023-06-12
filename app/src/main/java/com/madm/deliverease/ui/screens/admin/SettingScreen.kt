@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,12 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
-import com.madm.deliverease.ui.widgets.MyPageHeader
 import com.madm.deliverease.ui.widgets.PreferencesSetting
 
 @Composable
@@ -37,52 +36,64 @@ fun SettingScreen(logoutCallback: () -> Unit) {
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
     ) {
-//        MyPageHeader()
-        SettingCard {
-            SettingItem(stringResource(R.string.num_riders_for_week), false){
-                SetRidersAmount(
-                    middleText = "Min",
-                    amount = minRiderPerWeek.value,
-                    onAddBtnClick = {
-                        if(minRiderPerWeek.value == maxRiderPerWeek.value) {
-                            minRiderPerWeek.value++
-                            maxRiderPerWeek.value++
-                        } else if(minRiderPerWeek.value < maxRiderPerWeek.value) minRiderPerWeek.value++
-                    },
-                    onRemoveBtnClick = { if (minRiderPerWeek.value > 0) minRiderPerWeek.value-- }
-                )
-                SetRidersAmount(
-                    middleText = "Max",
-                    amount = maxRiderPerWeek.value,
-                    onAddBtnClick = { maxRiderPerWeek.value++ },
-                    onRemoveBtnClick = {
-                        if (maxRiderPerWeek.value == minRiderPerWeek.value && minRiderPerWeek.value != 0) {
-                            maxRiderPerWeek.value--
-                            minRiderPerWeek.value--
-                        } else if (maxRiderPerWeek.value > minRiderPerWeek.value) maxRiderPerWeek.value--
+        Card(
+            elevation = mediumCardElevation,
+            shape = Shapes.medium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(nonePadding, smallPadding),
+            backgroundColor = CustomTheme.colors.surface,
+            contentColor = CustomTheme.colors.onSurface
+        ) {
+            Column(
+                Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                SettingItem(stringResource(R.string.num_riders_for_week), false) {
+                    SetRidersAmount(
+                        middleText = "Min",
+                        amount = minRiderPerWeek.value,
+                        onAddBtnClick = {
+                            if (minRiderPerWeek.value == maxRiderPerWeek.value) {
+                                minRiderPerWeek.value++
+                                maxRiderPerWeek.value++
+                            } else if (minRiderPerWeek.value < maxRiderPerWeek.value) minRiderPerWeek.value++
+                        },
+                        onRemoveBtnClick = { if (minRiderPerWeek.value > 0) minRiderPerWeek.value-- }
+                    )
+                    SetRidersAmount(
+                        middleText = "Max",
+                        amount = maxRiderPerWeek.value,
+                        onAddBtnClick = { maxRiderPerWeek.value++ },
+                        onRemoveBtnClick = {
+                            if (maxRiderPerWeek.value == minRiderPerWeek.value && minRiderPerWeek.value != 0) {
+                                maxRiderPerWeek.value--
+                                minRiderPerWeek.value--
+                            } else if (maxRiderPerWeek.value > minRiderPerWeek.value) maxRiderPerWeek.value--
+                        }
+                    )
+                }
+                SettingItem(stringResource(R.string.num_riders_for_day), false) {
+                    SetRidersAmount(
+                        middleText = "Min",
+                        amount = minRiderPerDay.value,
+                        onAddBtnClick = {
+                            if (minRiderPerDay.value == maxRiderPerDay.value) {
+                                minRiderPerDay.value++
+                                maxRiderPerDay.value++
+                            } else if (minRiderPerDay.value < maxRiderPerDay.value) minRiderPerDay.value++
+                        }
+                    ) { if (minRiderPerDay.value > 0) minRiderPerDay.value-- }
+                    SetRidersAmount(
+                        middleText = "Max",
+                        amount = maxRiderPerDay.value,
+                        onAddBtnClick = { maxRiderPerDay.value++ }
+                    ) {
+                        if (maxRiderPerDay.value == minRiderPerDay.value && minRiderPerDay.value != 0) {
+                            maxRiderPerDay.value--
+                            minRiderPerDay.value--
+                        } else if (maxRiderPerDay.value > minRiderPerDay.value) maxRiderPerDay.value--
                     }
-                )
-            }
-            SettingItem(stringResource(R.string.num_riders_for_day), false){
-                SetRidersAmount(
-                    middleText = "Min",
-                    amount = minRiderPerDay.value,
-                    onAddBtnClick = {
-                        if(minRiderPerDay.value == maxRiderPerDay.value) {
-                            minRiderPerDay.value++
-                            maxRiderPerDay.value++
-                        }  else if(minRiderPerDay.value < maxRiderPerDay.value) minRiderPerDay.value++
-                    }
-                ) { if (minRiderPerDay.value > 0) minRiderPerDay.value-- }
-                SetRidersAmount(
-                    middleText = "Max",
-                    amount = maxRiderPerDay.value,
-                    onAddBtnClick = { maxRiderPerDay.value++ }
-                ) {
-                    if (maxRiderPerDay.value == minRiderPerDay.value && minRiderPerDay.value != 0) {
-                        maxRiderPerDay.value--
-                        minRiderPerDay.value--
-                    } else if (maxRiderPerDay.value > minRiderPerDay.value) maxRiderPerDay.value--
                 }
             }
         }
@@ -90,6 +101,7 @@ fun SettingScreen(logoutCallback: () -> Unit) {
     }
 }
 
+// TODO Ralisin: can we delete it?
 @Composable
 fun SettingCard(content: @Composable () -> Unit){
     Card(
@@ -97,16 +109,12 @@ fun SettingCard(content: @Composable () -> Unit){
         shape = Shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(nonePadding, smallPadding)
+            .padding(nonePadding, smallPadding),
+
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-//            .background(
-//                color = Color(0xFFFFF3F3), // TODO Ralisin: set theme color
-//                shape = RoundedCornerShape(topEndPercent = 5, bottomStartPercent = 5)
-//            ),
-            ,
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             content()
@@ -128,12 +136,7 @@ fun SettingItem(title: String, inline: Boolean, content: @Composable () -> Unit)
         ) {
             Text(
                 text = title,
-//                style = TextStyle( // TODO Ralisin: set theme typography
-//                    fontFamily = gilroy,
-//                    fontSize = 20.sp,
-//                    textAlign = TextAlign.Center,
-//                    fontWeight = FontWeight.SemiBold
-//                )
+                style = CustomTheme.typography.h3
             )
             content()
         }
@@ -147,12 +150,7 @@ fun SettingItem(title: String, inline: Boolean, content: @Composable () -> Unit)
         ) {
             Text(
                 text = title,
-//                style = TextStyle( // TODO Ralisin: set theme typography
-//                    fontFamily = gilroy,
-//                    fontSize = 20.sp,
-//                    textAlign = TextAlign.Center,
-//                    fontWeight = FontWeight.SemiBold
-//                )
+                style = CustomTheme.typography.h4
             )
             content()
         }
@@ -174,21 +172,30 @@ fun SetRidersAmount(
     ) {
         Button(
             onRemoveBtnClick,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = CustomTheme.colors.primary,
+                contentColor = CustomTheme.colors.onPrimary,
+            )
         ) {
-            Text(text = "-") //, Modifier.size(4.dp)) TODO Ralisin: understand if use typography theme
+            Text(text = "-", style = CustomTheme.typography.body1)
         }
 
         Column(
             modifier = Modifier.height(IntrinsicSize.Min),
-//            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = middleText)
-            Text(text = amount.toString())
+            Text(text = middleText, style = CustomTheme.typography.body1)
+            Text(text = amount.toString(), style = CustomTheme.typography.body1)
         }
 
-        Button(onClick = onAddBtnClick) {
-            Text(text = "+") //  TODO Ralisin: understand if use typography theme
+        Button(
+            onAddBtnClick,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = CustomTheme.colors.primary,
+                contentColor = CustomTheme.colors.onPrimary,
+            )
+        ) {
+            Text(text = "+", style = CustomTheme.typography.body1)
         }
     }
 }
@@ -317,15 +324,4 @@ fun RidersPerDayConstraint(){
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 

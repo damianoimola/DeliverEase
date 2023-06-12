@@ -9,7 +9,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.madm.deliverease.ui.widgets.MyPageHeader
 import com.madm.deliverease.ui.widgets.PreferencesSetting
 
 @Composable
