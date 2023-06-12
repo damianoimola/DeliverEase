@@ -1,6 +1,10 @@
 package com.madm.deliverease.ui.screens.access
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -48,7 +52,7 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(mediumPadding)
-            .clickable (
+            .clickable(
                 indication = null,
                 interactionSource = interactionSource,
                 onClick = { focusManager.clearFocus() }
@@ -135,21 +139,26 @@ fun ClassicLogin(
             username = username,
             password = password,
             onClick = {
-                focusManager.clearFocus()
-                isError = false
-                isPlaying.value = true
-                val userManager: UserManager = UserManager(context)
-                userManager.getUsers { list ->
-                    user.value = list.firstOrNull { user ->
-                        (user.email == username.value) && (user.password == password.value)
-                    }
-                    globalAllUsers = list
-                    saveAccess(context, user.value)
+                if(isOnline(context)) {
+                    focusManager.clearFocus()
+                    isError = false
+                    isPlaying.value = true
+                    val userManager: UserManager = UserManager(context)
+                    userManager.getUsers { list ->
+                        println("USER LIST: $list")
+                        user.value = list.firstOrNull { user ->
+                            (user.email == username.value) && (user.password == password.value)
+                        }
+                        globalAllUsers = list
+                        saveAccess(context, user.value)
 
-                    // to show login animation
-                    Thread.sleep(2500)
-                    isError = (user.value == null)
-                }
+                        // to show login animation
+                        Thread.sleep(2500)
+                        println("USER: $user")
+                        isError = (user.value == null)
+                    }
+                } else Toast.makeText(context, "Network capabilities status: OFF", Toast.LENGTH_SHORT).show()
+
             }
         )
     }
@@ -208,4 +217,23 @@ fun saveAccess(
     editor.putString(PASSWORD_FIELD, user?.password)
 
     editor.apply()
+}
+
+
+fun isOnline(context: Context): Boolean {
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
+    if (capabilities != null) {
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+            return true
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+            return true
+        }
+    }
+    return false
 }
