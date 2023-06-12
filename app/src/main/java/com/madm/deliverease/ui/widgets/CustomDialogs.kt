@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun HireNewRiderDialog(onDismiss: () -> Unit) {
+fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     var riderName by rememberSaveable { mutableStateOf("") }
     var riderSurname by rememberSaveable { mutableStateOf("") }
@@ -128,7 +128,7 @@ fun HireNewRiderDialog(onDismiss: () -> Unit) {
 
                                 newUser.registerOrUpdate(context)       // updating server info
                                 onDismiss()
-                                globalAllUsers.add(newUser)             // updating ui with the new rider
+                                callbackFunction(newUser)
 
                                 Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
                             }

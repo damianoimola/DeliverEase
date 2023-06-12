@@ -10,10 +10,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
@@ -23,19 +21,25 @@ import com.madm.deliverease.ui.theme.nonePadding
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Preview
 @Composable
 fun RidersScreen() {
     val copyOfGlobalUsers = globalAllUsers
 
-    val riderList : List<User> by rememberSaveable { mutableStateOf(copyOfGlobalUsers) }
+    var riderList : ArrayList<User> by rememberSaveable { mutableStateOf(ArrayList(copyOfGlobalUsers)) }
 
     var showHireDialog by rememberSaveable { mutableStateOf(false) }
     var showEditDialog by rememberSaveable { mutableStateOf(false) }
     var selectedRider : User? by rememberSaveable { mutableStateOf(null) }
 
-    if (showHireDialog) HireNewRiderDialog { showHireDialog = !showHireDialog }
+    if (showHireDialog) HireNewRiderDialog (
+        {
+            globalAllUsers.add(it)
+            riderList = ArrayList(globalAllUsers)
+        }
+    ) { showHireDialog = !showHireDialog }
 
     if (showEditDialog && selectedRider != null)
         EditRiderDialog(selectedRider!!) { showEditDialog = !showEditDialog }
@@ -68,6 +72,10 @@ fun RidersScreen() {
                 SwipeToRevealRiderList(
                     ArrayList(riderList.filter { it.id != "0" }),
                     520.dp,
+                    deleteButtonClicked = { rider ->
+                        globalAllUsers.remove(rider)
+                        riderList = ArrayList(globalAllUsers)
+                    },
                     editButtonClicked = { rider ->
                         showEditDialog = !showEditDialog
                         selectedRider = rider

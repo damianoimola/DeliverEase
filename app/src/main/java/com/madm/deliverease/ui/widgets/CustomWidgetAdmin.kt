@@ -32,7 +32,7 @@ val density: Float get() = Resources.getSystem().displayMetrics.density
 fun SwipeToRevealRiderList(
     riderList: ArrayList<User>,
     maxHeight: Dp,
-    deleteButtonClicked: () -> Unit = {},
+    deleteButtonClicked: (User) -> Unit = {},
     editButtonClicked: (User) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -52,8 +52,7 @@ fun SwipeToRevealRiderList(
                     onDelete = {
                         isRevealed = false
                         rider.unregister(context)
-                        riderList.remove(rider)
-                        deleteButtonClicked()
+                        deleteButtonClicked(rider)
                     }, // TODO Ralisin: remove rider from Rest API
                     onEdit = {
                         isRevealed = false
