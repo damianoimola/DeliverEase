@@ -1,6 +1,8 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.content.Context
 import android.os.Parcelable
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,9 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
+import com.madm.deliverease.*
 import com.madm.deliverease.R
-import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.Shapes
 import com.madm.deliverease.ui.theme.mediumCardElevation
 import com.madm.deliverease.ui.theme.nonePadding
@@ -70,8 +71,7 @@ fun ShiftsScreenV1() {
     }
 
 
-
-
+    val weekWorkingDays: ArrayList<WorkDay> = ArrayList(workingDays)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -87,8 +87,10 @@ fun ShiftsScreenV1() {
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
 
         ButtonDraftAndSubmit({
-            if(updatedWorkingDays.isNotEmpty()) {
-                calendarManager.insertDays(updatedWorkingDays)
+            val constraintsOk = shiftsConstraintsAreOk(context, ArrayList(workingDays))
+
+            if(updatedWorkingDays.isNotEmpty() && constraintsOk) {
+//                calendarManager.insertDays(updatedWorkingDays)
             }
         }) {
             Message(
@@ -166,6 +168,9 @@ fun ShiftsScreenV1() {
                     else riderList.add(riderId)
 
                     wd.riders = riderList.distinct()
+
+                    // test
+                    weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }.riders = riderList.distinct()
                 } else {
                     val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
 
@@ -178,12 +183,59 @@ fun ShiftsScreenV1() {
                     wd.riders = riderList
                     wd.workDayDate = selectedDateFormatted
                     updatedWorkingDays.add(wd)
+
+                    // test
+                    weekWorkingDays.add(wd)
                 }
             }
         }
     }
 }
 
+fun shiftsConstraintsAreOk(context: Context, updatedWorkingDays: ArrayList<WorkDay>): Boolean {
+    // open the shared prefs file
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+
+    // TODO: load just one time when composable starts up (Damiano)
+    val min_week = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
+    val max_week = sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)
+    val min_day = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
+    val max_day = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
+
+    println("CONSTRAINTS $min_week, $max_week, $min_day, $max_day")
+
+    var error_message : String = ""
+
+    data class WeeklyRider(val id: String = "", var workingDays: Int = 0)
+    val ridersThisWeek : ArrayList<WeeklyRider> = arrayListOf()
+
+    updatedWorkingDays.forEach { d ->
+        d.riders?.forEach { riderID ->
+            val anyRider = ridersThisWeek.any{ it.id == riderID }
+
+            if(anyRider) ridersThisWeek.first { it.id == riderID }.workingDays += 1
+            else ridersThisWeek.add(WeeklyRider(riderID))
+
+            println("RIDER $riderID CONTATORE ${ridersThisWeek.first { it.id == riderID }.workingDays}")
+        }
+    }
+
+    error_message += "MINIMUM PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${ridersThisWeek.filter { it.workingDays !in min_week..max_week }.map { it.id }.distinct()}\n"
+
+    updatedWorkingDays.forEach {
+        if(it.riders?.count() !in min_day..max_day){
+            error_message += "MINIMUM PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+        }
+    }
+
+    if (error_message.isNotBlank()) {
+        // todo: metti il dialog invece che il toast (Damiano)
+        Toast.makeText(context, error_message, Toast.LENGTH_SHORT).show()
+        println("MESSAGGIO DI ERRORE $error_message")
+        return false
+    }
+    return true
+}
 
 
 @Composable
@@ -200,13 +252,8 @@ fun RidersAvailabilitiesV1(
         globalAllUsers.filter { user -> user.id in selectedWorkDay.riders!!.toList() }
     else listOf()
 
-//    val availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
-//        availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-//    ) }
-//
-//    val ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(
-//        ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-//    ) }
+
+    // todo: fai una mappa con (selected date e checkbox item)
 
     val availableRidersCheckboxList : List<CheckBoxItem> = availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
 

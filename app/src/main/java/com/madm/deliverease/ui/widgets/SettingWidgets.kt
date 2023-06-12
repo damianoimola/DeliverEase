@@ -143,7 +143,7 @@ fun switchLanguage(languageCode: String, context: Context) {
     val editor = sharedPreferences.edit()
 
     // setting up the default language inside internal storage
-    editor.putString("STARTUP_LANG", languageCode)
+    editor.putString(STARTUP_LANGUAGE_FIELD, languageCode)
     editor.apply()
 
     // Restart the activity to apply the new language

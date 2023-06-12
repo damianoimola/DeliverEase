@@ -26,6 +26,8 @@ import com.madm.deliverease.ui.widgets.PreferencesSetting
 @Composable
 fun SettingScreen(logoutCallback: () -> Unit) {
     val sharedPreferences = LocalContext.current.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
     val minRiderPerWeek = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)) }
     val maxRiderPerWeek = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)) }
     val minRiderPerDay = remember { mutableStateOf(sharedPreferences.getInt(ADMIN_MIN_DAY, 0)) }
@@ -59,20 +61,20 @@ fun SettingScreen(logoutCallback: () -> Unit) {
                             if (minRiderPerWeek.value == maxRiderPerWeek.value) {
                                 minRiderPerWeek.value++
                                 maxRiderPerWeek.value++
-                                sharedPreferences.edit().putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
-                                sharedPreferences.edit().putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
+                                editor.putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
+                                editor.apply()
                             } else if (minRiderPerWeek.value < maxRiderPerWeek.value) {
                                 minRiderPerWeek.value++
-                                sharedPreferences.edit().putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
+                                editor.apply()
                             }
                         },
                         onRemoveBtnClick = {
                             if (minRiderPerWeek.value > 0) {
                                 minRiderPerWeek.value--
-                                sharedPreferences.edit().putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
+                                editor.apply()
                             }
                         }
                     )
@@ -81,20 +83,20 @@ fun SettingScreen(logoutCallback: () -> Unit) {
                         amount = maxRiderPerWeek.value,
                         onAddBtnClick = {
                             maxRiderPerWeek.value++
-                            sharedPreferences.edit().putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
-                            sharedPreferences.edit().apply()
+                            editor.putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
+                            editor.apply()
                         },
                         onRemoveBtnClick = {
                             if (maxRiderPerWeek.value == minRiderPerWeek.value && minRiderPerWeek.value != 0) {
                                 maxRiderPerWeek.value--
                                 minRiderPerWeek.value--
-                                sharedPreferences.edit().putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
-                                sharedPreferences.edit().putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MIN_WEEK, minRiderPerWeek.value)
+                                editor.putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
+                                editor.apply()
                             } else if (maxRiderPerWeek.value > minRiderPerWeek.value) {
                                 maxRiderPerWeek.value--
-                                sharedPreferences.edit().putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MAX_WEEK, maxRiderPerWeek.value)
+                                editor.apply()
                             }
                         }
                     )
@@ -107,20 +109,20 @@ fun SettingScreen(logoutCallback: () -> Unit) {
                             if (minRiderPerDay.value == maxRiderPerDay.value) {
                                 minRiderPerDay.value++
                                 maxRiderPerDay.value++
-                                sharedPreferences.edit().putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
-                                sharedPreferences.edit().putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
+                                editor.putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
+                                editor.apply()
                             } else if (minRiderPerDay.value < maxRiderPerDay.value) {
                                 minRiderPerDay.value++
-                                sharedPreferences.edit().putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
-                                sharedPreferences.edit().apply()
+                                editor.putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
+                                editor.apply()
                             }
                         }
                     ) {
                         if (minRiderPerDay.value > 0) {
                             minRiderPerDay.value--
-                            sharedPreferences.edit().putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
-                            sharedPreferences.edit().apply()
+                            editor.putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
+                            editor.apply()
                         }
                     }
                     SetRidersAmount(
@@ -128,20 +130,20 @@ fun SettingScreen(logoutCallback: () -> Unit) {
                         amount = maxRiderPerDay.value,
                         onAddBtnClick = {
                             maxRiderPerDay.value++
-                            sharedPreferences.edit().putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
-                            sharedPreferences.edit().apply()
+                            editor.putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
+                            editor.apply()
                         }
                     ) {
                         if (maxRiderPerDay.value == minRiderPerDay.value && minRiderPerDay.value != 0) {
                             maxRiderPerDay.value--
                             minRiderPerDay.value--
-                            sharedPreferences.edit().putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
-                            sharedPreferences.edit().putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
-                            sharedPreferences.edit().apply()
+                            editor.putInt(ADMIN_MIN_DAY, minRiderPerDay.value)
+                            editor.putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
+                            editor.apply()
                         } else if (maxRiderPerDay.value > minRiderPerDay.value) {
                             maxRiderPerDay.value--
-                            sharedPreferences.edit().putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
-                            sharedPreferences.edit().apply()
+                            editor.putInt(ADMIN_MAX_DAY, maxRiderPerDay.value)
+                            editor.apply()
                         }
                     }
                 }
