@@ -39,7 +39,6 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
