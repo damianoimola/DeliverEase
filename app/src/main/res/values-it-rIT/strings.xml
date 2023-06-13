@@ -44,4 +44,8 @@
     <string name="offered">"Offerto: "</string>
     <string name="wanted">"Voluto: "</string>
     <string name="week">"Settimana: "</string>
+    <string name="settings_constraints">Vincoli</string>
+    <string name="shiftChangeOffers">Richieste di cambio turno</string>
+    <string name="terms_conditions"><![CDATA[Termini & Condizioni]]></string>
+    <string name="click_to_see_shift">Clicca per mostrare le disponibilità</string>
 </resources>

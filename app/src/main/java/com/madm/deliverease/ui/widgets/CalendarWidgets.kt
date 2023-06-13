@@ -154,7 +154,7 @@ fun MonthSelector(
                     if(option < months[0]) {
                         Text(
                             "${MonthMap[option]} ${currentYear + 1}",
-                            style = CustomTheme.typography.body1,
+                            style = CustomTheme.typography.body2,
                             color = CustomTheme.colors.onBackgroundVariant
                         )
                     }
@@ -227,7 +227,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
 
     Row (
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(0.dp)
             .horizontalScroll(rememberScrollState())
     ){
         mondaysList.forEach {
@@ -266,7 +266,8 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
 
     Row (
         verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier.padding(0.dp)
     ){
         Text(
             text = stringResource(R.string.week),

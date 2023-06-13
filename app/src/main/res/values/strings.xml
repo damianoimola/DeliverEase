@@ -48,4 +48,5 @@
     <string name="offered">Offered: </string>
     <string name="wanted">Wanted: </string>
     <string name="week">Week: </string>
+    <string name="click_to_see_shift">Click here to show availabilities</string>
 </resources>
