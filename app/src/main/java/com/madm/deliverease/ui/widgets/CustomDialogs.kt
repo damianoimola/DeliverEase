@@ -357,3 +357,85 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
         }
     }
 }
+
+
+
+
+@Composable
+fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismiss: () -> Unit){
+    val context = LocalContext.current
+    Dialog(onDismissRequest = { onDismiss()},
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )) {
+        Surface(modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
+            shape = MaterialTheme.shapes.large) {
+            Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
+                verticalArrangement = Arrangement.spacedBy(25.dp)) {
+
+                Text(errorMessage,
+                    style = TextStyle(
+                        fontFamily = gilroy,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+
+                Row(
+                    modifier = Modifier.width(400.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = { onDismiss() }) {
+                        Text(text = stringResource(id = R.string.cancel),
+                            style = TextStyle(
+                                fontFamily = gilroy,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                    Button(onClick = {
+                        onContinue()
+                        //closing dialog
+                        onDismiss()
+                    }) {
+                        Text(text = stringResource(id = R.string._continue),
+                            style = TextStyle(
+                                fontFamily = gilroy,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

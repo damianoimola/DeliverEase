@@ -2,7 +2,6 @@ package com.madm.deliverease.ui.screens.admin
 
 import android.content.Context
 import android.os.Parcelable
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -61,17 +60,36 @@ fun ShiftsScreenV1() {
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var errorMessage : String by rememberSaveable { mutableStateOf("") }
+
+
     // retrieving all working days in server
-    val updatedWorkingDays: ArrayList<WorkDay> = arrayListOf()
     var workingDays: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
+    // newly added working days (still not on server)
+    val updatedWorkingDays: ArrayList<WorkDay> = arrayListOf()
+    // EVERY working day both server and newly added
+    var weekWorkingDays: ArrayList<WorkDay> = arrayListOf()
+
     val calendarManager : CalendarManager = CalendarManager(context)
-    calendarManager.getDays { days ->
-        println("API CALL")
-        workingDays = days
+
+    if(!showDialog)
+        calendarManager.getDays { days ->
+            println("API CALL")
+            workingDays = days
+            weekWorkingDays = ArrayList(days)
+        }
+    else {
+        WrongConstraintsDialog(
+            errorMessage.ifBlank { "Are you sure to continue?" },
+            {
+                if (updatedWorkingDays.isNotEmpty()) {
+                    // calendarManager.insertDays(updatedWorkingDays)
+                }
+            }
+        ) { showDialog = !showDialog }
     }
 
-
-    val weekWorkingDays: ArrayList<WorkDay> = ArrayList(workingDays)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -87,11 +105,9 @@ fun ShiftsScreenV1() {
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
 
         ButtonDraftAndSubmit({
-            val constraintsOk = shiftsConstraintsAreOk(context, ArrayList(workingDays))
+            errorMessage = shiftsConstraintsErrorMessage(context, ArrayList(weekWorkingDays), selectedWeek, selectedMonth, selectedYear)
 
-            if(updatedWorkingDays.isNotEmpty() && constraintsOk) {
-//                calendarManager.insertDays(updatedWorkingDays)
-            }
+            showDialog = true
         }) {
             Message(
                 senderID = globalUser!!.id,
@@ -168,9 +184,6 @@ fun ShiftsScreenV1() {
                     else riderList.add(riderId)
 
                     wd.riders = riderList.distinct()
-
-                    // test
-                    weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }.riders = riderList.distinct()
                 } else {
                     val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
 
@@ -183,16 +196,34 @@ fun ShiftsScreenV1() {
                     wd.riders = riderList
                     wd.workDayDate = selectedDateFormatted
                     updatedWorkingDays.add(wd)
-
-                    // test
-                    weekWorkingDays.add(wd)
                 }
+
+
+
+
+
+                val secondRiderList: ArrayList<String> = arrayListOf()
+                val wwd = weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                wwd.riders!!.forEach { secondRiderList.add(it) }
+
+                if(!isAllocated) secondRiderList.remove(riderId)
+                else secondRiderList.add(riderId)
+
+                wwd.riders = secondRiderList.distinct()
+
+                println("WWD: $wwd")
             }
         }
     }
 }
 
-fun shiftsConstraintsAreOk(context: Context, updatedWorkingDays: ArrayList<WorkDay>): Boolean {
+fun shiftsConstraintsErrorMessage(
+    context: Context,
+    weekWorkingDays: ArrayList<WorkDay>,
+    selectedWeek: Int,
+    selectedMonth: Int,
+    selectedYear: Int
+): String {
     // open the shared prefs file
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
@@ -206,35 +237,65 @@ fun shiftsConstraintsAreOk(context: Context, updatedWorkingDays: ArrayList<WorkD
 
     var error_message : String = ""
 
+
+    // retrieving first and last day of selected week
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.YEAR, selectedYear)
+    calendar.set(Calendar.MONTH, selectedMonth)
+    calendar.set(Calendar.WEEK_OF_MONTH, selectedWeek+1)
+    calendar.set(Calendar.HOUR, 0)
+
+    // Set the start and end dates of the selected week
+    calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    val startDate = calendar.time
+
+    calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+    calendar.set(Calendar.HOUR_OF_DAY, 23)
+    calendar.set(Calendar.MINUTE, 59)
+    calendar.set(Calendar.SECOND, 59)
+    calendar.set(Calendar.MILLISECOND, 999)
+    val endDate = calendar.time
+
+    println("START ${startDate} END ${endDate}")
+    println("WEEK ${weekWorkingDays.filter { it.workDayDate in startDate..endDate }}")
+
+
     data class WeeklyRider(val id: String = "", var workingDays: Int = 0)
     val ridersThisWeek : ArrayList<WeeklyRider> = arrayListOf()
 
-    updatedWorkingDays.forEach { d ->
+    weekWorkingDays
+        .filter { it.workDayDate in startDate..endDate }
+        .forEach { d ->
         d.riders?.forEach { riderID ->
             val anyRider = ridersThisWeek.any{ it.id == riderID }
 
             if(anyRider) ridersThisWeek.first { it.id == riderID }.workingDays += 1
-            else ridersThisWeek.add(WeeklyRider(riderID))
+            else ridersThisWeek.add(WeeklyRider(riderID, 1))
 
             println("RIDER $riderID CONTATORE ${ridersThisWeek.first { it.id == riderID }.workingDays}")
         }
     }
 
-    error_message += "MINIMUM PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${ridersThisWeek.filter { it.workingDays !in min_week..max_week }.map { it.id }.distinct()}\n"
 
-    updatedWorkingDays.forEach {
+    val filter = ridersThisWeek.filter { it.workingDays !in min_week..max_week }.map { it.id }.distinct()
+    error_message += if(filter.isNotEmpty())
+        "PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
+    else ""
+
+    weekWorkingDays
+        .filter { it.workDayDate in startDate..endDate }
+        .forEach {
         if(it.riders?.count() !in min_day..max_day){
-            error_message += "MINIMUM PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+            error_message += "PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
         }
     }
 
-    if (error_message.isNotBlank()) {
-        // todo: metti il dialog invece che il toast (Damiano)
-        Toast.makeText(context, error_message, Toast.LENGTH_SHORT).show()
-        println("MESSAGGIO DI ERRORE $error_message")
-        return false
-    }
-    return true
+    println("ERROR MSG $error_message")
+    return error_message
 }
 
 
