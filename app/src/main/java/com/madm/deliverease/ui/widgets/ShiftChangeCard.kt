@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
+import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 
 @Composable
@@ -63,7 +64,7 @@ fun ShiftChangeCard(
                     ) {
                         CustomShiftChangeRequest(shift) {
                             Message(
-                                senderID = shift.receiverID,
+                                senderID = globalUser!!.id,
                                 receiverID = shift.senderID,
                                 body = shift.id,
                                 type = Message.MessageType.ACCEPTANCE.displayName

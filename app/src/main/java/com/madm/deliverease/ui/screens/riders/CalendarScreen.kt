@@ -40,23 +40,23 @@ fun CalendarScreen(){
     val swap = remember{ mutableStateOf(false)}
 
     //variable used to store the date of the day we would like to trade
-    var clickedWeekday: WeekDay? by remember {
-        mutableStateOf(null)
-    }
+    var clickedWeekday: WeekDay? by remember { mutableStateOf(null) }
 
     //variable used to store the date of the day we would like to change
-    var previousWeekDay: WeekDay ? by remember {
-        mutableStateOf(null)
-    }
+    var previousWeekDay: WeekDay ? by remember { mutableStateOf(null) }
 
     // getting API data
     var shiftList : List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
 
-    val calendarManager : CalendarManager =
-        CalendarManager(LocalContext.current)
+    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
 
     calendarManager.getDays{ list: List<WorkDay> ->
-        shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }
+        println("######## PRE SHIFT LIST $list")
+        shiftList = list.filter {
+            println("######## WORK DAY ${it.date}  ${it.riders}")
+            it.riders!!.contains(globalUser!!.id)
+        }
+        println("######## SHIFT LIST $shiftList")
     }
 
     //variable used to show the dialog

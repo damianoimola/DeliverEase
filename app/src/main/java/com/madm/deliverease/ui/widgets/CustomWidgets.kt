@@ -10,6 +10,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +28,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,8 +44,12 @@ fun MyOutlinedTextField(
     field: MutableState<String>,
     isError: Boolean,
     label: String = "",
-    onDone: () -> Unit = {}
+    onDone: () -> Unit = {},
+    visualTransformation : VisualTransformation? = null,
+    keyboardOptions : KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, imeAction = ImeAction.Done)
 ){
+    var showPassword by remember { mutableStateOf(visualTransformation == null) }
+
     OutlinedTextField(
         value = field.value,
         onValueChange = { field.value = it },
@@ -52,13 +60,12 @@ fun MyOutlinedTextField(
             Text(text = label)
         },
         enabled = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Ascii,
-            imeAction = ImeAction.Done // Done, not Enter
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {onDone},
-        ),
+        visualTransformation = if (showPassword)
+            VisualTransformation.None
+        else
+            PasswordVisualTransformation(),
+        keyboardOptions = keyboardOptions,
+        keyboardActions = KeyboardActions(onDone = {onDone}),
         singleLine = true,
         maxLines = 1,
         textStyle = CustomTheme.typography.body1,
@@ -74,6 +81,26 @@ fun MyOutlinedTextField(
             placeholderColor = CustomTheme.colors.onBackgroundVariant
         ),
         isError = isError,
+        trailingIcon = {
+            if(visualTransformation != null) {
+                if (showPassword) {
+                    IconButton(onClick = { showPassword = false }) {
+                        Icon(
+                            imageVector = Icons.Filled.Visibility,
+                            contentDescription = "hide_password"
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = { showPassword = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.VisibilityOff,
+                            contentDescription = "hide_password"
+                        )
+                    }
+                }
+            }
+        }
     )
 }
 
@@ -157,7 +184,10 @@ fun ConfirmExitingApp(onDismiss: () -> Unit){
             .wrapContentWidth()
             .wrapContentHeight(),
             shape = MaterialTheme.shapes.large) {
-            Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
+            Column(modifier = Modifier
+                .padding(20.dp)
+                .width(400.dp)
+                .wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(25.dp)) {
 
                 Text(text = stringResource(R.string.exiting_question),

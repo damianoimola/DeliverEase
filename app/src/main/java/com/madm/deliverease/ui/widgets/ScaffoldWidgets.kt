@@ -1,7 +1,7 @@
 package com.madm.deliverease.ui.widgets
 
+import android.os.Parcelable
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,23 +16,21 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
-import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.smallPadding
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 
-
+@Parcelize
 class CustomNavItem(
-    val title: String,
-    val icon: ImageVector,
-    val position: Int,
-    val function: () -> Unit
-)
+    @IgnoredOnParcel val title: String = "",
+    @IgnoredOnParcel val icon: ImageVector? = null,
+    @IgnoredOnParcel val position: Int = -1,
+    @IgnoredOnParcel val function: () -> Unit = {}
+) : Parcelable
 
 @Composable
 fun CustomBottomAppBar(
@@ -48,7 +46,7 @@ fun CustomBottomAppBar(
     ) {
         navItems.forEach { navItem : CustomNavItem ->
             BottomNavigationItem(
-                icon = { Icon(navItem.icon, contentDescription = navItem.title) },
+                icon = { Icon(navItem.icon!!, contentDescription = navItem.title) },
                 label = { Text(text = navItem.title, color = Color.White, maxLines = 1) },
                 selected = navItem == selectedItem,
                 onClick = {
