@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.screens.admin
 
 import android.content.Context
 import android.os.Parcelable
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -67,7 +68,7 @@ fun ShiftsScreenV1() {
     // retrieving all working days in server
     var workingDays: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
     // newly added working days (still not on server)
-    val updatedWorkingDays: ArrayList<WorkDay> = arrayListOf()
+    val updatedWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
     // EVERY working day both server and newly added
     var weekWorkingDays: ArrayList<WorkDay> = arrayListOf()
 
@@ -83,9 +84,11 @@ fun ShiftsScreenV1() {
         WrongConstraintsDialog(
             errorMessage.ifBlank { "Are you sure to continue?" },
             {
+                println("updatedWorkingDays $updatedWorkingDays")
                 if (updatedWorkingDays.isNotEmpty()) {
-                    // calendarManager.insertDays(updatedWorkingDays)
-                }
+                     calendarManager.insertDays(updatedWorkingDays)
+                } else
+                    Toast.makeText(context, "Shifts are not changed, calendar has not been updated", Toast.LENGTH_SHORT).show()
             }
         ) { showDialog = !showDialog }
     }
@@ -283,14 +286,14 @@ fun shiftsConstraintsErrorMessage(
 
     val filter = ridersThisWeek.filter { it.workingDays !in min_week..max_week }.map { it.id }.distinct()
     error_message += if(filter.isNotEmpty())
-        "PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
+        "• PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
     else ""
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate }
         .forEach {
         if(it.riders?.count() !in min_day..max_day){
-            error_message += "PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+            error_message += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
         }
     }
 

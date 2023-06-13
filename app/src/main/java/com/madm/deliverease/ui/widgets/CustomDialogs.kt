@@ -380,8 +380,8 @@ fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismi
                     style = TextStyle(
                         fontFamily = gilroy,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
+                        fontSize = 17.sp,
+                        textAlign = TextAlign.Start
                     )
                 )
 
