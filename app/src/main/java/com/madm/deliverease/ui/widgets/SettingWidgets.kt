@@ -3,9 +3,6 @@ package com.madm.deliverease.ui.widgets
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import com.madm.deliverease.*
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
-import java.util.*
 
 
 @Composable
@@ -65,7 +61,7 @@ fun CustomDivider(text: String ){
     ) {
         Text(
             text,
-            style = CustomTheme.typography.h4,
+            style = CustomTheme.typography.h3,
             color = CustomTheme.colors.onBackgroundVariant
         )
     }

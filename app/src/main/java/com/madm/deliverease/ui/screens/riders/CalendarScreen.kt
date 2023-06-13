@@ -12,12 +12,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.smallPadding
 import com.madm.deliverease.ui.widgets.*
 import java.text.SimpleDateFormat
@@ -162,7 +162,7 @@ fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, setWeekDay: ()->U
             } else {
                 "You already have a turn"
             }),
-            style = TextStyle(color = Color.White),
+            style = CustomTheme.typography.body1,
         )
 
         if (haveAShift && !swap.value) {

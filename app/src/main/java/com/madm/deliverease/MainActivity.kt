@@ -1,8 +1,6 @@
 package com.madm.deliverease
 
 import android.content.Context
-import android.content.res.Resources
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +31,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberAnimatedNavController()
 
             DeliverEaseTheme {
+
                 // navigation host holds all of the navigation destinations within the app
                 // calling "navController.navigate("home")" you can travel through app
                 // It can handle parameters.

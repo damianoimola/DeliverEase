@@ -68,7 +68,7 @@ fun ShiftPreferenceScreen(){
             else currentYear
             selectedMonth = month
         }
-        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+        WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
         WeekContent(selectedWeek, selectedMonth, selectedYear) {
             // retrieve the selected date in a full format
             val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
@@ -182,8 +182,8 @@ fun ShiftOptions(
                             },
                             modifier = Modifier.padding(start = 4.dp),
                             colors = RadioButtonDefaults.colors(
-                                selectedColor = CustomTheme.colors.secondary,
-                                unselectedColor = CustomTheme.colors.secondaryVariant
+                                selectedColor = CustomTheme.colors.tertiary,
+                                unselectedColor = CustomTheme.colors.tertiaryVariant
                             )
                         )
                     } else {
@@ -192,9 +192,9 @@ fun ShiftOptions(
                             onCheckedChange = { checkedState = it },
                             modifier = Modifier.padding(start = 4.dp),
                             colors = CheckboxDefaults.colors(
-                                checkedColor = CustomTheme.colors.secondary,
-                                uncheckedColor = CustomTheme.colors.secondaryVariant,
-                                checkmarkColor = CustomTheme.colors.onSecondary
+                                checkedColor = CustomTheme.colors.tertiary,
+                                uncheckedColor = CustomTheme.colors.tertiaryVariant,
+                                checkmarkColor = CustomTheme.colors.onTertiary
                             )
                         )
                     }

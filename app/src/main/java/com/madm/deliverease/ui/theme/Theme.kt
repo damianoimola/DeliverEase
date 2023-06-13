@@ -4,7 +4,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 /*
@@ -80,6 +83,16 @@ fun DeliverEaseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color(0xFFB94434),
+            darkIcons = false
+        )
+    }
+
+
     val currentColor = remember { if (darkTheme) darkColors else colors }
     val rememberedColors = remember { currentColor.copy() }.apply { updateColorsFrom(currentColor) }
     CompositionLocalProvider(

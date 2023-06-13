@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -165,7 +164,7 @@ fun ShiftsScreenV1() {
 
                 Text(
                     text = stringResource(R.string.click_to_see_shift),
-                    style = TextStyle(color = Color.White),
+                    style = CustomTheme.typography.body1
                 )
             }
             //
@@ -447,7 +446,12 @@ fun RidersCheckboxCard(
                             it.isChecked = isChecked
                             riderSelected(it.user.id!!, it.isChecked)
                         },
-                        modifier = Modifier.padding(start = 0.dp)
+                        modifier = Modifier.padding(start = 0.dp),
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = CustomTheme.colors.tertiary,
+                            uncheckedColor = CustomTheme.colors.tertiaryVariant,
+                            checkmarkColor = CustomTheme.colors.onTertiary
+                        )
                     )
                     Text(
                         text = "${it.user.name} ${it.user.surname}",
