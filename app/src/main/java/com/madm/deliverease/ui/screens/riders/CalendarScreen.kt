@@ -28,7 +28,7 @@ import java.util.Calendar
 @Preview
 @Composable
 fun CalendarScreen(){
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH)) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -51,12 +51,7 @@ fun CalendarScreen(){
     val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
 
     calendarManager.getDays{ list: List<WorkDay> ->
-        println("######## PRE SHIFT LIST $list")
-        shiftList = list.filter {
-            println("######## WORK DAY ${it.date}  ${it.riders}")
-            it.riders!!.contains(globalUser!!.id)
-        }
-        println("######## SHIFT LIST $shiftList")
+        shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }
     }
 
     //variable used to show the dialog

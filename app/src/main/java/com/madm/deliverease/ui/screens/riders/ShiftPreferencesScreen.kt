@@ -67,6 +67,7 @@ fun ShiftPreferenceScreen(){
                 currentYear + 1
             else currentYear
             selectedMonth = month
+            selectedWeek = 1
         }
         WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
         WeekContent(selectedWeek, selectedMonth, selectedYear) {
