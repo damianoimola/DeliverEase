@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.content.res.Configuration
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +30,7 @@ import java.util.Calendar
 @Preview
 @Composable
 fun CalendarScreen(){
+    val configuration = LocalConfiguration.current
     var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -60,50 +63,101 @@ fun CalendarScreen(){
     //where the dialog is actually shown
     if (showCustomDialog) ChangeShiftDialog(dayOfTheWeek = clickedWeekday, previousWeekDay, selectedMonth, selectedYear ) { showCustomDialog = false }
 
+    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
 
-    Column {
-        //month selector
-        MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
-            selectedYear = if (isNextYear)
-                currentYear + 1
-            else currentYear
-            selectedMonth = month
-            selectedWeek = 1
+        Column {
+            //month selector
+            MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                selectedYear = if (isNextYear)
+                    currentYear + 1
+                else currentYear
+                selectedMonth = month
+                selectedWeek = 1
+            }
+            //horizontal weekList
+            WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+            //divider
+            WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+                ShiftRow( // TODO Ralisin: set theme
+                    shiftList.any {
+                        var selectedDate: LocalDate? = null
+
+                        // create a date from selected day
+                        selectedDate = if (weekDay.number < 7 && selectedWeek != 0)
+                            LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
+                        else
+                            LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
+
+                        // converting API date
+                        val inputDateString = it.workDayDate.toString()
+                        val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val date: Date = inputDateFormat.parse(inputDateString)!!
+                        val outputDateString: String = outputDateFormat.format(date)
+
+                        outputDateString == selectedDate.toString()
+                    }, swap,
+                    {
+                        clickedWeekday = weekDay
+                    },
+                    {
+                        previousWeekDay = weekDay
+                    }
+
+                )  { showCustomDialog = it }
+                swap.value = false
+            })
         }
-        //horizontal weekList
-        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
-        //divider
-        WeekContent(selectedWeek, selectedMonth, selectedYear) { weekDay ->
-            ShiftRow( // TODO Ralisin: set theme
-                shiftList.any {
-                    var selectedDate: LocalDate? = null
-
-                    // create a date from selected day
-                    selectedDate = if (weekDay.number < 7 && selectedWeek != 0)
-                        LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
-                    else
-                        LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
-
-                    // converting API date
-                    val inputDateString = it.workDayDate.toString()
-                    val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
-                    val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val date: Date = inputDateFormat.parse(inputDateString)!!
-                    val outputDateString: String = outputDateFormat.format(date)
-
-                    outputDateString == selectedDate.toString()
-                }, swap,
-                {
-                    clickedWeekday = weekDay
-                },
-                {
-                    previousWeekDay = weekDay
+    } else {
+        println("ECCOLO QUA")
+        Row(modifier = Modifier.fillMaxSize()) {
+            Column (modifier = Modifier.width(IntrinsicSize.Min)) {
+                //month selector
+                MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                    selectedYear = if (isNextYear)
+                        currentYear + 1
+                    else currentYear
+                    selectedMonth = month
+                    selectedWeek = 1
                 }
+                //horizontal weekList
+                WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+            }
 
-            )  { showCustomDialog = it }
-            swap.value = false
+            //divider
+            WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+                ShiftRow( // TODO Ralisin: set theme
+                    shiftList.any {
+                        var selectedDate: LocalDate? = null
+
+                        // create a date from selected day
+                        selectedDate = if (weekDay.number < 7 && selectedWeek != 0)
+                            LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
+                        else
+                            LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
+
+                        // converting API date
+                        val inputDateString = it.workDayDate.toString()
+                        val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val date: Date = inputDateFormat.parse(inputDateString)!!
+                        val outputDateString: String = outputDateFormat.format(date)
+
+                        outputDateString == selectedDate.toString()
+                    }, swap,
+                    {
+                        clickedWeekday = weekDay
+                    },
+                    {
+                        previousWeekDay = weekDay
+                    }
+
+                )  { showCustomDialog = it }
+                swap.value = false
+            })
         }
     }
+
 }
 
 

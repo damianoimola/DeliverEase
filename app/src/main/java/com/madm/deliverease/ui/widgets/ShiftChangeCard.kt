@@ -28,6 +28,7 @@ import com.madm.deliverease.ui.theme.*
 fun ShiftChangeCard(
     shiftsList: List<Message>,
     modifier: Modifier = Modifier,
+    isPortrait : Int
 ) {
     val context = LocalContext.current
 
@@ -36,7 +37,7 @@ fun ShiftChangeCard(
         shape = Shapes.medium,
         modifier = modifier
             .fillMaxSize()
-            .padding(nonePadding, smallPadding),
+            .padding(smallPadding * (1-isPortrait), smallPadding * isPortrait),
         backgroundColor = CustomTheme.colors.surface
     ) {
         Column(

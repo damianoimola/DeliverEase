@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -12,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +50,7 @@ fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
 
 @Composable
 fun ShiftPreferenceScreen(){
+    val configuration = LocalConfiguration.current
     var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
@@ -61,60 +64,124 @@ fun ShiftPreferenceScreen(){
 
     val context = LocalContext.current
 
-    Column {
-        MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
-            selectedYear = if (isNextYear)
-                currentYear + 1
-            else currentYear
-            selectedMonth = month
-            selectedWeek = 1
-        }
-        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
-        WeekContent(selectedWeek, selectedMonth, selectedYear) {
-            // retrieve the selected date in a full format
-            val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
-                Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
-            else
-                Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
-            ShiftOptions(
-                permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
-                nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
-                onComplete = { kind: Int, permanent: Boolean ->
-                    if(permanent) {
-                        val tmpConstraint =
-                            permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
+    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+        Column {
+            MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                selectedYear = if (isNextYear)
+                    currentYear + 1
+                else currentYear
+                selectedMonth = month
+                selectedWeek = 1
+            }
+            WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+            WeekContent(selectedWeek, selectedMonth, selectedYear, {
+                // retrieve the selected date in a full format
+                val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
+                    Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                else
+                    Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+                ShiftOptions(
+                    permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
+                    nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
+                    onComplete = { kind: Int, permanent: Boolean ->
+                        if(permanent) {
+                            val tmpConstraint =
+                                permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
 
 
-                        if(tmpConstraint == null)
-                            globalUser!!.permanentConstraints.add(
-                                PermanentConstraint(
-                                    getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number),
-                                    ReverseShiftOptionMap[kind]
+                            if(tmpConstraint == null)
+                                globalUser!!.permanentConstraints.add(
+                                    PermanentConstraint(
+                                        getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number),
+                                        ReverseShiftOptionMap[kind]
+                                    )
                                 )
-                            )
-                        else
-                            globalUser!!.permanentConstraints.first{ c ->
-                                c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number)
-                            }.type = ReverseShiftOptionMap[kind]
-                    } else {
-                        val tmpConstraint =
-                            nonPermanentConstraints.firstOrNull { c -> c.constraintDate == selectedDateFormatted }
+                            else
+                                globalUser!!.permanentConstraints.first{ c ->
+                                    c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number)
+                                }.type = ReverseShiftOptionMap[kind]
+                        } else {
+                            val tmpConstraint =
+                                nonPermanentConstraints.firstOrNull { c -> c.constraintDate == selectedDateFormatted }
 
-                        if(tmpConstraint == null) {
-                            val npc = NonPermanentConstraint(ReverseShiftOptionMap[kind])
-                            npc.constraintDate = selectedDateFormatted
+                            if(tmpConstraint == null) {
+                                val npc = NonPermanentConstraint(ReverseShiftOptionMap[kind])
+                                npc.constraintDate = selectedDateFormatted
 
-                            globalUser!!.nonPermanentConstraints.add(npc)
+                                globalUser!!.nonPermanentConstraints.add(npc)
+                            }
+                            else globalUser!!.nonPermanentConstraints.first { c -> c.constraintDate == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
                         }
-                        else globalUser!!.nonPermanentConstraints.first { c -> c.constraintDate == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
-                    }
 
-                    globalUser!!.registerOrUpdate(context)
+                        globalUser!!.registerOrUpdate(context)
+                    }
+                )
+            })
+        }
+    } else {
+        println("ECCOLO QUA")
+        Row(modifier = Modifier.fillMaxSize()) {
+            Column (modifier = Modifier.width(IntrinsicSize.Min)) {
+                MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                    selectedYear = if (isNextYear)
+                        currentYear + 1
+                    else currentYear
+                    selectedMonth = month
+                    selectedWeek = 1
                 }
-            )
+                WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+            }
+
+            WeekContent(selectedWeek, selectedMonth, selectedYear, {
+                // retrieve the selected date in a full format
+                val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
+                    Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                else
+                    Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+                ShiftOptions(
+                    permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
+                    nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
+                    onComplete = { kind: Int, permanent: Boolean ->
+                        if(permanent) {
+                            val tmpConstraint =
+                                permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
+
+
+                            if(tmpConstraint == null)
+                                globalUser!!.permanentConstraints.add(
+                                    PermanentConstraint(
+                                        getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number),
+                                        ReverseShiftOptionMap[kind]
+                                    )
+                                )
+                            else
+                                globalUser!!.permanentConstraints.first{ c ->
+                                    c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number)
+                                }.type = ReverseShiftOptionMap[kind]
+                        } else {
+                            val tmpConstraint =
+                                nonPermanentConstraints.firstOrNull { c -> c.constraintDate == selectedDateFormatted }
+
+                            if(tmpConstraint == null) {
+                                val npc = NonPermanentConstraint(ReverseShiftOptionMap[kind])
+                                npc.constraintDate = selectedDateFormatted
+
+                                globalUser!!.nonPermanentConstraints.add(npc)
+                            }
+                            else globalUser!!.nonPermanentConstraints.first { c -> c.constraintDate == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
+                        }
+
+                        globalUser!!.registerOrUpdate(context)
+                    }
+                )
+            })
         }
     }
+
+
 }
 
 

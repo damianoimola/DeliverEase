@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.madm.common_libs.model.*
@@ -17,6 +19,7 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
+    val configuration = LocalConfiguration.current
     var workDayList : List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
@@ -58,10 +61,19 @@ fun HomeScreen() {
     }
 
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying)
-        ShiftChangeCard(shiftRequestList, Modifier.weight(1f))
+
+    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 1)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), 1)
+        }
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 0)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), 0)
+        }
     }
+
 }
 
 
