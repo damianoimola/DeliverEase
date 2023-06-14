@@ -77,32 +77,20 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                     enterTransition = {
                         slideIntoContainer(
                             towards =
-                            if(previousSelectedItem.position > selectedItem.position)
-                                AnimatedContentScope.SlideDirection.Right
-                            else if(previousSelectedItem.position < selectedItem.position)
-                                AnimatedContentScope.SlideDirection.Left
-                            else
-                                AnimatedContentScope.SlideDirection.Up,
-                            animationSpec = tween(700)
+                                if(previousSelectedItem.position > selectedItem.position)
+                                    AnimatedContentScope.SlideDirection.Right
+                                else if(previousSelectedItem.position < selectedItem.position)
+                                    AnimatedContentScope.SlideDirection.Left
+                                else
+                                    AnimatedContentScope.SlideDirection.Up,
+                            animationSpec = tween(500)
                         )
                     }
                 ) {
-                    composable("home") {
-                        //selectedItem = navItems[0]
-                        HomeScreen()
-                    }
-                    composable("calendar") {
-                        //selectedItem = navItems[1]
-                        CalendarScreen()
-                    }
-                    composable("preferences") {
-                        //selectedItem = navItems[2]
-                        ShiftPreferenceScreen()
-                    }
-                    composable("settings") {
-                        //selectedItem = navItems[3]
-                        SettingScreenRider(logoutCallback)
-                    }
+                    composable("home") { HomeScreen() }
+                    composable("calendar") { CalendarScreen() }
+                    composable("preferences") { ShiftPreferenceScreen() }
+                    composable("settings") { SettingScreenRider(logoutCallback) }
                 }
             }
         },

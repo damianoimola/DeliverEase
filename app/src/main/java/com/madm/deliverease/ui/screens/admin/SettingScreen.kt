@@ -1,6 +1,5 @@
 package com.madm.deliverease.ui.screens.admin
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -22,7 +21,6 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.PreferencesSetting
 
-@SuppressLint("CommitPrefEdits")
 @Composable
 fun SettingScreen(logoutCallback: () -> Unit) {
     val sharedPreferences = LocalContext.current.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
