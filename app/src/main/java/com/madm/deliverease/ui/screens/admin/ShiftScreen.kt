@@ -3,23 +3,16 @@ package com.madm.deliverease.ui.screens.admin
 import android.content.Context
 import android.os.Parcelable
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.*
@@ -48,8 +41,8 @@ class CheckBoxItem(val user: User, val isAllocated : Boolean) : Parcelable{
 
 
 @Composable
-fun ShiftsScreenV1() {
-    println("MAIN")
+fun ShiftsScreen() {
+    println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
     var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
@@ -84,7 +77,6 @@ fun ShiftsScreenV1() {
         WrongConstraintsDialog(
             errorMessage.ifBlank { "Are you sure to continue?" },
             {
-                println("updatedWorkingDays $updatedWorkingDays")
                 if (updatedWorkingDays.isNotEmpty()) {
                      calendarManager.insertDays(updatedWorkingDays)
                 } else
@@ -130,10 +122,10 @@ fun ShiftsScreenV1() {
 
             println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
 
+            // filter all users that are available
             var availableRidersList : List<User> = listOf()
             var ifNeededRidersList : List<User> = listOf()
 
-            // filter all users that are available
             availableRidersList = globalAllUsers.filter { user ->
                 val permanent = user.permanentConstraints.firstOrNull {
                     it.dayOfWeek == selectedDateFormatted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
@@ -203,8 +195,6 @@ fun ShiftsScreenV1() {
 
 
 
-
-
                 val secondRiderList: ArrayList<String> = arrayListOf()
                 val wwd = weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
                 wwd.riders!!.forEach { secondRiderList.add(it) }
@@ -213,8 +203,6 @@ fun ShiftsScreenV1() {
                 else secondRiderList.add(riderId)
 
                 wwd.riders = secondRiderList.distinct()
-
-                println("WWD: $wwd")
             }
         }
     }
@@ -231,14 +219,12 @@ fun shiftsConstraintsErrorMessage(
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
     // TODO: load just one time when composable starts up (Damiano)
-    val min_week = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
-    val max_week = sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)
-    val min_day = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
-    val max_day = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
+    val minWeek = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
+    val maxWeek = sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)
+    val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
+    val maxDay = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
 
-    println("CONSTRAINTS $min_week, $max_week, $min_day, $max_day")
-
-    var error_message : String = ""
+    var errorMessage : String = ""
 
 
     // retrieving first and last day of selected week
@@ -263,9 +249,6 @@ fun shiftsConstraintsErrorMessage(
     calendar.set(Calendar.MILLISECOND, 999)
     val endDate = calendar.time
 
-    println("START ${startDate} END ${endDate}")
-    println("WEEK ${weekWorkingDays.filter { it.workDayDate in startDate..endDate }}")
-
 
     data class WeeklyRider(val id: String = "", var workingDays: Int = 0)
     val ridersThisWeek : ArrayList<WeeklyRider> = arrayListOf()
@@ -279,26 +262,26 @@ fun shiftsConstraintsErrorMessage(
             if(anyRider) ridersThisWeek.first { it.id == riderID }.workingDays += 1
             else ridersThisWeek.add(WeeklyRider(riderID, 1))
 
-            println("RIDER $riderID CONTATORE ${ridersThisWeek.first { it.id == riderID }.workingDays}")
+            println("RIDER $riderID COUNTER ${ridersThisWeek.first { it.id == riderID }.workingDays}")
         }
     }
 
 
-    val filter = ridersThisWeek.filter { it.workingDays !in min_week..max_week }.map { it.id }.distinct()
-    error_message += if(filter.isNotEmpty())
+    val filter = ridersThisWeek.filter { it.workingDays !in minWeek..maxWeek }.map { it.id }.distinct()
+    errorMessage += if(filter.isNotEmpty())
         "• PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
     else ""
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate }
         .forEach {
-        if(it.riders?.count() !in min_day..max_day){
-            error_message += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+        if(it.riders?.count() !in minDay..maxDay){
+            errorMessage += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+
+            println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
         }
     }
-
-    println("ERROR MSG $error_message")
-    return error_message
+    return errorMessage
 }
 
 
@@ -317,13 +300,9 @@ fun RidersAvailabilitiesV1(
     else listOf()
 
 
-    // todo: fai una mappa con (selected date e checkbox item)
-
     val availableRidersCheckboxList : List<CheckBoxItem> = availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
 
     val ifNeededRidersCheckboxList : List<CheckBoxItem> = ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
-
-    println("RIDERS AVAILABILITIES - $selectedDate + $allocatedRiderList")
 
     Column {
         // Card with available riders
@@ -341,182 +320,6 @@ fun RidersAvailabilitiesV1(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@Composable
-fun ShiftsScreen() {
-    var selectedDay : Int by rememberSaveable { mutableStateOf(0) }
-    var selectedDate : Date by rememberSaveable {
-        mutableStateOf(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-    }
-
-    var availableRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-    var ifNeededRidersList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-
-    // filter all users that are available
-    availableRidersList = globalAllUsers.filter {  user ->
-        val permanent = user.permanentConstraints.firstOrNull {
-            it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                    &&
-                    it.type!!.lowercase() != "open"
-        } == null
-
-        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.constraintDate == selectedDate
-                    &&
-                    it.type!!.lowercase() != "open"
-        } == null
-
-        permanent && nonPermanent && user.id != "0"
-    }
-
-    // filter all users that if needed will come
-    ifNeededRidersList = globalAllUsers.filter {  user ->
-        val permanent = user.permanentConstraints.firstOrNull {
-            it.dayOfWeek == selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                    &&
-                    it.type == "light"
-        } != null
-
-        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.constraintDate == selectedDate
-                    &&
-                    it.type == "light"
-        } != null
-
-        (permanent || nonPermanent) && user.id != "0"
-    }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        DaysList(selectedDay) { dayNumber, date ->
-            selectedDay = dayNumber
-            selectedDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
-        }
-
-        RidersAvailabilities(availableRidersList, ifNeededRidersList, selectedDate)
-    }
-
-}
-
-
-
-@Composable
-fun RidersAvailabilities(
-    availableRidersList: List<User>,
-    ifNeededRidersList: List<User>,
-    selectedDate: Date
-) {
-    println("RIDERS AVAILABILITIES")
-    val context = LocalContext.current
-    var selectedWorkDay : WorkDay? by rememberSaveable { mutableStateOf(WorkDay()) }
-    var allocatedRiderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
-    var availableRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
-    var ifNeededRidersCheckboxList : List<CheckBoxItem> by rememberSaveable { mutableStateOf(listOf()) }
-    val calendarManager : CalendarManager = CalendarManager(LocalContext.current)
-
-    val defaultMessage :String = stringResource(R.string.default_message_send_shift)
-
-    calendarManager.getDays{ list: List<WorkDay> ->
-        selectedWorkDay = list.firstOrNull {
-
-            println("##### SELECTED DATE $selectedDate    DATE ${it.date}    workDayDate ${it.workDayDate}")
-            it.workDayDate == selectedDate
-        }
-
-        allocatedRiderList = if(selectedWorkDay != null)
-            globalAllUsers.filter { user -> user.id in selectedWorkDay!!.riders!!.toList() }
-        else
-            listOf()
-
-        availableRidersCheckboxList = availableRidersList.map {
-            CheckBoxItem(it, it in allocatedRiderList)
-        }
-
-        ifNeededRidersCheckboxList = ifNeededRidersList.map {
-            CheckBoxItem(it, it in allocatedRiderList)
-        }
-    }
-
-    LazyColumn {
-        item {
-            // Card with available riders
-            if (availableRidersCheckboxList.isNotEmpty()) {
-                TextLineSeparator(stringResource(R.string.available))
-//                RidersCheckboxCard(availableRidersCheckboxList)
-            }
-
-            // Section with only if_needed riders
-            if (ifNeededRidersCheckboxList.isNotEmpty()) {
-                TextLineSeparator(stringResource(R.string.if_needed))
-//                RidersCheckboxCard(ifNeededRidersCheckboxList)
-            }
-
-            // Buttons for action "Save Draft" and "Submit" choice
-            ButtonDraftAndSubmit({
-                val listOfWorkingRiders =
-                    availableRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! } +
-                            ifNeededRidersCheckboxList.filter { it.isChecked }.map{ it.user.id!! }
-
-                val workDay : WorkDay = WorkDay(listOfWorkingRiders)
-                workDay.workDayDate = selectedDate
-
-                workDay.insertOrUpdate(context)
-            }) {
-                Message(
-                    senderID = globalUser!!.id,
-                    receiverID = "0",
-                    body = defaultMessage,
-                    type = Message.MessageType.NOTIFICATION.displayName
-                ).send(context)
-            }
-        }
-    }
-}
 
 
 
@@ -617,74 +420,6 @@ fun ButtonDraftAndSubmit(
         }
     }
 }
-
-
-
-fun getNext90Days(): List<LocalDate> {
-    val currentDate = LocalDate.now()
-    val next90Days: ArrayList<LocalDate> = arrayListOf()
-
-    // from tomorrow
-    for (i in 1 until 91) {
-        val date = currentDate.plusDays(i.toLong())
-        next90Days.add(date)
-    }
-
-    return next90Days.toList()
-}
-
-
-@Composable
-fun DaysList(selectedDay: Int, function: (Int, LocalDate) -> Unit) {
-    val days = getNext90Days()
-    var selectedDayString by rememberSaveable { mutableStateOf(days[selectedDay]) }
-
-    LazyRow(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        itemsIndexed(days) { _, it ->
-            val month = it.month
-            val dayNumber = it.dayOfMonth
-            val dayName = it.dayOfWeek
-
-            Button(
-                onClick = {
-                    function(days.indexOf(it) + 1, it)
-                    selectedDayString = it
-                },
-//                elevation = ButtonDefaults.elevation(
-//                    defaultElevation = 6.dp,
-//                    pressedElevation = 8.dp,
-//                    disabledElevation = 2.dp
-//                ),
-                modifier = Modifier
-                    .padding(smallPadding, smallPadding)
-                    .clip(shape = MaterialTheme.shapes.medium),
-                colors = ButtonDefaults.buttonColors(
-                    if (selectedDayString == it) MaterialTheme.colors.primaryVariant
-                    else MaterialTheme.colors.primary
-                ),
-                border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.primary), // TODO Ralisin: set border color with theme
-                shape = MaterialTheme.shapes.medium //RoundedCornerShape(20)
-            ) {
-                Text(
-                    text = "$month\n$dayNumber ${dayName.toString().subSequence(0..2)}",
-                    // color = Color.White, // TODO ralisin: set text color with theme
-                    textAlign = TextAlign.Center,
-                    color = if (selectedDayString == it) Color.Black else MaterialTheme.colors.onPrimary // TODO Ralisin: set second color for themes
-                )
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
 
 
 

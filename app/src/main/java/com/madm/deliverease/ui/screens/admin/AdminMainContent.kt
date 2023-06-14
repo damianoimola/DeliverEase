@@ -99,22 +99,10 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                         )
                     }
                 ) {
-                    composable("home") {
-                        //selectedItem = navItems[0]
-                        HomeScreen()
-                    }
-                    composable("shift") {
-                        //selectedItem = navItems[1]
-                        ShiftsScreenV1()
-                    }
-                    composable("riders") {
-                        //selectedItem = navItems[2]
-                        RidersScreen()
-                    }
-                    composable("settings") {
-                        //selectedItem = navItems[3]
-                        SettingScreen(logoutCallback)
-                    }
+                    composable("home") { HomeScreen() }
+                    composable("shift") { ShiftsScreen() }
+                    composable("riders") { RidersScreen() }
+                    composable("settings") { SettingScreen(logoutCallback) }
                 }
             }
         },
