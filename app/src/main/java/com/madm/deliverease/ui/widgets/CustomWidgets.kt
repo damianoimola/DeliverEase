@@ -65,7 +65,7 @@ fun MyOutlinedTextField(
         else
             PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
-        keyboardActions = KeyboardActions(onDone = {onDone}),
+        keyboardActions = KeyboardActions(onDone = {onDone()}),
         singleLine = true,
         maxLines = 1,
         textStyle = CustomTheme.typography.body1,
