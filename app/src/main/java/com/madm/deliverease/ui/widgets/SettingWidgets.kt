@@ -1,6 +1,11 @@
 package com.madm.deliverease.ui.widgets
 
 
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -20,8 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.madm.deliverease.*
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
+import java.util.*
+
 
 @Composable
 fun PreferencesSetting(logoutCallback: () -> Unit){
@@ -65,6 +74,7 @@ fun CustomDivider(text: String ){
 @Preview
 @Composable
 fun Language(){
+    val context: Context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val items = listOf(stringResource(R.string.english), stringResource(R.string.italian))
     var selectedIndex by remember { mutableStateOf(0) }
@@ -114,6 +124,9 @@ fun Language(){
                     DropdownMenuItem(onClick = {
                         selectedIndex = index
                         expanded = false
+
+                        if(s == "English") switchLanguage("en", context)
+                        else switchLanguage("it", context)
                     }) {
                         Text(text = s, style = CustomTheme.typography.body1, color = CustomTheme.colors.onBackgroundVariant)
                     }
@@ -122,6 +135,25 @@ fun Language(){
         }
     }
 }
+
+
+
+fun switchLanguage(languageCode: String, context: Context) {
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
+    // setting up the default language inside internal storage
+    editor.putString("STARTUP_LANG", languageCode)
+    editor.apply()
+
+    // Restart the activity to apply the new language
+    val intent = Intent(context, MainActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    context.startActivity(intent)
+}
+
+
+
 
 @Composable
 fun DarkMode(){

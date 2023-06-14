@@ -1,6 +1,8 @@
 package com.madm.deliverease
 
 import android.content.Context
+import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,14 +12,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.madm.common_libs.model.User
+import com.madm.deliverease.localization.ContextWrapper
 import com.madm.deliverease.ui.screens.access.LoginScreen
 import com.madm.deliverease.ui.screens.admin.AdminsMainContent
 import com.madm.deliverease.ui.screens.riders.RidersMainContent
 import com.madm.deliverease.ui.theme.DeliverEaseTheme
+import java.util.*
+
 
 @OptIn(ExperimentalAnimationApi::class)
 class MainActivity : ComponentActivity() {
@@ -35,6 +39,24 @@ class MainActivity : ComponentActivity() {
                 AppNavigationGraph(navController = navController)
             }
         }
+    }
+
+
+
+    override fun attachBaseContext(newBaseContext: Context) {
+        // open the shared prefs file
+        val sharedPreferences = newBaseContext.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+        val language = sharedPreferences.getString("STARTUP_LANG", "en")
+
+        // setting up the locale
+        val locale: Locale = Locale(language!!)
+        Locale.setDefault(locale)
+
+        // provide the locale to the ContextWrapper custom child
+        val context: Context = ContextWrapper.wrap(newBaseContext, locale)
+
+        // call the "attachBaseContext" method of the parent (super class)
+        super.attachBaseContext(context)
     }
 
 

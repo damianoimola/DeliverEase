@@ -42,7 +42,13 @@ fun RidersScreen() {
     ) { showHireDialog = !showHireDialog }
 
     if (showEditDialog && selectedRider != null)
-        EditRiderDialog(selectedRider!!) { showEditDialog = !showEditDialog }
+        EditRiderDialog(selectedRider!!,
+            { oldUser, newUser ->
+                globalAllUsers.remove(oldUser)
+                globalAllUsers.add(newUser)
+                riderList = ArrayList(globalAllUsers)
+            }
+        ) { showEditDialog = !showEditDialog }
 
     Column (
         Modifier

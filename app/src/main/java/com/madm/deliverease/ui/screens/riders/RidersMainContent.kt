@@ -52,8 +52,8 @@ fun RidersMainContent(logoutCallback : () -> Unit){
 
 
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
-    var selectedItem by remember { mutableStateOf(navItems[0]) }
-    var previousSelectedItem: CustomNavItem by remember{ mutableStateOf(navItems[0]) }
+    var selectedItem by rememberSaveable { mutableStateOf(navItems[0]) }
+    var previousSelectedItem: CustomNavItem by rememberSaveable { mutableStateOf(navItems[0]) }
     //variable used to show the exiting dialog
     var showExitingDialog by rememberSaveable { mutableStateOf(false) }
 

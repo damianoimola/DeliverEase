@@ -57,7 +57,7 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
                 // DialogBox title
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Edit Rider",
+                        text = "Hire new Rider",
                         style = TextStyle(
                             fontFamily = gilroy,
                             fontWeight = FontWeight.Bold,
@@ -148,7 +148,7 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
 
 
 @Composable
-fun EditRiderDialog(user: User, onDismiss: () -> Unit) {
+fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     var riderName by rememberSaveable { mutableStateOf(user.name!!) }
     var riderSurname by rememberSaveable { mutableStateOf(user.surname!!) }
@@ -249,7 +249,7 @@ fun EditRiderDialog(user: User, onDismiss: () -> Unit) {
 
                                 newUser.registerOrUpdate(context)       // updating server info
                                 onDismiss()
-                                globalAllUsers.add(newUser)             // updating ui with the new rider
+                                callbackFunction(user, newUser)
 
                                 Toast.makeText(context, "MODIFIED, HURRAY!!", Toast.LENGTH_SHORT).show()
                             }
