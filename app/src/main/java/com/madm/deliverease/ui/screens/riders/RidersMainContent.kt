@@ -46,19 +46,19 @@ fun RidersMainContent(logoutCallback : () -> Unit){
     // bottom navigation bar icons
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home, 1) {
-            if(navController.currentDestination?.route != "riders")
+            if(navController.currentDestination?.route != "home")
                 navController.navigate("home")
         },
         CustomNavItem("Calendar", Icons.Default.DateRange, 2) {
-            if(navController.currentDestination?.route != "riders")
+            if(navController.currentDestination?.route != "calendar")
                 navController.navigate("calendar")
         },
         CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon), 3) {
-            if(navController.currentDestination?.route != "riders")
+            if(navController.currentDestination?.route != "preferences")
                 navController.navigate("preferences")
         },
         CustomNavItem("Settings", Icons.Default.Settings, 4) {
-            if(navController.currentDestination?.route != "riders")
+            if(navController.currentDestination?.route != "settings")
                 navController.navigate("settings")
         }
     )
@@ -71,6 +71,8 @@ fun RidersMainContent(logoutCallback : () -> Unit){
 
     if(showExitingDialog)
         ConfirmExitingApp() { showExitingDialog = false }
+
+    selectedItem = navItems[0]
 
     Scaffold(
         backgroundColor = CustomTheme.colors.background,
@@ -98,26 +100,30 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                     }
                 ) {
                     composable("home") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[0]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 1)
+                                selectedItem = navItems[0]
                         }
                         HomeScreen()
                     }
                     composable("calendar") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[1]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 2)
+                                selectedItem = navItems[1]
                         }
                         CalendarScreen()
                     }
                     composable("preferences") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[2]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 3)
+                                selectedItem = navItems[2]
                         }
                         ShiftPreferenceScreen()
                     }
                     composable("settings") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[3]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 4)
+                                selectedItem = navItems[3]
                         }
                         SettingScreenRider(logoutCallback)
                     }
@@ -129,7 +135,7 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    CoroutineScope(Dispatchers.Main).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         previousSelectedItem = selectedItem
                         if(item != previousSelectedItem){
                             selectedItem = item

@@ -71,6 +71,8 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
     if(showExitingDialog)
         ConfirmExitingApp() { showExitingDialog = false }
 
+    selectedItem = navItems[0]
+
     Scaffold(
         backgroundColor = CustomTheme.colors.background,
         topBar = { CustomTopAppBar() },
@@ -97,26 +99,30 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                     }
                 ) {
                     composable("home") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[0]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 1)
+                                selectedItem = navItems[0]
                         }
                         HomeScreen()
                     }
                     composable("shift") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[1]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 2)
+                                selectedItem = navItems[1]
                         }
                         ShiftsScreenV1()
                     }
                     composable("riders") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[2]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 3)
+                                selectedItem = navItems[2]
                         }
                         RidersScreen()
                     }
                     composable("settings") {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            selectedItem = navItems[3]
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 4)
+                                selectedItem = navItems[3]
                         }
                         SettingScreen(logoutCallback)
                     }
@@ -128,7 +134,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    CoroutineScope(Dispatchers.Main).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         previousSelectedItem = selectedItem
                         if(item != previousSelectedItem){
                             selectedItem = item
