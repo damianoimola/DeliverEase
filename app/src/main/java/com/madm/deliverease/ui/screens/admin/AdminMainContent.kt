@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -32,7 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AdminsMainContent(logoutCallback: () -> Unit) {
@@ -44,24 +45,20 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
     // bottom navigation bar icons
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home, 1) {
-            if(navController.currentDestination?.route != "home") {
+            if(navController.currentDestination?.route != "home")
                 navController.navigate("home")
-            }
         },
         CustomNavItem("Shifts", ImageVector.vectorResource(id = R.drawable.newshifts), 2) {
-            if(navController.currentDestination?.route != "shift") {
+            if(navController.currentDestination?.route != "shift")
                 navController.navigate("shift")
-            }
         },
         CustomNavItem("Riders", ImageVector.vectorResource(id = R.drawable.rider), 3) {
-            if(navController.currentDestination?.route != "riders") {
+            if(navController.currentDestination?.route != "riders")
                 navController.navigate("riders")
-            }
         },
         CustomNavItem("Settings", Icons.Default.Settings, 4) {
-            if(navController.currentDestination?.route != "settings") {
+            if(navController.currentDestination?.route != "settings")
                 navController.navigate("settings")
-            }
         },
     )
 
@@ -100,19 +97,27 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                     }
                 ) {
                     composable("home") {
-                        //selectedItem = navItems[0]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[0]
+                        }
                         HomeScreen()
                     }
                     composable("shift") {
-                        //selectedItem = navItems[1]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[1]
+                        }
                         ShiftsScreenV1()
                     }
                     composable("riders") {
-                        //selectedItem = navItems[2]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[2]
+                        }
                         RidersScreen()
                     }
                     composable("settings") {
-                        //selectedItem = navItems[3]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[3]
+                        }
                         SettingScreen(logoutCallback)
                     }
                 }
@@ -146,6 +151,4 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
             showExitingDialog = true
         }
     }
-
-    selectedItem = navItems[0]
 }

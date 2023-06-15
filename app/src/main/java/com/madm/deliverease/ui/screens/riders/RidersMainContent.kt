@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -33,6 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun RidersMainContent(logoutCallback : () -> Unit){
@@ -43,13 +45,23 @@ fun RidersMainContent(logoutCallback : () -> Unit){
 
     // bottom navigation bar icons
     val navItems = listOf(
-        CustomNavItem("Home", Icons.Default.Home, 1) { navController.navigate("home") },
-        CustomNavItem("Calendar", Icons.Default.DateRange, 2) { navController.navigate("calendar") },
-        CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon), 3) { navController.navigate("preferences") },
-        CustomNavItem("Settings", Icons.Default.Settings, 4) { navController.navigate("settings") }
+        CustomNavItem("Home", Icons.Default.Home, 1) {
+            if(navController.currentDestination?.route != "riders")
+                navController.navigate("home")
+        },
+        CustomNavItem("Calendar", Icons.Default.DateRange, 2) {
+            if(navController.currentDestination?.route != "riders")
+                navController.navigate("calendar")
+        },
+        CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon), 3) {
+            if(navController.currentDestination?.route != "riders")
+                navController.navigate("preferences")
+        },
+        CustomNavItem("Settings", Icons.Default.Settings, 4) {
+            if(navController.currentDestination?.route != "riders")
+                navController.navigate("settings")
+        }
     )
-
-
 
     // Set as navItems[0] cause it works with address, so at first launch of app home button wasn't set as default
     var selectedItem by rememberSaveable { mutableStateOf(navItems[0]) }
@@ -59,8 +71,6 @@ fun RidersMainContent(logoutCallback : () -> Unit){
 
     if(showExitingDialog)
         ConfirmExitingApp() { showExitingDialog = false }
-
-
 
     Scaffold(
         backgroundColor = CustomTheme.colors.background,
@@ -88,19 +98,27 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                     }
                 ) {
                     composable("home") {
-                        //selectedItem = navItems[0]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[0]
+                        }
                         HomeScreen()
                     }
                     composable("calendar") {
-                        //selectedItem = navItems[1]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[1]
+                        }
                         CalendarScreen()
                     }
                     composable("preferences") {
-                        //selectedItem = navItems[2]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[2]
+                        }
                         ShiftPreferenceScreen()
                     }
                     composable("settings") {
-                        //selectedItem = navItems[3]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            selectedItem = navItems[3]
+                        }
                         SettingScreenRider(logoutCallback)
                     }
                 }
@@ -134,6 +152,4 @@ fun RidersMainContent(logoutCallback : () -> Unit){
             showExitingDialog = true
         }
     }
-
-    selectedItem = navItems[0]
 }
