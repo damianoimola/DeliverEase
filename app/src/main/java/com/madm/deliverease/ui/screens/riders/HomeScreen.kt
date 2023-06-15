@@ -22,7 +22,7 @@ fun HomeScreen() {
     val configuration = LocalConfiguration.current
     var workDayList : List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
-    var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var shiftRequestList : ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
     val isPlaying = rememberSaveable { mutableStateOf (false) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
@@ -42,7 +42,7 @@ fun HomeScreen() {
     }
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
-        shiftRequestList = list.filter {
+        shiftRequestList = ArrayList(list.filter {
             it.messageType == Message.MessageType.REQUEST
             &&
             it.senderID != globalUser!!.id
@@ -57,20 +57,22 @@ fun HomeScreen() {
                     it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }.map { d -> d.date }.toList()
                 )
             )
-        }
+        })
     }
 
-
+    // TODO: da testare (Damiano)
+    // to remove the request message from the list of messages
+    val updateList : (Message) -> Unit = { shiftRequestList.remove(it) }
 
     if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 1)
-            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), 1)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 1)
         }
     } else {
         Row(verticalAlignment = Alignment.CenterVertically) {
             CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 0)
-            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), 0)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 0)
         }
     }
 

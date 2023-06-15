@@ -48,4 +48,5 @@
     <string name="offered">Offered: </string>
     <string name="wanted">Wanted: </string>
     <string name="week">Week: </string>
+    <string name="no_shift_change_requests">No shift change offers to read</string>
 </resources>

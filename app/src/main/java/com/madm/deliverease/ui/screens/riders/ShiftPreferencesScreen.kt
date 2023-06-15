@@ -10,6 +10,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,7 +78,7 @@ fun ShiftPreferenceScreen(){
             WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
-                val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
+                val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
                 else
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
@@ -86,6 +87,7 @@ fun ShiftPreferenceScreen(){
                     permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
                     nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
                     onComplete = { kind: Int, permanent: Boolean ->
+                        println("AFTER ON COMPLETE")
                         if(permanent) {
                             val tmpConstraint =
                                 permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
@@ -115,6 +117,12 @@ fun ShiftPreferenceScreen(){
                             else globalUser!!.nonPermanentConstraints.first { c -> c.constraintDate == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
                         }
 
+
+                        println("SELECTED YEAR $selectedYear")
+                        println("SELECTED MONTH $selectedMonth")
+                        println("SELECTED WEEK $selectedWeek")
+                        println("SELECTED DAY ${it.number}")
+                        println("SELECTED DATE FORMATTED $selectedDateFormatted")
                         globalUser!!.registerOrUpdate(context)
                     }
                 )
@@ -134,12 +142,14 @@ fun ShiftPreferenceScreen(){
                 WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
+
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
-                val selectedDateFormatted = if (it.number < 7 && selectedWeek != 0)
+                val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
                 else
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+
 
                 ShiftOptions(
                     permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
@@ -211,16 +221,21 @@ fun ShiftOptions(
         ShiftOptionMap[nonPermanentConstraint.type]!!
     else 0
 
-    var actualOption by remember{
-        mutableStateOf(
-            if(nonPermanentConstraint != null)
-                nonPermanentPreferenceKind
-            else permanentPreferenceKind
-        )
-    }
+    var actualOption = if(nonPermanentConstraint != null)
+        nonPermanentPreferenceKind
+    else permanentPreferenceKind
 
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[actualOption]) }
+    println("PERMANENT $permanentConstraint")
+    println("NON PERMANENT $nonPermanentConstraint")
+    println("ACTUAL $actualOption")
+
+    var selectedOption by remember { mutableStateOf(radioOptions[actualOption]) }
+
+    val onOptionSelected: (String) -> Unit = { selectedOption = it }
     onOptionSelected(radioOptions[actualOption])
+
+//    val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf(radioOptions[actualOption]) }
+//    onOptionSelected(radioOptions[actualOption])
 
     LazyVerticalGrid(
         userScrollEnabled = true,
@@ -233,9 +248,7 @@ fun ShiftOptions(
                         .fillMaxWidth()
                         .selectable(
                             selected = (text == selectedOption),
-                            onClick = {
-                                onOptionSelected(text)
-                            }
+                            onClick = { onOptionSelected(text) }
                         )
                         .padding(horizontal = 4.dp),
                     horizontalArrangement = Arrangement.Start,
@@ -283,6 +296,7 @@ fun ShiftOptions(
                 ){
                     Button(
                         onClick = {
+                            println("BEFORE ON COMPLETE")
                             onComplete(
                                 radioOptions.indexOf(selectedOption),
                                 checkedState

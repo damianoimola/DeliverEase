@@ -108,7 +108,7 @@ fun ShiftsScreen() {
             WeekContent(selectedWeek, selectedMonth, selectedYear,
                 { weekDay ->
                     // retrieve the selected date in a full format
-                    val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0)
+                    val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
                         Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
                     else
                         Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
@@ -251,7 +251,7 @@ fun ShiftsScreen() {
             WeekContent(selectedWeek, selectedMonth, selectedYear,
                 { weekDay ->
                     // retrieve the selected date in a full format
-                    val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0)
+                    val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
                         Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
                     else
                         Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
