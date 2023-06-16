@@ -169,7 +169,7 @@ fun MonthSelector(
 }
 
 @Composable
-fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit){
+fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit, lastItem: @Composable () -> Unit = {}){
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
 
     LazyColumn(
@@ -199,6 +199,10 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
             }
 
             content(day)
+        }
+
+        item {
+            lastItem()
         }
     }
 }

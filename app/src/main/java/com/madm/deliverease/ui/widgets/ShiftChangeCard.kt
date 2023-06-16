@@ -28,6 +28,8 @@ import com.madm.deliverease.ui.theme.*
 fun ShiftChangeCard(
     shiftsList: List<Message>,
     modifier: Modifier = Modifier,
+    updateList: (Message) -> Unit,
+    isPortrait : Int
 ) {
     val context = LocalContext.current
 
@@ -36,7 +38,7 @@ fun ShiftChangeCard(
         shape = Shapes.medium,
         modifier = modifier
             .fillMaxSize()
-            .padding(nonePadding, smallPadding),
+            .padding(smallPadding * (1 - isPortrait), smallPadding * isPortrait),
         backgroundColor = CustomTheme.colors.surface
     ) {
         Column(
@@ -55,22 +57,30 @@ fun ShiftChangeCard(
 
             // List of customShift
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                shiftsList.forEach { shift ->
-                    Card(
-                        Modifier.padding(nonePadding, smallPadding),
-                        backgroundColor = CustomTheme.colors.surface,
-                        contentColor = CustomTheme.colors.onSurface,
-                        elevation = extraSmallCardElevation
-                    ) {
-                        CustomShiftChangeRequest(shift) {
-                            Message(
-                                senderID = globalUser!!.id,
-                                receiverID = shift.senderID,
-                                body = shift.id,
-                                type = Message.MessageType.ACCEPTANCE.displayName
-                            ).send(context)
+                if(shiftsList.isNotEmpty()){
+                    shiftsList.forEach { shift ->
+                        Card(
+                            Modifier.padding(nonePadding, smallPadding),
+                            backgroundColor = CustomTheme.colors.surface,
+                            contentColor = CustomTheme.colors.onSurface,
+                            elevation = extraSmallCardElevation
+                        ) {
+                            CustomShiftChangeRequest(shift) {
+                                Message(
+                                    senderID = globalUser!!.id,
+                                    receiverID = shift.senderID,
+                                    body = shift.id,
+                                    type = Message.MessageType.ACCEPTANCE.displayName
+                                ).send(context){ if(it) updateList(shift) }
+                            }
                         }
                     }
+                } else {
+                    Text(
+                        stringResource(R.string.no_shift_change_requests),
+                        style = CustomTheme.typography.body1,
+                        color = CustomTheme.colors.onSurface
+                    )
                 }
             }
         }
@@ -107,7 +117,9 @@ fun CustomShiftChangeRequest(
 
         // Icon button accept
         Row(
-            Modifier.weight(0.2f).padding(smallPadding, nonePadding),
+            Modifier
+                .weight(0.2f)
+                .padding(smallPadding, nonePadding),
             Arrangement.End,
             Alignment.CenterVertically
         ){

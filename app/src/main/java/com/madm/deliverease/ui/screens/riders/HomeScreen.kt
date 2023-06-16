@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.madm.common_libs.model.*
@@ -17,9 +19,10 @@ import com.madm.deliverease.ui.widgets.*
 @Preview
 @Composable
 fun HomeScreen() {
+    val configuration = LocalConfiguration.current
     var workDayList : List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
-    var shiftRequestList : List<Message> by rememberSaveable { mutableStateOf(listOf()) }
+    var shiftRequestList : ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
     val isPlaying = rememberSaveable { mutableStateOf (false) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
@@ -39,7 +42,7 @@ fun HomeScreen() {
     }
 
     messagesManager.getReceivedMessages{ list: List<Message> ->
-        shiftRequestList = list.filter {
+        shiftRequestList = ArrayList(list.filter {
             it.messageType == Message.MessageType.REQUEST
             &&
             it.senderID != globalUser!!.id
@@ -54,14 +57,25 @@ fun HomeScreen() {
                     it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }.map { d -> d.date }.toList()
                 )
             )
+        })
+    }
+
+    // TODO: da testare (Damiano)
+    // to remove the request message from the list of messages
+    val updateList : (Message) -> Unit = { shiftRequestList.remove(it) }
+
+    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 1)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 1)
+        }
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 0)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 0)
         }
     }
 
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying)
-        ShiftChangeCard(shiftRequestList, Modifier.weight(1f))
-    }
 }
 
 

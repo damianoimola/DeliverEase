@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
     override fun attachBaseContext(newBaseContext: Context) {
         // open the shared prefs file
         val sharedPreferences = newBaseContext.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
-        val language = sharedPreferences.getString("STARTUP_LANG", "en")
+        val language = sharedPreferences.getString(STARTUP_LANGUAGE_FIELD, "en")
 
         // setting up the locale
         val locale: Locale = Locale(language!!)

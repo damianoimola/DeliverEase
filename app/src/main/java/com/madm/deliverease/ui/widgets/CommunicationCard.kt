@@ -42,7 +42,8 @@ fun CommunicationCard(
     communicationList: MutableList<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
-    isPlaying: MutableState<Boolean>
+    isPlaying: MutableState<Boolean>,
+    isPortrait: Int
 ) {
     val context = LocalContext.current
     val showTextField = remember { mutableStateOf(false) }
@@ -56,7 +57,7 @@ fun CommunicationCard(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxSize()
-            .padding(nonePadding, smallPadding),
+            .padding(smallPadding * (1-isPortrait), smallPadding * isPortrait),
         backgroundColor = CustomTheme.colors.surface
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

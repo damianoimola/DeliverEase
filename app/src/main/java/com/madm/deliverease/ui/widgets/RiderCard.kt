@@ -27,14 +27,15 @@ import com.madm.deliverease.ui.theme.*
 fun TodayRidersCard(
     modifier: Modifier = Modifier,
     riderList: List<User>,
-    columns: Int = 2
+    columns: Int = 2,
+    isPortrait: Int
 ) {
     Card(
         elevation = mediumCardElevation,
         shape = Shapes.medium,
         modifier = modifier
-            .fillMaxWidth()
-            .padding(nonePadding, smallPadding),
+            .fillMaxSize()
+            .padding(smallPadding * (1-isPortrait), smallPadding * isPortrait),
         backgroundColor = CustomTheme.colors.surface
     ) {
         Column(
