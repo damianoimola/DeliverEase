@@ -78,18 +78,19 @@ fun Language(){
     Box(Modifier.fillMaxWidth()){
         Row(
             Modifier.padding(smallPadding),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.languages),
-                modifier = Modifier.size(25.dp),
+                modifier = Modifier.size(23.dp),
                 contentDescription = "language icon",
                 tint = CustomTheme.colors.onBackground
             )
             Divider(Modifier.width(smallPadding), Color.Transparent)
             Text(
                 stringResource(R.string.language),
-                style = CustomTheme.typography.h4,
+                style = CustomTheme.typography.body1,
                 color = CustomTheme.colors.onBackground
             )
         }
@@ -158,18 +159,19 @@ fun DarkMode(){
     Box(Modifier.fillMaxWidth()){
         Row(
             Modifier.padding(smallPadding),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.dark_theme),
-                modifier = Modifier.size(25.dp),
+                modifier = Modifier.size(28.dp),
                 contentDescription = "change theme",
                 tint = CustomTheme.colors.onBackground
             )
             Divider(Modifier.width(smallPadding), Color.Transparent)
             Text(
                 stringResource(R.string.dark_mode),
-                style = CustomTheme.typography.h4,
+                style = CustomTheme.typography.body1,
                 color = CustomTheme.colors.onBackground
             )
         }
@@ -178,7 +180,8 @@ fun DarkMode(){
             Modifier
                 .fillMaxWidth()
                 .padding(largePadding, nonePadding),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Switch(
                 checked = switchCheckedState,
@@ -203,18 +206,19 @@ fun SettingRow(
     Box(Modifier.fillMaxWidth()) {
         Row(
             Modifier.padding(smallPadding),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = icon,
-                modifier = Modifier.size(25.dp),
+                modifier = Modifier.size(24.dp),
                 contentDescription = "bug",
                 tint = CustomTheme.colors.onBackground
             )
-            Divider(Modifier.width(mediumPadding), Color.Transparent)
+            Divider(Modifier.width(smallPadding), Color.Transparent)
             Text(
                 title,
-                style = CustomTheme.typography.h4,
+                style = CustomTheme.typography.body1,
                 color = CustomTheme.colors.onBackground
             )
         }
@@ -244,35 +248,6 @@ fun SettingRow(
     }
 }
 
-@Composable
-fun TermsAndConditions(){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(40.dp)
-        .clickable { /*TODO*/ }){
-        Icon(painter = painterResource(id = R.drawable.terms_and_conditions), contentDescription = "terms and conditions",
-            modifier = Modifier
-                .padding(start = 12.dp, top = 1.dp)
-                .size(28.dp)
-                .align(Alignment.CenterStart))
-        Text(
-                    stringResource(R.string.terms_conditions), modifier = Modifier
-                .padding(start = 48.dp, top = 0.dp)
-                .align(Alignment.CenterStart),
-            style = TextStyle(
-                fontFamily = gilroy,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Start,
-                fontWeight = FontWeight.SemiBold
-            ))
-
-        Icon(painter = painterResource(id = R.drawable.next_icon), contentDescription = "next screen",
-            modifier = Modifier
-                .padding(end = 4.dp, top = 10.dp)
-                .size(44.dp)
-                .align(Alignment.CenterEnd))
-    }
-}
 
 @Composable
 fun LogOut(logoutCallback: () -> Unit) {
@@ -287,19 +262,20 @@ fun LogOut(logoutCallback: () -> Unit) {
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = CustomTheme.colors.primary,
                 contentColor = CustomTheme.colors.onPrimary
-            )
+            ),
+            shape = CustomTheme.shapes.large
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.log_out),
                 contentDescription = "logout",
                 modifier = Modifier
-                    .padding(smallPadding)
-                    .size(28.dp),
+                    .padding(smallPadding, nonePadding)
+                    .size(25.dp),
             )
             Text(
                 text = stringResource(R.string.logout),
                 modifier = Modifier.padding(smallPadding, nonePadding),
-                style = CustomTheme.typography.h4,
+                style = CustomTheme.typography.body1,
             )
         }
     }

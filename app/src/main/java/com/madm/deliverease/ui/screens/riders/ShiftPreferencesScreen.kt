@@ -7,13 +7,14 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -302,7 +303,8 @@ fun ShiftOptions(
                                 checkedState
                             )
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.clip(shape = CustomTheme.shapes.large).fillMaxWidth(),
+                        shape = CustomTheme.shapes.large,
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = CustomTheme.colors.primary,
                             contentColor = CustomTheme.colors.onPrimary,

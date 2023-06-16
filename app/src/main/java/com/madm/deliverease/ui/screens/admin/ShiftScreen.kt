@@ -316,12 +316,12 @@ fun ShiftsScreen() {
                             .clickable {
                                 isVisible = !isVisible
                             }
-
                     ) {
-
                         Text(
                             text = stringResource(R.string.click_to_see_shift),
-                            style = CustomTheme.typography.body1
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onTertiary,
+                            modifier = Modifier.align(Alignment.CenterStart)
                         )
                     }
 

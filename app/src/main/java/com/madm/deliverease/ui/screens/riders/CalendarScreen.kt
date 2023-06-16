@@ -212,6 +212,7 @@ fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, setWeekDay: ()->U
                 "You already have a turn"
             }),
             style = CustomTheme.typography.body1,
+            modifier = Modifier.align(Alignment.CenterStart)
         )
 
         if (haveAShift && !swap.value) {
@@ -221,7 +222,7 @@ fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, setWeekDay: ()->U
                 contentDescription = "shift change",
                 modifier = Modifier
                     .padding(start = 140.dp, top = 1.dp)
-                    .size(28.dp)
+                    .size(25.dp)
                     .align(Alignment.CenterEnd)
                     .clickable {
                         /*
