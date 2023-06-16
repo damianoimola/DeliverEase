@@ -15,6 +15,8 @@ const val ADMIN_MAX_WEEK = "AD_MAX_WEEk"
 const val ADMIN_MIN_DAY = "AD_MIN_DAY"
 const val ADMIN_MAX_DAY = "AD_MAX_DAY"
 
+const val SELECTED_THEME = "SELECTED_THEME"
+
 fun cleanGlobalAppData(){
     globalUser = null
     globalAllUsers = mutableListOf()

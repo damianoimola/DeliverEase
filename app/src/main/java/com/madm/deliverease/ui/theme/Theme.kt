@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.theme
 
+import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -7,7 +8,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.madm.deliverease.SELECTED_THEME
+import com.madm.deliverease.SHARED_PREFERENCES_FILE
 
 
 /*
@@ -74,6 +78,14 @@ var darkColorPalette = CustomThemeColors(
     onError = darkOnError
 )
 
+
+fun getCurrentTheme(context: Context): String{
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+
+    return sharedPreferences.getString(SELECTED_THEME, "")!!
+}
+
+
 @Composable
 fun DeliverEaseTheme(
     shapes: Shapes = CustomTheme.shapes,
@@ -84,6 +96,19 @@ fun DeliverEaseTheme(
     content: @Composable () -> Unit,
 ) {
 
+    val localSelectedThemeName = getCurrentTheme(LocalContext.current)
+    var isDarkTheme: Boolean = darkTheme
+
+    if(localSelectedThemeName.isNotBlank()){
+        isDarkTheme = when(localSelectedThemeName){
+            "dark" -> true
+            "light" -> false
+            else -> isSystemInDarkTheme()
+        }
+    }
+
+    println("AAAAAAAAA $localSelectedThemeName - $isDarkTheme")
+
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -93,7 +118,7 @@ fun DeliverEaseTheme(
     }
 
 
-    val currentColor = remember { if (darkTheme) darkColors else colors }
+    val currentColor = remember { if (isDarkTheme) darkColors else colors }
     val rememberedColors = remember { currentColor.copy() }.apply { updateColorsFrom(currentColor) }
     CompositionLocalProvider(
         LocalColors provides rememberedColors,
