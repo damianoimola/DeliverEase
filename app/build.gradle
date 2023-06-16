@@ -65,7 +65,8 @@ dependencies {
 
     // LOGO IN SVG
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-
+    //per modificare system bar
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
     //Lottie animations
     implementation "com.airbnb.android:lottie-compose:6.0.0"
 

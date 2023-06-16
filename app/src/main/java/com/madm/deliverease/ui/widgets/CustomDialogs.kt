@@ -20,6 +20,7 @@ import com.madm.common_libs.model.User
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
+import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.gilroy
 import com.madm.deliverease.ui.theme.smallPadding
 import kotlinx.coroutines.CoroutineScope
@@ -229,7 +230,10 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                             .weight(.5f)
                             .padding(8.dp)
                     )
-                    Button(
+                    Button(colors = ButtonDefaults.buttonColors(
+                        backgroundColor = CustomTheme.colors.primary,
+                        contentColor = CustomTheme.colors.onPrimary,
+                    ),
                         onClick = {
                             isNameError = riderName.isEmpty()
                             isSurnameError = riderSurname.isEmpty()
@@ -300,16 +304,19 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                     modifier = Modifier.width(400.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(onClick = { onDismiss() }) {
+                    Button( colors = ButtonDefaults.buttonColors(
+                        backgroundColor = CustomTheme.colors.primary,
+                        contentColor = CustomTheme.colors.onPrimary,
+                    ),
+                        onClick = { onDismiss() }) {
                         Text(text = stringResource(id = R.string.cancel),
-                            style = TextStyle(
-                                fontFamily = gilroy,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 15.sp,
-                                textAlign = TextAlign.Center
-                            ))
+                            style = CustomTheme.typography.button)
                     }
-                    Button(onClick = {
+                    Button( colors = ButtonDefaults.buttonColors(
+                        backgroundColor = CustomTheme.colors.primary,
+                        contentColor = CustomTheme.colors.onPrimary,
+                    ),
+                        onClick = {
 
                         // declaration of the message
                         val msg = Message(
@@ -345,12 +352,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
 
                     }) {
                         Text(text = stringResource(id = R.string._continue),
-                            style = TextStyle(
-                                fontFamily = gilroy,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 15.sp,
-                                textAlign = TextAlign.Center
-                            ))
+                            style = CustomTheme.typography.button)
                     }
                 }
             }

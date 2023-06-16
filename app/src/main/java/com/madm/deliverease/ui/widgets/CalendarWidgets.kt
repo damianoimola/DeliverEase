@@ -11,16 +11,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.gilroy
@@ -154,7 +151,7 @@ fun MonthSelector(
                     if(option < months[0]) {
                         Text(
                             "${MonthMap[option]} ${currentYear + 1}",
-                            style = CustomTheme.typography.body1,
+                            style = CustomTheme.typography.body2,
                             color = CustomTheme.colors.onBackgroundVariant
                         )
                     }
@@ -227,7 +224,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
 
     Row (
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(0.dp)
             .horizontalScroll(rememberScrollState())
     ){
         mondaysList.forEach {
@@ -266,11 +263,12 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
 
     Row (
         verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier.padding(0.dp)
     ){
         Text(
             text = stringResource(R.string.week),
-            style = CustomTheme.typography.h4,
+            style = CustomTheme.typography.h2,
             color = CustomTheme.colors.onBackground
         )
         Text(

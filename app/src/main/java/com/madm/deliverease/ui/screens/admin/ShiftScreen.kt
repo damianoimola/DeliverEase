@@ -1,7 +1,9 @@
 package com.madm.deliverease.ui.screens.admin
 
 import android.os.Parcelable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,15 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.Shapes
-import com.madm.deliverease.ui.theme.mediumCardElevation
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -45,10 +45,9 @@ class CheckBoxItem(val user: User, val isAllocated : Boolean) : Parcelable{
 }
 
 
-
+@Preview
 @Composable
 fun ShiftsScreenV1() {
-    println("MAIN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
     var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
@@ -65,12 +64,8 @@ fun ShiftsScreenV1() {
     var workingDays: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
     val calendarManager : CalendarManager = CalendarManager(context)
     calendarManager.getDays { days ->
-        println("API CALL")
         workingDays = days
     }
-
-
-
 
 
     Column(
@@ -84,7 +79,7 @@ fun ShiftsScreenV1() {
             selectedMonth = month
         }
 
-        WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+        WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
 
         ButtonDraftAndSubmit({
             if(updatedWorkingDays.isNotEmpty()) {
@@ -111,6 +106,11 @@ fun ShiftsScreenV1() {
 
             var availableRidersList : List<User> = listOf()
             var ifNeededRidersList : List<User> = listOf()
+
+            //to do animation
+            var isVisible by remember {
+                mutableStateOf(false)
+            }
 
             // filter all users that are available
             availableRidersList = globalAllUsers.filter { user ->
@@ -147,37 +147,66 @@ fun ShiftsScreenV1() {
             }
 
 
-            RidersAvailabilitiesV1(
-                availableRidersList = availableRidersList,
-                ifNeededRidersList = ifNeededRidersList,
-                selectedDate = selectedDateFormatted,
-                workingDays = workingDays
-            ){ riderId, isAllocated ->
+            //AGGIUNTA
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(20))
+                    .background(
+                        color = CustomTheme.colors.tertiary
+                    )
+                    .fillMaxWidth()
+                    .padding(smallPadding)
+                    .clickable {
+                        isVisible = !isVisible
+                    }
 
-                val riderList: ArrayList<String> = arrayListOf()
+            ) {
 
-                val anyWd = updatedWorkingDays.any{ d -> d.workDayDate == selectedDateFormatted }
+                Text(
+                    text = stringResource(R.string.click_to_see_shift),
+                    style = CustomTheme.typography.body1
+                )
+            }
+            //
 
-                if(anyWd){
-                    val wd = updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                    wd.riders!!.forEach { riderList.add(it) }
+            AnimatedVisibility(visible = isVisible) {
 
-                    if(!isAllocated) riderList.remove(riderId)
-                    else riderList.add(riderId)
 
-                    wd.riders = riderList.distinct()
-                } else {
-                    val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+                RidersAvailabilitiesV1(
+                    availableRidersList = availableRidersList,
+                    ifNeededRidersList = ifNeededRidersList,
+                    selectedDate = selectedDateFormatted,
+                    workingDays = workingDays
+                ) { riderId, isAllocated ->
 
-                    if(tmp != null) tmp.riders!!.forEach{ riderList.add(it) }
+                    val riderList: ArrayList<String> = arrayListOf()
 
-                    if(!isAllocated) riderList.remove(riderId)
-                    else riderList.add(riderId)
+                    val anyWd =
+                        updatedWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
 
-                    val wd = WorkDay()
-                    wd.riders = riderList
-                    wd.workDayDate = selectedDateFormatted
-                    updatedWorkingDays.add(wd)
+                    if (anyWd) {
+                        val wd =
+                            updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                        wd.riders!!.forEach { riderList.add(it) }
+
+                        if (!isAllocated) riderList.remove(riderId)
+                        else riderList.add(riderId)
+
+                        wd.riders = riderList.distinct()
+                    } else {
+                        val tmp =
+                            workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+
+                        if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
+
+                        if (!isAllocated) riderList.remove(riderId)
+                        else riderList.add(riderId)
+
+                        val wd = WorkDay()
+                        wd.riders = riderList
+                        wd.workDayDate = selectedDateFormatted
+                        updatedWorkingDays.add(wd)
+                    }
                 }
             }
         }
@@ -228,48 +257,6 @@ fun RidersAvailabilitiesV1(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -459,7 +446,12 @@ fun RidersCheckboxCard(
                             it.isChecked = isChecked
                             riderSelected(it.user.id!!, it.isChecked)
                         },
-                        modifier = Modifier.padding(start = 0.dp)
+                        modifier = Modifier.padding(start = 0.dp),
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = CustomTheme.colors.tertiary,
+                            uncheckedColor = CustomTheme.colors.tertiaryVariant,
+                            checkmarkColor = CustomTheme.colors.onTertiary
+                        )
                     )
                     Text(
                         text = "${it.user.name} ${it.user.surname}",
@@ -470,6 +462,7 @@ fun RidersCheckboxCard(
         }
     }
 }
+
 
 
 @Composable
@@ -484,10 +477,14 @@ fun ButtonDraftAndSubmit(
             // border = BorderStroke(1.dp, Color.Red), // TODO Ralisin: set theme border
             modifier = Modifier
                 .weight(1f)
-                .padding(32.dp),
-            // colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604)) // TODO Ralisin: set theme color buttons
+                .padding(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = CustomTheme.colors.primary,
+            )
         ) {
-            Text(text = stringResource(R.string.save_draft) /*color = Color.Red TODO Ralisin: set text color with theme*/)
+            Text(text = stringResource(R.string.save_draft),
+                color = CustomTheme.colors.onPrimary,
+                style = CustomTheme.typography.button)
         }
 
         Button(
@@ -499,10 +496,14 @@ fun ButtonDraftAndSubmit(
             // border = BorderStroke(1.dp, Color.Transparent /*Color.Red TODO: set theme color border*/),
             modifier = Modifier
                 .weight(1f)
-                .padding(32.dp),
-            // colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFBF3604)) // TODO Ralisin: set theme color buttons
+                .padding(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = CustomTheme.colors.primary,
+            )
         ) {
-            Text(text = stringResource(R.string.submit) /*color = Color.Red TODO Ralisin: set theme color*/)
+            Text(text = stringResource(R.string.submit) ,
+                color = CustomTheme.colors.onPrimary,
+                style = CustomTheme.typography.button)
         }
     }
 }

@@ -163,7 +163,7 @@ fun SettingItem(title: String, inline: Boolean, content: @Composable () -> Unit)
         ) {
             Text(
                 text = title,
-                style = CustomTheme.typography.h3
+                style = CustomTheme.typography.h2
             )
             content()
         }
@@ -177,7 +177,7 @@ fun SettingItem(title: String, inline: Boolean, content: @Composable () -> Unit)
         ) {
             Text(
                 text = title,
-                style = CustomTheme.typography.h4
+                style = CustomTheme.typography.h3
             )
             content()
         }
