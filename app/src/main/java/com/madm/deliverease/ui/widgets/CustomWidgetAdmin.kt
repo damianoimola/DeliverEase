@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -132,7 +133,7 @@ fun DroppableListItemCard(
             },
         contentColor = colorContent,
         backgroundColor = cardBgColor,
-        shape = remember { Shapes.small },
+        shape = CustomTheme.shapes.large,
         elevation = cardElevation,
         content = { content(rider) }
     )

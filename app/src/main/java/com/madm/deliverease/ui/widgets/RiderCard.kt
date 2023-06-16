@@ -80,7 +80,7 @@ fun RiderRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clip(CustomTheme.shapes.medium)
+            .clip(CustomTheme.shapes.large)
             .padding(mediumPadding)
     ) {
         Icon(

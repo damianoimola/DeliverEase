@@ -98,7 +98,8 @@ fun RidersScreen() {
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = CustomTheme.colors.primary,
                     contentColor = CustomTheme.colors.onPrimary,
-                )
+                ),
+                shape = CustomTheme.shapes.large
             ) {
                 Text(
                     text = stringResource(R.string.hire_new_rider),

@@ -1,20 +1,24 @@
 package com.madm.deliverease.ui.screens.admin
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.madm.deliverease.*
 import com.madm.deliverease.R
@@ -169,7 +173,7 @@ fun SettingItem(title: String, inline: Boolean, content: @Composable () -> Unit)
         }
     } else {
         Column(
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(smallPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
@@ -193,18 +197,22 @@ fun SetRidersAmount(
     onRemoveBtnClick: () -> Unit
 ) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Button(
-            onRemoveBtnClick,
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = CustomTheme.colors.primary,
-                contentColor = CustomTheme.colors.onPrimary,
-            )
+        IconButton(
+            onClick = onRemoveBtnClick,
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(CustomTheme.colors.primary)
+                .size(40.dp)
         ) {
-            Text(text = "-", style = CustomTheme.typography.body1)
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.remove),
+                contentDescription = stringResource(R.string.remove),
+                tint = CustomTheme.colors.onPrimary
+            )
         }
 
         Column(
@@ -215,14 +223,18 @@ fun SetRidersAmount(
             Text(text = amount.toString(), style = CustomTheme.typography.body1)
         }
 
-        Button(
-            onAddBtnClick,
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = CustomTheme.colors.primary,
-                contentColor = CustomTheme.colors.onPrimary,
-            )
+        IconButton(
+            onClick = onAddBtnClick,
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(CustomTheme.colors.primary)
+                .size(40.dp)
         ) {
-            Text(text = "+", style = CustomTheme.typography.body1)
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.remove),
+                tint = CustomTheme.colors.onPrimary
+            )
         }
     }
 }
