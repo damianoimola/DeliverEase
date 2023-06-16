@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -32,7 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AdminsMainContent(logoutCallback: () -> Unit) {
@@ -44,24 +45,20 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
     // bottom navigation bar icons
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home, 1) {
-            if(navController.currentDestination?.route != "home") {
+            if(navController.currentDestination?.route != "home")
                 navController.navigate("home")
-            }
         },
         CustomNavItem("Shifts", ImageVector.vectorResource(id = R.drawable.newshifts), 2) {
-            if(navController.currentDestination?.route != "shift") {
+            if(navController.currentDestination?.route != "shift")
                 navController.navigate("shift")
-            }
         },
         CustomNavItem("Riders", ImageVector.vectorResource(id = R.drawable.rider), 3) {
-            if(navController.currentDestination?.route != "riders") {
+            if(navController.currentDestination?.route != "riders")
                 navController.navigate("riders")
-            }
         },
         CustomNavItem("Settings", Icons.Default.Settings, 4) {
-            if(navController.currentDestination?.route != "settings") {
+            if(navController.currentDestination?.route != "settings")
                 navController.navigate("settings")
-            }
         },
     )
 
@@ -73,6 +70,8 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
 
     if(showExitingDialog)
         ConfirmExitingApp() { showExitingDialog = false }
+
+    selectedItem = navItems[0]
 
     Scaffold(
         backgroundColor = CustomTheme.colors.background,
@@ -99,10 +98,34 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                         )
                     }
                 ) {
-                    composable("home") { HomeScreen() }
-                    composable("shift") { ShiftsScreen() }
-                    composable("riders") { RidersScreen() }
-                    composable("settings") { SettingScreen(logoutCallback) }
+                    composable("home") {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 1)
+                                selectedItem = navItems[0]
+                        }
+                        HomeScreen()
+                    }
+                    composable("shift") {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 2)
+                                selectedItem = navItems[1]
+                        }
+                        ShiftsScreen()
+                    }
+                    composable("riders") {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 3)
+                                selectedItem = navItems[2]
+                        }
+                        RidersScreen()
+                    }
+                    composable("settings") {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if(selectedItem.position != 4)
+                                selectedItem = navItems[3]
+                        }
+                        SettingScreen(logoutCallback)
+                    }
                 }
             }
         },
@@ -111,7 +134,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                 navItems = navItems,
                 selectedItem = selectedItem,
                 onItemSelected = { item ->
-                    CoroutineScope(Dispatchers.Main).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         previousSelectedItem = selectedItem
                         if(item != previousSelectedItem){
                             selectedItem = item
@@ -134,6 +157,4 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
             showExitingDialog = true
         }
     }
-
-    selectedItem = navItems[0]
 }
