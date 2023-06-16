@@ -50,7 +50,7 @@ val Typography = Typography(
     h2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
     // TODO Ralisin: set it
     // Card title
-    h3 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 22.sp),
+    h3 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Bold, fontSize = 20.sp),
     // TODO Ralisin: set it
     h4 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 20.sp),
     // Used on setting preferences titles
@@ -65,7 +65,7 @@ val Typography = Typography(
     body1 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 16.sp),
     // Smaller text
     body2 = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 14.sp),
-    // Text style for buttons // TODO Ralisin: set it because right now it's equal to h6
+    // Text style for buttons
     button = TextStyle(fontFamily = gilroy, fontWeight = FontWeight.Normal, fontSize = 16.sp),
 )
 

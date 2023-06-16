@@ -15,8 +15,7 @@ fun SettingScreenRider(logoutCallback: () -> Unit){
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
         PreferencesSetting(logoutCallback)

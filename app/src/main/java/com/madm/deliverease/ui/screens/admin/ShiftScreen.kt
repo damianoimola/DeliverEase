@@ -42,9 +42,8 @@ import java.util.Calendar
 import kotlin.collections.ArrayList
 
 
-
 @Parcelize
-class CheckBoxItem(val user: User, val isAllocated : Boolean) : Parcelable{
+class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
     @IgnoredOnParcel
     var isChecked: Boolean by mutableStateOf(isAllocated)
 }
@@ -57,17 +56,21 @@ fun ShiftsScreen() {
     println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
+    var selectedWeek: Int by remember {
+        mutableStateOf(
+            Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1
+        )
+    }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-    val months = (currentMonth..currentMonth + 11).map{i -> i%12}.toList().toIntArray()
+    val months = (currentMonth..currentMonth + 11).map { i -> i % 12 }.toList().toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    var errorMessage : String by rememberSaveable { mutableStateOf("") }
+    var errorMessage: String by rememberSaveable { mutableStateOf("") }
 
 
     // retrieving all working days in server
@@ -77,15 +80,15 @@ fun ShiftsScreen() {
     // EVERY working day both server and newly added
     var weekWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
 
-    val calendarManager : CalendarManager = CalendarManager(context)
+    val calendarManager: CalendarManager = CalendarManager(context)
 
-    if(!showDialog && weekWorkingDays.isEmpty())
+    if (!showDialog && weekWorkingDays.isEmpty())
         calendarManager.getDays { days ->
             println("API CALL")
             workingDays = days
             weekWorkingDays = ArrayList(days)
         }
-    else if(showDialog && weekWorkingDays.isNotEmpty()){
+    else if (showDialog && weekWorkingDays.isNotEmpty()) {
         WrongConstraintsDialog(
             errorMessage.ifBlank { "Are you sure to continue?" },
             {
@@ -93,13 +96,17 @@ fun ShiftsScreen() {
                     weekWorkingDays.clear()
                     calendarManager.insertDays(updatedWorkingDays)
                 } else
-                    Toast.makeText(context, "Shifts are not changed, calendar has not been updated", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Shifts are not changed, calendar has not been updated",
+                        Toast.LENGTH_SHORT
+                    ).show()
             }
         ) { showDialog = !showDialog }
     }
 
 
-    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.Start
@@ -112,22 +119,41 @@ fun ShiftsScreen() {
                 selectedWeek = 1
             }
 
-        WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
+            WeeksList(
+                selectedMonth,
+                selectedYear,
+                selectedWeek,
+                true
+            ) { weekNumber: Int -> selectedWeek = weekNumber }
 
             WeekContent(selectedWeek, selectedMonth, selectedYear,
                 { weekDay ->
                     // retrieve the selected date in a full format
-                    val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                        Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
-                    else
-                        Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    val selectedDateFormatted =
+                        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                            Date.from(
+                                LocalDate.of(
+                                    selectedYear,
+                                    (selectedMonth + 2) % 12,
+                                    weekDay.number
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
+                        else
+                            Date.from(
+                                LocalDate.of(
+                                    selectedYear,
+                                    (selectedMonth + 1) % 12,
+                                    weekDay.number
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
 
                     println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
 
                     // filter all users that are available
-                    val availableRidersList : List<User> = globalAllUsers.filter { user ->
+                    val availableRidersList: List<User> = globalAllUsers.filter { user ->
                         val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                            it.dayOfWeek == selectedDateFormatted.toInstant()
+                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
                                     &&
                                     it.type!!.lowercase() != "open"
                         } == null
@@ -141,9 +167,10 @@ fun ShiftsScreen() {
                         permanent && nonPermanent && user.id != "0"
                     }
 
-                    val ifNeededRidersList : List<User> = globalAllUsers.filter { user ->
+                    val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
                         val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                            it.dayOfWeek == selectedDateFormatted.toInstant()
+                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
                                     &&
                                     it.type == "light"
                         } != null
@@ -156,71 +183,110 @@ fun ShiftsScreen() {
 
                         (permanent || nonPermanent) && user.id != "0"
                     }
+                    //to do animation
+                    var isVisible by remember {
+                        mutableStateOf(false)
+                    }
+
+                    //AGGIUNTA
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20))
+                            .background(
+                                color = CustomTheme.colors.tertiary
+                            )
+                            .fillMaxWidth()
+                            .padding(smallPadding)
+                            .clickable {
+                                isVisible = !isVisible
+                            }
+
+                    ) {
+
+                        Text(
+                            text = stringResource(R.string.click_to_see_shift),
+                            style = CustomTheme.typography.body1
+                        )
+                    }
 
 
-                    RidersAvailabilities(
-                        availableRidersList = availableRidersList,
-                        ifNeededRidersList = ifNeededRidersList,
-                        selectedDate = selectedDateFormatted,
-                        workingDays = weekWorkingDays
-                    ){ riderId, isAllocated ->
+                    AnimatedVisibility(visible = isVisible) {
+                        RidersAvailabilities(
+                            availableRidersList = availableRidersList,
+                            ifNeededRidersList = ifNeededRidersList,
+                            selectedDate = selectedDateFormatted,
+                            workingDays = weekWorkingDays
+                        ) { riderId, isAllocated ->
 
-                        var riderList: ArrayList<String> = arrayListOf()
+                            var riderList: ArrayList<String> = arrayListOf()
 
-                        var anyWd = updatedWorkingDays.any{ d -> d.workDayDate == selectedDateFormatted }
+                            var anyWd =
+                                updatedWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
 
-                        if(anyWd){
-                            val wd = updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                            wd.riders!!.forEach { riderList.add(it) }
+                            if (anyWd) {
+                                val wd =
+                                    updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                                wd.riders!!.forEach { riderList.add(it) }
 
-                            if(!isAllocated) riderList.remove(riderId)
-                            else riderList.add(riderId)
+                                if (!isAllocated) riderList.remove(riderId)
+                                else riderList.add(riderId)
 
-                            wd.riders = riderList.distinct()
-                        } else {
-                            val tmp = workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+                                wd.riders = riderList.distinct()
+                            } else {
+                                val tmp =
+                                    workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
 
-                            if(tmp != null) tmp.riders!!.forEach{ riderList.add(it) }
+                                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
 
-                            if(!isAllocated) riderList.remove(riderId)
-                            else riderList.add(riderId)
+                                if (!isAllocated) riderList.remove(riderId)
+                                else riderList.add(riderId)
 
-                            val wd = WorkDay()
-                            wd.riders = riderList
-                            wd.workDayDate = selectedDateFormatted
-                            updatedWorkingDays.add(wd)
-                        }
+                                val wd = WorkDay()
+                                wd.riders = riderList
+                                wd.workDayDate = selectedDateFormatted
+                                updatedWorkingDays.add(wd)
+                            }
 
 
 
-                        riderList = arrayListOf()
-                        anyWd = weekWorkingDays.any{ d -> d.workDayDate == selectedDateFormatted }
-                        if(anyWd) {
-                            val wwd = weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                            wwd.riders!!.forEach { riderList.add(it) }
+                            riderList = arrayListOf()
+                            anyWd =
+                                weekWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
+                            if (anyWd) {
+                                val wwd =
+                                    weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                                wwd.riders!!.forEach { riderList.add(it) }
 
-                            if(!isAllocated) riderList.remove(riderId)
-                            else riderList.add(riderId)
+                                if (!isAllocated) riderList.remove(riderId)
+                                else riderList.add(riderId)
 
-                            wwd.riders = riderList.distinct()
-                        } else {
-                            val tmp = updatedWorkingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+                                wwd.riders = riderList.distinct()
+                            } else {
+                                val tmp =
+                                    updatedWorkingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
 
-                            if(tmp != null) tmp.riders!!.forEach{ riderList.add(it) }
+                                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
 
-                            if(!isAllocated) riderList.remove(riderId)
-                            else riderList.add(riderId)
+                                if (!isAllocated) riderList.remove(riderId)
+                                else riderList.add(riderId)
 
-                            val wd = WorkDay()
-                            wd.riders = riderList
-                            wd.workDayDate = selectedDateFormatted
-                            weekWorkingDays.add(wd)
+                                val wd = WorkDay()
+                                wd.riders = riderList
+                                wd.workDayDate = selectedDateFormatted
+                                weekWorkingDays.add(wd)
+                            }
                         }
                     }
                 }
             ) {
                 ButtonDraftAndSubmit({
-                    errorMessage = shiftsConstraintsErrorMessage(context, ArrayList(weekWorkingDays), selectedWeek, selectedMonth, selectedYear)
+                    errorMessage = shiftsConstraintsErrorMessage(
+                        context,
+                        ArrayList(weekWorkingDays),
+                        selectedWeek,
+                        selectedMonth,
+                        selectedYear
+                    )
 
                     showDialog = true
                 }) {
@@ -236,7 +302,7 @@ fun ShiftsScreen() {
     } else {
         println("ECCOLO QUA")
         Row(modifier = Modifier.fillMaxSize()) {
-            Column (modifier = Modifier.width(IntrinsicSize.Min)){
+            Column(modifier = Modifier.width(IntrinsicSize.Min)) {
                 MonthSelector(
                     months,
                     selectedMonth,
@@ -260,17 +326,31 @@ fun ShiftsScreen() {
             WeekContent(selectedWeek, selectedMonth, selectedYear,
                 { weekDay ->
                     // retrieve the selected date in a full format
-                    val selectedDateFormatted = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                        Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
-                    else
-                        Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, weekDay.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                    val selectedDateFormatted =
+                        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                            Date.from(
+                                LocalDate.of(
+                                    selectedYear,
+                                    (selectedMonth + 2) % 12,
+                                    weekDay.number
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
+                        else
+                            Date.from(
+                                LocalDate.of(
+                                    selectedYear,
+                                    (selectedMonth + 1) % 12,
+                                    weekDay.number
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
 
                     println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
 
                     // filter all users that are available
-                    val availableRidersList : List<User> = globalAllUsers.filter { user ->
+                    val availableRidersList: List<User> = globalAllUsers.filter { user ->
                         val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                            it.dayOfWeek == selectedDateFormatted.toInstant()
+                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
                                     &&
                                     it.type!!.lowercase() != "open"
                         } == null
@@ -284,9 +364,10 @@ fun ShiftsScreen() {
                         permanent && nonPermanent && user.id != "0"
                     }
 
-                    val ifNeededRidersList : List<User> = globalAllUsers.filter { user ->
+                    val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
                         val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                            it.dayOfWeek == selectedDateFormatted.toInstant()
+                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
                                     &&
                                     it.type == "light"
                         } != null
@@ -299,6 +380,7 @@ fun ShiftsScreen() {
 
                         (permanent || nonPermanent) && user.id != "0"
                     }
+
                     //to do animation
                     var isVisible by remember {
                         mutableStateOf(false)
@@ -396,7 +478,13 @@ fun ShiftsScreen() {
                 }
             ) {
                 ButtonDraftAndSubmit({
-                    errorMessage = shiftsConstraintsErrorMessage(context, ArrayList(weekWorkingDays), selectedWeek, selectedMonth, selectedYear)
+                    errorMessage = shiftsConstraintsErrorMessage(
+                        context,
+                        ArrayList(weekWorkingDays),
+                        selectedWeek,
+                        selectedMonth,
+                        selectedYear
+                    )
 
                     showDialog = true
                 }) {
@@ -422,7 +510,8 @@ fun shiftsConstraintsErrorMessage(
     selectedYear: Int
 ): String {
     // open the shared prefs file
-    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val sharedPreferences =
+        context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
     // TODO: load just one time when composable starts up (Damiano)
     val minWeek = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
@@ -430,14 +519,14 @@ fun shiftsConstraintsErrorMessage(
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
     val maxDay = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
 
-    var errorMessage : String = ""
+    var errorMessage: String = ""
 
 
     // retrieving first and last day of selected week
     val calendar = Calendar.getInstance()
     calendar.set(Calendar.YEAR, selectedYear)
     calendar.set(Calendar.MONTH, selectedMonth)
-    calendar.set(Calendar.WEEK_OF_MONTH, selectedWeek+1)
+    calendar.set(Calendar.WEEK_OF_MONTH, selectedWeek + 1)
     calendar.set(Calendar.HOUR, 0)
 
     // Set the start and end dates of the selected week
@@ -457,20 +546,21 @@ fun shiftsConstraintsErrorMessage(
 
 
     data class WeeklyRider(val id: String = "", var workingDays: Int = 0)
-    val ridersThisWeek : ArrayList<WeeklyRider> = arrayListOf()
+
+    val ridersThisWeek: ArrayList<WeeklyRider> = arrayListOf()
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() }
         .forEach { d ->
-        d.riders?.forEach { riderID ->
-            val anyRider = ridersThisWeek.any{ it.id == riderID }
+            d.riders?.forEach { riderID ->
+                val anyRider = ridersThisWeek.any { it.id == riderID }
 
-            if(anyRider) ridersThisWeek.first { it.id == riderID }.workingDays += 1
-            else ridersThisWeek.add(WeeklyRider(riderID, 1))
+                if (anyRider) ridersThisWeek.first { it.id == riderID }.workingDays += 1
+                else ridersThisWeek.add(WeeklyRider(riderID, 1))
 
-            println("RIDER $riderID COUNTER ${ridersThisWeek.first { it.id == riderID }.workingDays}")
+                println("RIDER $riderID COUNTER ${ridersThisWeek.first { it.id == riderID }.workingDays}")
+            }
         }
-    }
 
 
     val filter = ridersThisWeek
@@ -478,19 +568,19 @@ fun shiftsConstraintsErrorMessage(
         .map { it.id }
         .distinct()
 
-    errorMessage += if(filter.isNotEmpty())
+    errorMessage += if (filter.isNotEmpty())
         "• PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
     else ""
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() }
         .forEach {
-        if(it.riders?.count() !in minDay..maxDay){
-            errorMessage += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+            if (it.riders?.count() !in minDay..maxDay) {
+                errorMessage += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
 
-            println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
+                println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
+            }
         }
-    }
     return errorMessage
 }
 
@@ -501,18 +591,20 @@ fun RidersAvailabilities(
     ifNeededRidersList: List<User>,
     selectedDate: Date,
     workingDays: List<WorkDay>,
-    riderSelected : (String, Boolean) -> Unit
+    riderSelected: (String, Boolean) -> Unit
 ) {
-    val selectedWorkDay : WorkDay? = workingDays.firstOrNull { it.workDayDate == selectedDate }
+    val selectedWorkDay: WorkDay? = workingDays.firstOrNull { it.workDayDate == selectedDate }
 
-    val allocatedRiderList : List<User> = if(selectedWorkDay != null)
+    val allocatedRiderList: List<User> = if (selectedWorkDay != null)
         globalAllUsers.filter { user -> user.id in selectedWorkDay.riders!!.toList() }
     else listOf()
 
 
-    val availableRidersCheckboxList : List<CheckBoxItem> = availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+    val availableRidersCheckboxList: List<CheckBoxItem> =
+        availableRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
 
-    val ifNeededRidersCheckboxList : List<CheckBoxItem> = ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
+    val ifNeededRidersCheckboxList: List<CheckBoxItem> =
+        ifNeededRidersList.map { CheckBoxItem(it, it in allocatedRiderList) }
 
     Column {
         // Card with available riders
@@ -528,9 +620,6 @@ fun RidersAvailabilities(
         }
     }
 }
-
-
-
 
 
 @Composable
@@ -552,7 +641,7 @@ fun TextLineSeparator(text: String) {
 @Composable
 fun RidersCheckboxCard(
     riderCheckBoxList: List<CheckBoxItem>,
-    riderSelected : (String, Boolean) -> Unit
+    riderSelected: (String, Boolean) -> Unit
 ) {
     Card(
         elevation = mediumCardElevation,
@@ -601,13 +690,12 @@ fun RidersCheckboxCard(
 }
 
 
-
 @Composable
 fun ButtonDraftAndSubmit(
     updateServer: () -> Unit,
     notifyRiders: () -> Unit
 ) {
-    Row( horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Button(
             onClick = { updateServer() },
             shape = RoundedCornerShape(30),
@@ -619,9 +707,11 @@ fun ButtonDraftAndSubmit(
                 backgroundColor = CustomTheme.colors.primary,
             )
         ) {
-            Text(text = stringResource(R.string.save_draft),
+            Text(
+                text = stringResource(R.string.save_draft),
                 color = CustomTheme.colors.onPrimary,
-                style = CustomTheme.typography.button)
+                style = CustomTheme.typography.button
+            )
         }
 
         Button(
@@ -638,9 +728,11 @@ fun ButtonDraftAndSubmit(
                 backgroundColor = CustomTheme.colors.primary,
             )
         ) {
-            Text(text = stringResource(R.string.submit) ,
+            Text(
+                text = stringResource(R.string.submit),
                 color = CustomTheme.colors.onPrimary,
-                style = CustomTheme.typography.button)
+                style = CustomTheme.typography.button
+            )
         }
     }
 }

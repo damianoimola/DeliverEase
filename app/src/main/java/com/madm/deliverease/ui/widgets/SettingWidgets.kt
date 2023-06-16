@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -71,9 +72,18 @@ fun CustomDivider(text: String ){
 @Composable
 fun Language(){
     val context: Context = LocalContext.current
+
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val startupLanguage = sharedPreferences.getString(STARTUP_LANGUAGE_FIELD, "")!!
+
     var expanded by remember { mutableStateOf(false) }
     val items = listOf(stringResource(R.string.english), stringResource(R.string.italian))
-    var selectedIndex by remember { mutableStateOf(0) }
+    var selectedIndex by remember {
+        mutableStateOf(
+            if(startupLanguage.isBlank() || startupLanguage == "en") 0
+            else 1
+        )
+    }
 
     Box(Modifier.fillMaxWidth()){
         Row(
@@ -154,7 +164,18 @@ fun switchLanguage(languageCode: String, context: Context) {
 
 @Composable
 fun DarkMode(){
-    var switchCheckedState by remember { mutableStateOf(false) }
+    val context : Context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+
+    val savedTheme = sharedPreferences.getString(SELECTED_THEME, "")!!
+    val isDarkTheme = isSystemInDarkTheme()
+
+    var switchCheckedState by remember {
+        mutableStateOf(
+            if (savedTheme.isBlank()) isDarkTheme
+            else savedTheme == "dark"
+        )
+    }
 
     Box(Modifier.fillMaxWidth()){
         Row(
@@ -185,7 +206,20 @@ fun DarkMode(){
         ) {
             Switch(
                 checked = switchCheckedState,
-                onCheckedChange = { switchCheckedState = it },
+                onCheckedChange = {
+                    switchCheckedState = it
+
+                    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+
+                    editor.putString(SELECTED_THEME, if(it) "dark" else "light")
+                    editor.apply()
+
+//                    // Restart the activity to apply the new theme
+//                    val intent = Intent(context, MainActivity::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                    context.startActivity(intent)
+                },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = CustomTheme.colors.secondary,
                     checkedTrackColor = CustomTheme.colors.secondaryVariant,
