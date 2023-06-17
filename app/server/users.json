@@ -15,28 +15,27 @@
       "surname": "Imola",
       "email": "damiano.imola@deliverease.it",
       "password": "prova",
-      "permanentConstraints": [
-        {
-          "dayOfWeek": 1,
-          "type": "light"
-        },
-        {
-          "dayOfWeek": 5,
-          "type": "heavy"
-        }
-      ],
+      "permanentConstraints": [],
       "nonPermanentConstraints": [
         {
-          "date": "May 25, 2023 12:00:00 AM",
+          "date": "19-06-2023",
+          "type": "heavy"
+        },
+        {
+          "date": "20-06-2023",
           "type": "light"
         },
         {
-          "date": "May 30, 2023 12:00:00 AM",
+          "date": "23-06-2023",
+          "type": "open"
+        },
+        {
+          "date": "24-06-2023",
           "type": "heavy"
         },
         {
-          "date": "Jun 1, 2023 12:00:00 AM",
-          "type": "heavy"
+          "date": "25-06-2023",
+          "type": "light"
         }
       ]
     },
@@ -53,7 +52,7 @@
       "id": "3",
       "name": "Massimo",
       "surname": "Buniy",
-      "email": "massimo.buniy@deliverease.it",
+      "email": "massimo.buniy",
       "password": "prova",
       "permanentConstraints": [],
       "nonPermanentConstraints": []
@@ -68,11 +67,112 @@
       "nonPermanentConstraints": []
     },
     {
-      "id": "99",
-      "name": "John",
-      "surname": "Doe",
-      "email": "john.doe@example.com",
-      "password": "JohnDoePassword123",
+      "id": "100",
+      "name": "c",
+      "surname": "d",
+      "email": "c",
+      "password": "d",
+      "permanentConstraints": [
+        {
+          "dayOfWeek": 4,
+          "type": "heavy"
+        },
+        {
+          "dayOfWeek": 0,
+          "type": "open"
+        }
+      ],
+      "nonPermanentConstraints": [
+        {
+          "date": "05-07-2023",
+          "type": "open"
+        },
+        {
+          "date": "05-08-2023",
+          "type": "heavy"
+        },
+        {
+          "date": "12-06-2023",
+          "type": "light"
+        },
+        {
+          "date": "04-08-2023",
+          "type": "light"
+        },
+        {
+          "date": "03-08-2023",
+          "type": "open"
+        },
+        {
+          "date": "03-07-2023",
+          "type": "open"
+        },
+        {
+          "date": "04-07-2023",
+          "type": "light"
+        },
+        {
+          "date": "09-07-2023",
+          "type": "light"
+        }
+      ]
+    },
+    {
+      "id": "101",
+      "name": "e",
+      "surname": "f",
+      "email": "e",
+      "password": "f",
+      "permanentConstraints": [],
+      "nonPermanentConstraints": [
+        {
+          "date": "18-06-2023",
+          "type": "open"
+        },
+        {
+          "date": "17-06-2023",
+          "type": "heavy"
+        },
+        {
+          "date": "16-06-2023",
+          "type": "heavy"
+        },
+        {
+          "date": "15-06-2023",
+          "type": "light"
+        },
+        {
+          "date": "15-06-2023",
+          "type": "open"
+        },
+        {
+          "date": "14-06-2023",
+          "type": "light"
+        },
+        {
+          "date": "13-06-2023",
+          "type": "heavy"
+        },
+        {
+          "date": "13-06-2023",
+          "type": "open"
+        },
+        {
+          "date": "12-06-2023",
+          "type": "heavy"
+        },
+        {
+          "date": "12-06-2023",
+          "type": "open"
+        }
+      ]
+    },
+    {
+      "id": "102",
+      "name": "h",
+      "surname": "h",
+      "email": "c",
+      "password": "c",
       "permanentConstraints": [],
       "nonPermanentConstraints": []
     }

@@ -1,44 +1,460 @@
 {
   "messages": [
     {
-      "id": "1",
-      "senderID": "2",
-      "receiverID": "1",
-      "body": "2023-06-10#2023-06-20",
+      "id": "c619c7e0-50d6-4d02-97dc-571940a3fd6e",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:11"
+    },
+    {
+      "id": "4dfb1006-07f0-40c7-a9c4-249028d285c1",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:14"
+    },
+    {
+      "id": "b715e782-74b6-47c8-a024-d58de6da4150",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:18"
+    },
+    {
+      "id": "583411c3-06ea-4d63-95cc-0ac3360be355",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:21"
+    },
+    {
+      "id": "ac375c87-5a01-44a1-9e9d-19aaaccdfef8",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:23"
+    },
+    {
+      "id": "f59f44f6-dbbe-466a-bb40-0a8de083def4",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:27"
+    },
+    {
+      "id": "7ff94ab2-8f6c-40b0-857b-d8bba172c5ca",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:19:48"
+    },
+    {
+      "id": "6de06c93-5f44-450f-993b-961d14ce7345",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "ciao",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:20:03"
+    },
+    {
+      "id": "586eb67b-7979-4778-8c2c-65e9641d0682",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:21:24"
+    },
+    {
+      "id": "ff97426c-aa67-43c8-9805-2a28f8f79e7b",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:21:25"
+    },
+    {
+      "id": "bae31d63-e23b-4f8c-9fab-1f3a6a66de01",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:21:47"
+    },
+    {
+      "id": "cdc76a63-3ead-45ac-a5d7-d0f6e6e3c27c",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:22:23"
+    },
+    {
+      "id": "d2fdc455-c65e-4b1e-8420-43bbaf663f05",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:22:29"
+    },
+    {
+      "id": "a4140963-543f-4837-a751-d1358511f347",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:22:31"
+    },
+    {
+      "id": "77953a86-cb1c-4680-a80b-921757374357",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:22:38"
+    },
+    {
+      "id": "ea0d80cd-9060-47e0-9b76-d98a6459573a",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:04"
+    },
+    {
+      "id": "39b10b5d-6b5d-459d-a8b9-0a3601d9718f",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:08"
+    },
+    {
+      "id": "858aed7b-6a24-4f0a-a050-2c10afff1684",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:13"
+    },
+    {
+      "id": "d5feeac0-8877-4f89-9bc0-aa508254825b",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:34"
+    },
+    {
+      "id": "501740a9-e10c-44bf-8e53-f638612928e1",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:40"
+    },
+    {
+      "id": "e63c0e5b-3370-48ea-bb5f-5912497edfaf",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:44"
+    },
+    {
+      "id": "9f70e75b-2717-4102-bf7e-bc63e155cc9c",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:48"
+    },
+    {
+      "id": "be4d0447-e03a-4400-9cc2-bfe490ba7057",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:23:54"
+    },
+    {
+      "id": "fb305f2e-40de-48f4-9f1d-f506ed181683",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a newest calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 22:24:12"
+    },
+    {
+      "id": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
+      "senderID": "100",
+      "receiverID": "0",
+      "body": "11-06-2023#10-06-2023",
       "type": "REQUEST",
-      "date": "2023-05-25"
+      "date": "08-06-2023 22:39:03"
     },
     {
-      "id": "2",
-      "senderID": "2",
-      "receiverID": "1",
-      "body": "Ciao un nuovo calendario è stato pubblicato",
+      "id": "1c2f28be-67f6-4bc8-963e-990382d2f8ec",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
       "type": "NOTIFICATION",
-      "date": "2023-05-25"
+      "date": "08-06-2023 23:27:06"
     },
     {
-      "id": "3",
-      "senderID": "1",
-      "receiverID": "1",
-      "body": "2023-06-10#2023-06-20",
+      "id": "4132b698-b232-41e0-a408-983d2d4a003e",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "08-06-2023 23:27:14"
+    },
+    {
+      "id": "ffed9e8d-7de9-47d9-b549-b378eebf31e5",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
       "type": "ACCEPTANCE",
-      "date": "2023-05-25"
+      "date": "08-06-2023 23:36:21"
     },
     {
-      "id": "4",
-      "senderID": "1",
-      "receiverID": "3",
-      "body": "Ciao un nuovo calendario è stato pubblicato",
-      "type": "NOTIFICATION",
-      "date": "2023-05-25"
+      "id": "1c8f31bc-160c-4e8c-8474-e3743ac4a228",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
+      "type": "ACCEPTANCE",
+      "date": "08-06-2023 23:36:23"
     },
     {
-      "id": "5",
-      "senderID": "1",
-      "receiverID": "3",
-      "body": "Ciao un nuovo calendario è stato pubblicato",
+      "id": "1aba9c8b-095a-4248-8dc4-01a4c6308cf4",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
+      "type": "ACCEPTANCE",
+      "date": "08-06-2023 23:36:23"
+    },
+    {
+      "id": "35b24929-a8e7-4a6b-8353-7e349a3c65d5",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
+      "type": "ACCEPTANCE",
+      "date": "08-06-2023 23:36:23"
+    },
+    {
+      "id": "b742c3cb-c6f8-43e8-946d-276ba1989a8b",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
+      "type": "ACCEPTANCE",
+      "date": "08-06-2023 23:36:24"
+    },
+    {
+      "id": "fe570599-bedc-4f3d-9c74-ec8ecefff308",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
       "type": "NOTIFICATION",
-      "date": "2023-05-25"
+      "date": "08-06-2023 23:39:32"
+    },
+    {
+      "id": "2455bf45-a1c4-4a3e-be73-b0a639affed8",
+      "senderID": "100",
+      "receiverID": "0",
+      "body": "11-06-2023#09-06-2023",
+      "type": "REQUEST",
+      "date": "08-06-2023 23:40:30"
+    },
+    {
+      "id": "eb61e507-73a1-4bcf-a014-f3323e8bcbbe",
+      "senderID": "100",
+      "receiverID": "0",
+      "body": "11-06-2023#09-06-2023",
+      "type": "REQUEST",
+      "date": "08-06-2023 23:41:10"
+    },
+    {
+      "id": "d7c43621-1e99-4687-b949-3f0281d226f4",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "09-06-2023 14:03:21"
+    },
+    {
+      "id": "837fcb85-be05-47cd-b959-7d3db766a5b5",
+      "senderID": "2",
+      "receiverID": "0",
+      "body": "19-06-2023#21-06-2023",
+      "type": "REQUEST",
+      "date": "09-06-2023 14:04:21"
+    },
+    {
+      "id": "3008325f-f456-4587-9887-c75478f1cda0",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "eb61e507-73a1-4bcf-a014-f3323e8bcbbe",
+      "type": "ACCEPTANCE",
+      "date": "09-06-2023 14:51:47"
+    },
+    {
+      "id": "0a988419-717d-44a0-b31e-c92be267f3a1",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 08:56:39"
+    },
+    {
+      "id": "35efdc4b-38aa-41b3-a2ec-3686a3342e9c",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 08:56:45"
+    },
+    {
+      "id": "b65f7e67-5a39-4341-b179-b63fe6784952",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 08:56:54"
+    },
+    {
+      "id": "8223240c-d544-4b70-8939-4ca36040db67",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "2455bf45-a1c4-4a3e-be73-b0a639affed8",
+      "type": "ACCEPTANCE",
+      "date": "12-06-2023 09:19:53"
+    },
+    {
+      "id": "a81a373f-829b-4407-a468-5a6616b4d13d",
+      "senderID": "0",
+      "receiverID": "100",
+      "body": "ff471a3d-17ba-49df-a97b-dda65c8212a8",
+      "type": "ACCEPTANCE",
+      "date": "12-06-2023 09:20:02"
+    },
+    {
+      "id": "d790fa86-1e40-4ec1-9b99-26876b1af8d0",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "ciao damiano",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 11:08:08"
+    },
+    {
+      "id": "bfedb196-501d-4394-8f6d-efbfd011594e",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "bella zi",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 13:03:24"
+    },
+    {
+      "id": "4a1c3eb9-0535-4990-ac2a-8137cff5de75",
+      "senderID": "1",
+      "receiverID": "0",
+      "body": "26-06-2023#27-06-2023",
+      "type": "REQUEST",
+      "date": "06-06-2023 11:15:52"
+    },
+    {
+      "id": "9f1b71a5-6ca0-4645-971d-4464b62a3ae7",
+      "senderID": "100",
+      "receiverID": "1",
+      "body": "4a1c3eb9-0535-4990-ac2a-8137cff5de75",
+      "type": "ACCEPTANCE",
+      "date": "06-06-2023 11:30:26"
+    },
+    {
+      "id": "26a9f6e8-4fc1-4d21-80b4-60fbf5c08918",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Ciao, un nuovo calendario è stato pubblicato",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 21:32:06"
+    },
+    {
+      "id": "758bedf9-63fd-48bb-8f7c-b58a5161a45e",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Ciao, un nuovo calendario è stato pubblicato",
+      "type": "NOTIFICATION",
+      "date": "12-06-2023 21:32:09"
+    },
+    {
+      "id": "3e14fae1-0b53-4e8f-a37e-0bafd3123ad5",
+      "senderID": "0",
+      "receiverID": "101",
+      "body": "df6ac162-2b8a-441f-a55d-cb5b84942ee5",
+      "type": "ACCEPTANCE",
+      "date": "12-06-2023 21:33:06"
+    },
+    {
+      "id": "7daa9457-d087-4679-95dd-01a837c31a3b",
+      "senderID": "0",
+      "receiverID": "101",
+      "body": "df6ac162-2b8a-441f-a55d-cb5b84942ee5",
+      "type": "ACCEPTANCE",
+      "date": "12-06-2023 21:33:08"
+    },
+    {
+      "id": "5cab3995-0373-4a6e-b5c1-d79aae838616",
+      "senderID": "0",
+      "receiverID": "101",
+      "body": "df6ac162-2b8a-441f-a55d-cb5b84942ee5",
+      "type": "ACCEPTANCE",
+      "date": "12-06-2023 21:33:08"
+    },
+    {
+      "id": "5b2efe48-c503-4991-bbaa-e0c9e9846946",
+      "senderID": "0",
+      "receiverID": "101",
+      "body": "df6ac162-2b8a-441f-a55d-cb5b84942ee5",
+      "type": "ACCEPTANCE",
+      "date": "12-06-2023 21:33:09"
+    },
+    {
+      "id": "d8934ea8-426b-41e0-a752-6a20f78161e4",
+      "senderID": "0",
+      "receiverID": "0",
+      "body": "Hi, a new calendar has been published",
+      "type": "NOTIFICATION",
+      "date": "13-06-2023 12:23:20"
+    },
+    {
+      "id": "ba7fd279-dd07-496e-a6c3-45be5ad3b11e",
+      "senderID": "100",
+      "receiverID": "101",
+      "body": "df6ac162-2b8a-441f-a55d-cb5b84942ee5",
+      "type": "ACCEPTANCE",
+      "date": "15-06-2023 06:41:06"
+    },
+    {
+      "id": "425331dc-b043-453c-993a-5a0852e729ce",
+      "senderID": "101",
+      "receiverID": "100",
+      "body": "d2a971ff-1d2e-4759-889c-a01e64aca270",
+      "type": "ACCEPTANCE",
+      "date": "16-06-2023 11:47:23"
+    },
+    {
+      "id": "6ce8d832-685c-4e16-be20-d60190290176",
+      "senderID": "101",
+      "receiverID": "0",
+      "body": "14-06-2023#16-06-2023",
+      "type": "REQUEST",
+      "date": "16-06-2023 11:47:35"
     }
   ]
 }
