@@ -56,14 +56,9 @@ fun MyOutlinedTextField(
         modifier = Modifier
             .padding(bottom = smallPadding)
             .fillMaxWidth(),
-        label = {
-            Text(text = label)
-        },
+        label = { Text(text = label) },
         enabled = true,
-        visualTransformation = if (showPassword)
-            VisualTransformation.None
-        else
-            PasswordVisualTransformation(),
+        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = KeyboardActions(onDone = {onDone()}),
         singleLine = true,
@@ -87,7 +82,8 @@ fun MyOutlinedTextField(
                     IconButton(onClick = { showPassword = false }) {
                         Icon(
                             imageVector = Icons.Filled.Visibility,
-                            contentDescription = "hide_password"
+                            contentDescription = "hide_password",
+                            tint = CustomTheme.colors.onBackground
                         )
                     }
                 } else {
@@ -95,7 +91,8 @@ fun MyOutlinedTextField(
                         onClick = { showPassword = true }) {
                         Icon(
                             imageVector = Icons.Filled.VisibilityOff,
-                            contentDescription = "hide_password"
+                            contentDescription = "hide_password",
+                            tint = CustomTheme.colors.onBackground
                         )
                     }
                 }

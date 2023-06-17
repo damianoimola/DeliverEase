@@ -2,10 +2,7 @@ package com.madm.deliverease.ui.widgets
 
 import android.os.Parcelable
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,10 +13,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
+import com.madm.deliverease.ui.theme.mediumPadding
 import com.madm.deliverease.ui.theme.smallPadding
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -67,20 +66,40 @@ fun CustomBottomAppBar(
 
 @Composable
 fun CustomTopAppBar(){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(smallPadding),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.deliverease_icon),
+            contentDescription = "logo",
+            modifier = Modifier
+                .padding(smallPadding)
+                .size(50.dp),
+            tint = CustomTheme.colors.onBackground
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(smallPadding),
+        contentAlignment = Alignment.Center
     ){
-        Image(
-            painter = painterResource(id = R.drawable.logo_dark_icon_hd),
-            contentDescription = "Logo", // stringResource(R.string.logo),
+        Row(
             modifier = Modifier
-                .size((LocalConfiguration.current.screenWidthDp.dp), 50.dp)
-                .padding(0.dp),
-            contentScale = ContentScale.FillHeight,
-            alignment = Alignment.CenterStart,
-        ) // TODO Ralisin: set image with theme
+                .fillMaxWidth()
+                .padding(smallPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.deliverease_icon),
+                contentDescription = "logo",
+                modifier = Modifier.size(50.dp),
+                tint = CustomTheme.colors.onBackground
+            )
+        }
         Text(
             text = stringResource(R.string.app_name),
             modifier = Modifier.fillMaxWidth(),

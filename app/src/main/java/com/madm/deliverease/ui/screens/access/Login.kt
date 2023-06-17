@@ -12,6 +12,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,12 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -55,7 +58,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .clickable (
+            .clickable(
                 indication = null,
                 interactionSource = interactionSource,
                 onClick = { focusManager.clearFocus() }
@@ -64,14 +67,28 @@ fun LoginScreen(
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo_dark),
-            contentDescription = "logo",
+        Row(
             modifier = Modifier
-                .size((LocalConfiguration.current.screenWidthDp.dp), 100.dp)
-                .padding(mediumPadding),
-            contentScale = ContentScale.FillHeight
-        ) // TODO Ralisin: change image to match light and dark color
+                //.size((LocalConfiguration.current.screenWidthDp.dp), 100.dp)
+                .padding(mediumPadding)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.deliverease_icon),
+                contentDescription = "logo",
+                modifier = Modifier
+                    .padding(mediumPadding)
+                    .size(70.dp),
+                tint = CustomTheme.colors.onBackground
+            )
+            Text(
+                text = "DeliverEase",
+                style = CustomTheme.typography.h1,
+                color = CustomTheme.colors.onBackground
+            )
+        }
 
         ClassicLogin(goToRiderHome, goToAdminHome)
 
