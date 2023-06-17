@@ -169,7 +169,7 @@ function deleteMessagesOfUser(id) {
   const messagesData = JSON.parse(messagesJsonData);
 
   // retrieve all messages not sent by the id specified
-  messagesData.messages = messagesData.messages.filter((m) => (m.senderID !== id && m.type === "REQUEST"))
+  messagesData.messages = messagesData.messages.filter((m) => (m.senderID !== id && m.type !== "REQUEST"))
 
   // Convert the updated data object back to JSON
   const updatedMessagesJsonData = JSON.stringify(messagesData, null, 2);
