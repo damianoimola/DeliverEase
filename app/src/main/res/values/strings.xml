@@ -25,7 +25,7 @@
     <string name="if_needed">If needed</string>
     <string name="list_of_your_riders">List of your riders</string>
     <string name="hire_new_rider">Hire a new rider</string>
-    <string name="num_riders_for_week">Number of riders per week</string>
+    <string name="num_riders_for_week">Shifts per rider per week</string>
     <string name="num_riders_for_day">Number of riders per day</string>
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="report_bug">Report Bug</string>
