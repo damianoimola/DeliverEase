@@ -47,5 +47,11 @@
     <string name="settings_constraints">Vincoli</string>
     <string name="shiftChangeOffers">Richieste di cambio turno</string>
     <string name="terms_conditions"><![CDATA[Termini & Condizioni]]></string>
+    <string name="no_shift_change_requests">Nessuna richiesta di cambio presente</string>
     <string name="click_to_see_shift">Clicca per mostrare le disponibilità</string>
+    <string name="edit_rider">Modifica Rider</string>
+    <string name="save">Salva</string>
+    <string name="close">Chiudi</string>
+    <string name="name">Nome</string>
+    <string name="surname">Cognome</string>
 </resources>

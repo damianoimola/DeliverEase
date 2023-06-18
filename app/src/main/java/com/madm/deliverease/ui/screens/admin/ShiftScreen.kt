@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -19,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
@@ -56,11 +54,7 @@ fun ShiftsScreen() {
     println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
-    var selectedWeek: Int by remember {
-        mutableStateOf(
-            Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1
-        )
-    }
+    var selectedWeek: Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -80,7 +74,7 @@ fun ShiftsScreen() {
     // EVERY working day both server and newly added
     var weekWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
 
-    val calendarManager: CalendarManager = CalendarManager(context)
+    val calendarManager = CalendarManager(context)
 
     if (!showDialog && weekWorkingDays.isEmpty())
         calendarManager.getDays { days ->
@@ -88,7 +82,7 @@ fun ShiftsScreen() {
             workingDays = days
             weekWorkingDays = ArrayList(days)
         }
-    else if (showDialog && weekWorkingDays.isNotEmpty()) {
+    else if (showDialog && weekWorkingDays.isNotEmpty())
         WrongConstraintsDialog(
             errorMessage.ifBlank { "Are you sure to continue?" },
             {
@@ -103,7 +97,6 @@ fun ShiftsScreen() {
                     ).show()
             }
         ) { showDialog = !showDialog }
-    }
 
 
     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -205,7 +198,8 @@ fun ShiftsScreen() {
 
                         Text(
                             text = stringResource(R.string.click_to_see_shift),
-                            style = CustomTheme.typography.body1
+                            style = CustomTheme.typography.body1,
+                            color = CustomTheme.colors.onTertiary
                         )
                     }
 
@@ -300,7 +294,7 @@ fun ShiftsScreen() {
             }
         }
     } else {
-        println("ECCOLO QUA")
+        println("ECCOLO QUA") // TODO Ralisin to @Damiano: può essere rimosso?
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.width(IntrinsicSize.Min)) {
                 MonthSelector(
@@ -323,8 +317,11 @@ fun ShiftsScreen() {
                 ) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
-            WeekContent(selectedWeek, selectedMonth, selectedYear,
-                { weekDay ->
+            WeekContent(
+                weekNumber = selectedWeek,
+                selectedMonth = selectedMonth,
+                selectedYear = selectedYear,
+                content = { weekDay ->
                     // retrieve the selected date in a full format
                     val selectedDateFormatted =
                         if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
@@ -332,16 +329,16 @@ fun ShiftsScreen() {
                                 LocalDate.of(
                                     selectedYear,
                                     (selectedMonth + 2) % 12,
-                                    weekDay.number
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                    weekDay.number,
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant(),
                             )
                         else
                             Date.from(
                                 LocalDate.of(
                                     selectedYear,
                                     (selectedMonth + 1) % 12,
-                                    weekDay.number
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                    weekDay.number,
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant(),
                             )
 
                     println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
@@ -391,19 +388,19 @@ fun ShiftsScreen() {
                         modifier = Modifier
                             .clip(RoundedCornerShape(20))
                             .background(
-                                color = CustomTheme.colors.tertiary
+                                color = CustomTheme.colors.tertiary,
                             )
                             .fillMaxWidth()
                             .padding(smallPadding)
                             .clickable {
                                 isVisible = !isVisible
-                            }
+                            },
                     ) {
                         Text(
                             text = stringResource(R.string.click_to_see_shift),
                             style = CustomTheme.typography.body1,
                             color = CustomTheme.colors.onTertiary,
-                            modifier = Modifier.align(Alignment.CenterStart)
+                            modifier = Modifier.align(Alignment.CenterStart),
                         )
                     }
 
@@ -413,7 +410,7 @@ fun ShiftsScreen() {
                             availableRidersList = availableRidersList,
                             ifNeededRidersList = ifNeededRidersList,
                             selectedDate = selectedDateFormatted,
-                            workingDays = weekWorkingDays
+                            workingDays = weekWorkingDays,
                         ) { riderId, isAllocated ->
 
                             var riderList: ArrayList<String> = arrayListOf()
@@ -475,7 +472,7 @@ fun ShiftsScreen() {
                             }
                         }
                     }
-                }
+                },
             ) {
                 ButtonDraftAndSubmit({
                     errorMessage = shiftsConstraintsErrorMessage(
@@ -498,8 +495,6 @@ fun ShiftsScreen() {
             }
         }
     }
-
-
 }
 
 fun shiftsConstraintsErrorMessage(
@@ -519,8 +514,7 @@ fun shiftsConstraintsErrorMessage(
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
     val maxDay = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
 
-    var errorMessage: String = ""
-
+    var errorMessage = ""
 
     // retrieving first and last day of selected week
     val calendar = Calendar.getInstance()
@@ -628,12 +622,13 @@ fun TextLineSeparator(text: String) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(nonePadding, smallPadding)
     ) {
-        Text(text)
+        Text(text, color = CustomTheme.colors.onBackground)
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
                 .width(2.dp)
-                .padding(start = smallPadding)
+                .padding(start = smallPadding),
+            color = CustomTheme.colors.onBackground
         )
     }
 }
@@ -648,7 +643,9 @@ fun RidersCheckboxCard(
         shape = Shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(nonePadding, smallPadding)
+            .padding(nonePadding, smallPadding),
+        backgroundColor = CustomTheme.colors.surface,
+        contentColor = CustomTheme.colors.onSurface
     ) {
         Column(
             modifier = Modifier.padding(smallPadding),

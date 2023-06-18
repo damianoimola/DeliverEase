@@ -69,7 +69,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
     var showExitingDialog by rememberSaveable { mutableStateOf(false) }
 
     if(showExitingDialog)
-        ConfirmExitingApp() { showExitingDialog = false }
+        ConfirmExitingApp { showExitingDialog = false }
 
     selectedItem = navItems[0]
 

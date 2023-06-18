@@ -2,22 +2,13 @@ package com.madm.deliverease
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -27,7 +18,6 @@ import com.madm.deliverease.localization.ContextWrapper
 import com.madm.deliverease.ui.screens.access.LoginScreen
 import com.madm.deliverease.ui.screens.admin.AdminsMainContent
 import com.madm.deliverease.ui.screens.riders.RidersMainContent
-import com.madm.deliverease.ui.theme.CustomTheme
 import com.madm.deliverease.ui.theme.DeliverEaseTheme
 import java.util.*
 
@@ -42,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
             val sharedPreferences = LocalContext.current.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
             val savedTheme = sharedPreferences.getString(SELECTED_THEME, if(isSystemInDarkTheme()) "dark" else "light")
-            Log.i("SYSTEMTHEME", isSystemInDarkTheme().toString())
+
             darkMode = savedTheme != "light"
 
             DeliverEaseTheme(darkTheme = darkMode) {
@@ -107,7 +97,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable("rider-home") {
-                RidersMainContent(){
+                RidersMainContent {
                     if (navController.currentDestination?.route != "login") {
                         navController.navigate("login") {
                             popUpTo("rider-home") { inclusive = true }
@@ -120,7 +110,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             composable("admin-home") {
-                AdminsMainContent(){
+                AdminsMainContent {
                     if (navController.currentDestination?.route != "login") {
                         navController.navigate("login") {
                             popUpTo("rider-home") { inclusive = true }

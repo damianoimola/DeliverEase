@@ -52,52 +52,93 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
             modifier = Modifier
                 .wrapContentWidth()
                 .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
+            shape = CustomTheme.shapes.large,
+            color = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 // DialogBox title
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Hire new Rider",
-                        style = TextStyle(
-                            fontFamily = gilroy,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp,
-                            textAlign = TextAlign.Center
-                        )
+                        text = stringResource(id = R.string.hire_new_rider),
+                        style = CustomTheme.typography.h3
                     )
                 }
 
                 TextField(
                     value = riderName,
                     onValueChange = { riderName = it },
-                    placeholder = { Text(text = "Name*") },
+                    placeholder = { Text(text = stringResource(id = R.string.name) + "*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isNameError
+                    isError = isNameError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 TextField(
                     value = riderSurname,
                     onValueChange = { riderSurname = it },
-                    placeholder = { Text(text = "Surname*") },
+                    placeholder = { Text(text = stringResource(id = R.string.surname) + "*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isSurnameError
+                    isError = isSurnameError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 TextField(
                     value = riderEmail,
                     onValueChange = { riderEmail = it },
-                    placeholder = { Text(text = "E-mail*") },
+                    placeholder = { Text(text = stringResource(id = R.string.username) + "*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isEmailError
+                    isError = isEmailError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 TextField(
                     value = riderPassword,
                     onValueChange = { riderPassword = it },
-                    placeholder = { Text(text = "Password*") },
+                    placeholder = { Text(text = stringResource(id = R.string.password) + "*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isPasswordError
+                    isError = isPasswordError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 // Buttons
@@ -107,7 +148,11 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
                         content = { Text(text = "Close") },
                         modifier = Modifier
                             .weight(.5f)
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = CustomTheme.colors.primary,
+                            contentColor = CustomTheme.colors.onPrimary,
+                        ),
                     )
                     Button(
                         onClick = {
@@ -139,7 +184,11 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
                         content = { Text(text = "Hire") },
                         modifier = Modifier
                             .weight(.5f)
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = CustomTheme.colors.primary,
+                            contentColor = CustomTheme.colors.onPrimary,
+                        ),
                     )
                 }
             }
@@ -173,13 +222,15 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
             modifier = Modifier
                 .wrapContentWidth()
                 .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large
+            shape = MaterialTheme.shapes.large,
+            color = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 // DialogBox title
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Edit Rider",
+                        text = stringResource(R.string.edit_rider),
                         style = TextStyle(
                             fontFamily = gilroy,
                             fontWeight = FontWeight.Bold,
@@ -192,48 +243,93 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                 TextField(
                     value = riderName,
                     onValueChange = { riderName = it },
-                    placeholder = { Text(text = "Name*") },
+                    placeholder = { Text(text = stringResource(R.string.name) + "*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isNameError
+                    isError = isNameError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 TextField(
                     value = riderSurname,
                     onValueChange = { riderSurname = it },
-                    placeholder = { Text(text = "Surname*") },
+                    placeholder = { Text(text = stringResource(R.string.surname) +"*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isSurnameError
+                    isError = isSurnameError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 TextField(
                     value = riderEmail,
                     onValueChange = { riderEmail = it },
-                    placeholder = { Text(text = "E-mail*") },
+                    placeholder = { Text(text = stringResource(R.string.username) +"*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isEmailError
+                    isError = isEmailError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 TextField(
                     value = riderPassword,
                     onValueChange = { riderPassword = it },
-                    placeholder = { Text(text = "Password*") },
+                    placeholder = { Text(text = stringResource(id = R.string.password)+"*") },
                     modifier = Modifier.padding(smallPadding),
-                    isError = isPasswordError
+                    isError = isPasswordError,
+                    textStyle = CustomTheme.typography.body1,
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = CustomTheme.colors.onBackground,
+                        backgroundColor = CustomTheme.colors.surface,
+                        cursorColor = CustomTheme.colors.onBackground,
+                        focusedLabelColor = CustomTheme.colors.onBackground,
+                        focusedIndicatorColor = CustomTheme.colors.onBackground,
+                        unfocusedLabelColor = CustomTheme.colors.onBackgroundVariant,
+                        unfocusedIndicatorColor = CustomTheme.colors.onBackgroundVariant,
+                        placeholderColor = CustomTheme.colors.onBackgroundVariant
+                    ),
                 )
 
                 // Buttons
                 Row (modifier = Modifier.fillMaxWidth()) {
                     Button(
                         onClick = { onDismiss() },
-                        content = { Text(text = "Close") },
+                        content = { Text(text = stringResource(R.string.close)) },
                         modifier = Modifier
                             .weight(.5f)
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = CustomTheme.colors.primary,
+                            contentColor = CustomTheme.colors.onPrimary,
+                        ),
                     )
-                    Button(colors = ButtonDefaults.buttonColors(
-                        backgroundColor = CustomTheme.colors.primary,
-                        contentColor = CustomTheme.colors.onPrimary,
-                    ),
+                    Button(
                         onClick = {
                             isNameError = riderName.isEmpty()
                             isSurnameError = riderSurname.isEmpty()
@@ -260,10 +356,14 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                             else
                                 Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
                         },
-                        content = { Text(text = "Hire") },
+                        content = { Text(text = stringResource(R.string.save)) },
                         modifier = Modifier
                             .weight(.5f)
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = CustomTheme.colors.primary,
+                            contentColor = CustomTheme.colors.onPrimary,
+                        )
                     )
                 }
             }
@@ -288,7 +388,10 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
             .wrapContentWidth()
             .wrapContentHeight(),
             shape = MaterialTheme.shapes.large) {
-            Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
+            Column(modifier = Modifier
+                .padding(20.dp)
+                .width(400.dp)
+                .wrapContentHeight(),
             verticalArrangement = Arrangement.spacedBy(25.dp)) {
 
                 Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek?.name+" ?",
@@ -375,7 +478,10 @@ fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismi
             .wrapContentWidth()
             .wrapContentHeight(),
             shape = MaterialTheme.shapes.large) {
-            Column(modifier = Modifier.padding(20.dp).width(400.dp).wrapContentHeight(),
+            Column(modifier = Modifier
+                .padding(20.dp)
+                .width(400.dp)
+                .wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(25.dp)) {
 
                 Text(errorMessage,

@@ -54,12 +54,11 @@ fun SwipeToRevealRiderList(
                         isRevealed = false
                         rider.unregister(context)
                         deleteButtonClicked(rider)
-                    }, // TODO Ralisin: remove rider from Rest API
+                    },
                     onEdit = {
                         isRevealed = false
                         editButtonClicked(rider)
-                        Toast.makeText(context, "CLICKED EDIT", Toast.LENGTH_SHORT).show()
-                    } // TODO Ralisin: implement edit rider option
+                    } // TODO Ralisin: la finestra di diagolo che compare alla modificica ha scritto "hire" invece di "save"
                 )
 
                 DroppableListItemCard(
