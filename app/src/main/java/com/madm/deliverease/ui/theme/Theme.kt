@@ -3,12 +3,8 @@ package com.madm.deliverease.ui.theme
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.madm.deliverease.SELECTED_THEME
 import com.madm.deliverease.SHARED_PREFERENCES_FILE
@@ -95,20 +91,6 @@ fun DeliverEaseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-
-    val localSelectedThemeName = getCurrentTheme(LocalContext.current)
-    var isDarkTheme: Boolean = darkTheme
-
-    if(localSelectedThemeName.isNotBlank()){
-        isDarkTheme = when(localSelectedThemeName){
-            "dark" -> true
-            "light" -> false
-            else -> isSystemInDarkTheme()
-        }
-    }
-
-    println("AAAAAAAAA $localSelectedThemeName - $isDarkTheme")
-
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -117,9 +99,9 @@ fun DeliverEaseTheme(
         )
     }
 
-
-    val currentColor = remember { if (isDarkTheme) darkColors else colors }
+    val currentColor = if (darkTheme) darkColors else colors
     val rememberedColors = remember { currentColor.copy() }.apply { updateColorsFrom(currentColor) }
+
     CompositionLocalProvider(
         LocalColors provides rememberedColors,
         LocalShapes provides shapes,
@@ -132,23 +114,3 @@ fun DeliverEaseTheme(
         )
     }
 }
-
-
-
-/* Old MaterialTheme
-@Composable
-fun DeliverEaseTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
-
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
-}
- */

@@ -167,15 +167,8 @@ fun DarkMode(){
     val context : Context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
-    val savedTheme = sharedPreferences.getString(SELECTED_THEME, "")!!
-    val isDarkTheme = isSystemInDarkTheme()
-
-    var switchCheckedState by remember {
-        mutableStateOf(
-            if (savedTheme.isBlank()) isDarkTheme
-            else savedTheme == "dark"
-        )
-    }
+    val savedTheme = sharedPreferences.getString(SELECTED_THEME, if(isSystemInDarkTheme()) "dark" else "light")
+    var switchCheckedState by remember { mutableStateOf(savedTheme != "light") }
 
     Box(Modifier.fillMaxWidth()){
         Row(
@@ -215,10 +208,7 @@ fun DarkMode(){
                     editor.putString(SELECTED_THEME, if(it) "dark" else "light")
                     editor.apply()
 
-//                    // Restart the activity to apply the new theme
-//                    val intent = Intent(context, MainActivity::class.java)
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                    context.startActivity(intent)
+                    darkMode = it
                 },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = CustomTheme.colors.secondary,

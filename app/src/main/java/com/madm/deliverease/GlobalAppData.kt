@@ -1,9 +1,13 @@
 package com.madm.deliverease
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.madm.common_libs.model.User
 
 var globalUser : User? = null
 var globalAllUsers : MutableList<User> = mutableListOf()
+var darkMode by mutableStateOf(true)
 
 const val SHARED_PREFERENCES_FILE = "accessFile"
 const val EMAIL_FIELD = "EMAIL"
