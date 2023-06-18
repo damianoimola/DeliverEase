@@ -21,12 +21,9 @@ fun PizzaLoader(isPlaying: MutableState<Boolean>){
     val progress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = isPlaying.value,
-        reverseOnRepeat = true,
+        iterations = LottieConstants.IterateForever,
+        reverseOnRepeat = false,
         cancellationBehavior = LottieCancellationBehavior.Immediately)
-    LaunchedEffect(key1 = progress){
-        if(progress == 1f)
-            isPlaying.value = false
-    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -34,7 +31,7 @@ fun PizzaLoader(isPlaying: MutableState<Boolean>){
     ) {
         LottieAnimation(
             composition = composition,
-            modifier = Modifier.size(300.dp),
+            modifier = Modifier.size(200.dp),
             progress = { progress },
         )
     }
