@@ -8,6 +8,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,9 +17,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
@@ -59,19 +59,24 @@ fun ShiftChangeCard(
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 if(shiftsList.isNotEmpty()){
                     shiftsList.forEach { shift ->
+
+                        val isVisibile = remember { mutableStateOf(true) }
                         Card(
                             Modifier.padding(nonePadding, smallPadding),
                             backgroundColor = CustomTheme.colors.surface,
                             contentColor = CustomTheme.colors.onSurface,
                             elevation = extraSmallCardElevation
                         ) {
-                            CustomShiftChangeRequest(shift) {
-                                Message(
-                                    senderID = globalUser!!.id,
-                                    receiverID = shift.senderID,
-                                    body = shift.id,
-                                    type = Message.MessageType.ACCEPTANCE.displayName
-                                ).send(context){ if(it) updateList(shift) }
+                            if(isVisibile.value) {
+                                CustomShiftChangeRequest(shift) {
+                                    Message(
+                                        senderID = globalUser!!.id,
+                                        receiverID = shift.senderID,
+                                        body = shift.id,
+                                        type = Message.MessageType.ACCEPTANCE.displayName
+                                    ).send(context) { if (it) updateList(shift) }
+                                    isVisibile.value = false
+                                }
                             }
                         }
                     }
