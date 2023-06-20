@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
@@ -294,28 +293,17 @@ fun ShiftOptions(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ){
-                    Button(
-                        onClick = {
-                            println("BEFORE ON COMPLETE")
-                            onComplete(
-                                radioOptions.indexOf(selectedOption),
-                                checkedState
-                            )
-                        },
-                        modifier = Modifier.clip(shape = CustomTheme.shapes.large).fillMaxWidth(),
-                        shape = CustomTheme.shapes.large,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CustomTheme.colors.primary,
-                            contentColor = CustomTheme.colors.onPrimary,
-                        )
-                    ) {
-                        Text(
-                            stringResource(R.string.save_your_preference),
-                            textAlign = TextAlign.Center,
-                            style = CustomTheme.typography.body1,
-                            color = CustomTheme.colors.onPrimary
+
+                    defaultButton(text = stringResource(R.string.save_your_preference), modifier = Modifier
+                        .clip(shape = CustomTheme.shapes.large)
+                        .fillMaxWidth()) {
+                        println("BEFORE ON COMPLETE")
+                        onComplete(
+                            radioOptions.indexOf(selectedOption),
+                            checkedState
                         )
                     }
+
                 }
             }
         }

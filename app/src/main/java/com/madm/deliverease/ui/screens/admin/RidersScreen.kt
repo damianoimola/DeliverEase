@@ -90,21 +90,10 @@ fun RidersScreen() {
         }
 
         Row {
-            Button(
-                onClick = { showHireDialog = !showHireDialog },
-                modifier = Modifier
-                    .wrapContentSize()
-                    .weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = CustomTheme.colors.primary,
-                    contentColor = CustomTheme.colors.onPrimary,
-                ),
-                shape = CustomTheme.shapes.large
-            ) {
-                Text(
-                    text = stringResource(R.string.hire_new_rider),
-                    style = CustomTheme.typography.button
-                )
+            defaultButton(text = stringResource(R.string.hire_new_rider), modifier = Modifier
+                .wrapContentSize()
+                .weight(1f)) {
+                showHireDialog = !showHireDialog
             }
         }
     }

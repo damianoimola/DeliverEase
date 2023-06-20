@@ -1,8 +1,6 @@
 package com.madm.deliverease.ui.widgets
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,12 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -228,4 +222,25 @@ fun ConfirmExitingApp(onDismiss: () -> Unit){
         }
     }
 }
+
+
+@Composable
+
+fun defaultButton(text: String, modifier: Modifier, onClick: () -> Unit){
+    Button(
+        onClick =  onClick ,
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = CustomTheme.colors.primary,
+            contentColor = CustomTheme.colors.onPrimary,
+        ),
+        shape = CustomTheme.shapes.large
+    ) {
+        Text(
+            text = text,
+            style = CustomTheme.typography.button
+        )
+    }
+}
+
 

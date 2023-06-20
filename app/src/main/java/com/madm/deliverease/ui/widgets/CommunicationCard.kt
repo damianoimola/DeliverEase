@@ -1,7 +1,5 @@
 package com.madm.deliverease.ui.widgets
 
-import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -31,7 +29,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
@@ -154,66 +151,50 @@ fun CommunicationCard(
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(
-                            onClick = {
-                                showTextField.value = !showTextField.value
-                                isPlaying.value = true
+                        defaultButton(text = stringResource(R.string.send), Modifier ) {
+                            showTextField.value = !showTextField.value
+                            isPlaying.value = true
 
-                                val msg = Message(                  // declaration of the message
-                                    senderID = globalUser!!.id,
-                                    receiverID = "0",
-                                    body = textFieldValue.value,
-                                    type = Message.MessageType.NOTIFICATION.displayName
-                                )
+                            val msg = Message(                  // declaration of the message
+                                senderID = globalUser!!.id,
+                                receiverID = "0",
+                                body = textFieldValue.value,
+                                type = Message.MessageType.NOTIFICATION.displayName
+                            )
 
-                                msg.send(context) { messageSent ->          // sending message to server
+                            msg.send(context) { messageSent ->          // sending message to server
 
-                                    if (messageSent) {
-                                        communicationList.add(              // updating ui with new communication
-                                            0,
-                                            msg
-                                        )
+                                if (messageSent) {
+                                    communicationList.add(              // updating ui with new communication
+                                        0,
+                                        msg
+                                    )
 
-                                        CoroutineScope(Dispatchers.Main).launch {
-                                            Toast.makeText(
-                                                context,
-                                                "Message has been sent correctly!",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    } else {
-                                        CoroutineScope(Dispatchers.Main).launch {
-                                            Toast.makeText(
-                                                context,
-                                                "Message has not been sent!",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        Toast.makeText(
+                                            context,
+                                            "Message has been sent correctly!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else {
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        Toast.makeText(
+                                            context,
+                                            "Message has not been sent!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
+                            }
 
-                                textFieldValue.value = ""
-                                isPlaying.value = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = CustomTheme.colors.primary,
-                                contentColor = CustomTheme.colors.onPrimary,
-                            )
-                        ) {
-                            Text(stringResource(R.string.send), style = CustomTheme.typography.button)
+                            textFieldValue.value = ""
+                            isPlaying.value = false
                         }
                         Spacer(Modifier.width(4.dp))
-                        Button(
-                            onClick = {
-                                textFieldValue.value = ""
-                                showTextField.value = !showTextField.value
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = CustomTheme.colors.primary,
-                                contentColor = CustomTheme.colors.onPrimary,
-                            )
-                        ) {
-                            Text(stringResource(R.string.cancel))
+                        defaultButton(text = stringResource(R.string.cancel), Modifier) {
+                            textFieldValue.value = ""
+                            showTextField.value = !showTextField.value
                         }
                     }
                 }

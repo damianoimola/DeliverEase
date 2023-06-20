@@ -143,53 +143,42 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
 
                 // Buttons
                 Row (modifier = Modifier.fillMaxWidth()) {
-                    Button(
-                        onClick = { onDismiss() },
-                        content = { Text(text = "Close") },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CustomTheme.colors.primary,
-                            contentColor = CustomTheme.colors.onPrimary,
-                        ),
-                    )
-                    Button(
-                        onClick = {
-                            isNameError = riderName.isEmpty()
-                            isSurnameError = riderSurname.isEmpty()
-                            isEmailError = riderEmail.isEmpty()
-                            isPasswordError = riderPassword.isEmpty()
 
-                            if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
-                                val newUser = User(
-                                    id = (globalAllUsers.maxOf { (it.id)!!.toInt() } + 1).toString(),
-                                    name = riderName,
-                                    surname = riderSurname,
-                                    email = riderEmail,
-                                    password = riderPassword,
-                                    permanentConstraints = ArrayList(),
-                                    nonPermanentConstraints = ArrayList()
-                                )
+                    defaultButton(text = stringResource(id = R.string.close), modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp)) {
+                        onDismiss()
+                    }
 
-                                newUser.registerOrUpdate(context)       // updating server info
-                                onDismiss()
-                                callbackFunction(newUser)
+                    defaultButton(text = stringResource(id = R.string.hire), modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp) ) {
+                        isNameError = riderName.isEmpty()
+                        isSurnameError = riderSurname.isEmpty()
+                        isEmailError = riderEmail.isEmpty()
+                        isPasswordError = riderPassword.isEmpty()
 
-                                Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
-                            }
-                            else
-                                Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
-                        },
-                        content = { Text(text = "Hire") },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CustomTheme.colors.primary,
-                            contentColor = CustomTheme.colors.onPrimary,
-                        ),
-                    )
+                        if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
+                            val newUser = User(
+                                id = (globalAllUsers.maxOf { (it.id)!!.toInt() } + 1).toString(),
+                                name = riderName,
+                                surname = riderSurname,
+                                email = riderEmail,
+                                password = riderPassword,
+                                permanentConstraints = ArrayList(),
+                                nonPermanentConstraints = ArrayList()
+                            )
+
+                            newUser.registerOrUpdate(context)       // updating server info
+                            onDismiss()
+                            callbackFunction(newUser)
+
+                            Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
+                        }
+                        else
+                            Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }
         }
@@ -318,53 +307,41 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
 
                 // Buttons
                 Row (modifier = Modifier.fillMaxWidth()) {
-                    Button(
-                        onClick = { onDismiss() },
-                        content = { Text(text = stringResource(R.string.close)) },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CustomTheme.colors.primary,
-                            contentColor = CustomTheme.colors.onPrimary,
-                        ),
-                    )
-                    Button(
-                        onClick = {
-                            isNameError = riderName.isEmpty()
-                            isSurnameError = riderSurname.isEmpty()
-                            isEmailError = riderEmail.isEmpty()
-                            isPasswordError = riderPassword.isEmpty()
 
-                            if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
-                                val newUser = User(
-                                    id = user.id,
-                                    name = riderName,
-                                    surname = riderSurname,
-                                    email = riderEmail,
-                                    password = riderPassword,
-                                    permanentConstraints = user.permanentConstraints,
-                                    nonPermanentConstraints = user.nonPermanentConstraints
-                                )
+                    defaultButton(text = stringResource(R.string.close), modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp) ) {
+                        onDismiss()
+                    }
+                    defaultButton(text = stringResource(R.string.save), modifier = Modifier
+                        .weight(.5f)
+                        .padding(8.dp)) {
+                        isNameError = riderName.isEmpty()
+                        isSurnameError = riderSurname.isEmpty()
+                        isEmailError = riderEmail.isEmpty()
+                        isPasswordError = riderPassword.isEmpty()
 
-                                newUser.registerOrUpdate(context)       // updating server info
-                                onDismiss()
-                                callbackFunction(user, newUser)
+                        if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
+                            val newUser = User(
+                                id = user.id,
+                                name = riderName,
+                                surname = riderSurname,
+                                email = riderEmail,
+                                password = riderPassword,
+                                permanentConstraints = user.permanentConstraints,
+                                nonPermanentConstraints = user.nonPermanentConstraints
+                            )
 
-                                Toast.makeText(context, "MODIFIED, HURRAY!!", Toast.LENGTH_SHORT).show()
-                            }
-                            else
-                                Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
-                        },
-                        content = { Text(text = stringResource(R.string.save)) },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CustomTheme.colors.primary,
-                            contentColor = CustomTheme.colors.onPrimary,
-                        )
-                    )
+                            newUser.registerOrUpdate(context)       // updating server info
+                            onDismiss()
+                            callbackFunction(user, newUser)
+
+                            Toast.makeText(context, "MODIFIED, HURRAY!!", Toast.LENGTH_SHORT).show()
+                        }
+                        else
+                            Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }
         }
@@ -387,7 +364,9 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
         Surface(modifier = Modifier
             .wrapContentWidth()
             .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large) {
+            shape = CustomTheme.shapes.large,
+            color = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground) {
             Column(modifier = Modifier
                 .padding(20.dp)
                 .width(400.dp)
@@ -407,20 +386,11 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                     modifier = Modifier.width(400.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button( colors = ButtonDefaults.buttonColors(
-                        backgroundColor = CustomTheme.colors.primary,
-                        contentColor = CustomTheme.colors.onPrimary,
-                    ),
-                        onClick = { onDismiss() }) {
-                        Text(text = stringResource(id = R.string.cancel),
-                            style = CustomTheme.typography.button)
+                    defaultButton(text = stringResource(id = R.string.cancel), modifier = Modifier) {
+                        onDismiss()
                     }
-                    Button( colors = ButtonDefaults.buttonColors(
-                        backgroundColor = CustomTheme.colors.primary,
-                        contentColor = CustomTheme.colors.onPrimary,
-                    ),
-                        onClick = {
 
+                    defaultButton(text = stringResource(id = R.string._continue), modifier =Modifier ) {
                         // declaration of the message
                         val msg = Message(
                             senderID = globalUser!!.id,
@@ -453,10 +423,9 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                         //closing dialog
                         onDismiss()
 
-                    }) {
-                        Text(text = stringResource(id = R.string._continue),
-                            style = CustomTheme.typography.button)
+
                     }
+
                 }
             }
         }
@@ -477,7 +446,9 @@ fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismi
         Surface(modifier = Modifier
             .wrapContentWidth()
             .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large) {
+            shape = CustomTheme.shapes.large,
+            color = CustomTheme.colors.background,
+            contentColor = CustomTheme.colors.onBackground) {
             Column(modifier = Modifier
                 .padding(20.dp)
                 .width(400.dp)
@@ -488,8 +459,8 @@ fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismi
                     style = TextStyle(
                         fontFamily = gilroy,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Start
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
                     )
                 )
 
@@ -497,30 +468,14 @@ fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismi
                     modifier = Modifier.width(400.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(onClick = { onDismiss() }) {
-                        Text(text = stringResource(id = R.string.cancel),
-                            style = TextStyle(
-                                fontFamily = gilroy,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 15.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        )
-                    }
-                    Button(onClick = {
+                     defaultButton(text = stringResource(id = R.string.cancel), modifier = Modifier ) {
+                         onDismiss()
+                     }
+                    defaultButton(text = stringResource(id = R.string._continue), modifier = Modifier) {
                         onContinue()
-                        //closing dialog
                         onDismiss()
-                    }) {
-                        Text(text = stringResource(id = R.string._continue),
-                            style = TextStyle(
-                                fontFamily = gilroy,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 15.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        )
                     }
+
                 }
             }
         }

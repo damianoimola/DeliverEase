@@ -693,44 +693,20 @@ fun ButtonDraftAndSubmit(
     notifyRiders: () -> Unit
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Button(
-            onClick = { updateServer() },
-            shape = RoundedCornerShape(30),
-            // border = BorderStroke(1.dp, Color.Red), // TODO Ralisin: set theme border
-            modifier = Modifier
-                .weight(1f)
-                .padding(10.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = CustomTheme.colors.primary,
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.save_draft),
-                color = CustomTheme.colors.onPrimary,
-                style = CustomTheme.typography.button
-            )
+
+        defaultButton(text = stringResource(R.string.save_draft), modifier = Modifier
+            .weight(1f)
+            .padding(10.dp)) {
+            updateServer()
         }
 
-        Button(
-            onClick = {
-                updateServer()
-                notifyRiders()
-            },
-            shape = RoundedCornerShape(30), // TODO Ralisin: decide if to leave RoundedCornerShape of choose a default
-            // border = BorderStroke(1.dp, Color.Transparent /*Color.Red TODO: set theme color border*/),
-            modifier = Modifier
-                .weight(1f)
-                .padding(10.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = CustomTheme.colors.primary,
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.submit),
-                color = CustomTheme.colors.onPrimary,
-                style = CustomTheme.typography.button
-            )
+        defaultButton(text = stringResource(R.string.submit), modifier = Modifier
+            .weight(1f)
+            .padding(10.dp)) {
+            updateServer()
+            notifyRiders()
         }
+
     }
 }
 
