@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -53,7 +52,7 @@ fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
 @Composable
 fun ShiftPreferenceScreen(){
     val configuration = LocalConfiguration.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
+    var selectedWeek : Int by remember { mutableStateOf(1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -76,7 +75,7 @@ fun ShiftPreferenceScreen(){
                 selectedMonth = month
                 selectedWeek = 1
             }
-            WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+            WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
                 val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
@@ -140,7 +139,7 @@ fun ShiftPreferenceScreen(){
                     selectedMonth = month
                     selectedWeek = 1
                 }
-                WeeksList(selectedMonth, selectedYear, selectedWeek, false) { weekNumber: Int -> selectedWeek = weekNumber }
+                WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
 
