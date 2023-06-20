@@ -1,14 +1,16 @@
 package com.madm.deliverease.ui.widgets
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -29,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import com.madm.common_libs.model.*
 import com.madm.deliverease.R
 import com.madm.deliverease.globalUser
@@ -36,6 +39,7 @@ import com.madm.deliverease.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun CommunicationCard(
@@ -57,7 +61,7 @@ fun CommunicationCard(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxSize()
-            .padding(smallPadding * (1-isPortrait), smallPadding * isPortrait),
+            .padding(smallPadding * (1 - isPortrait), smallPadding * isPortrait),
         backgroundColor = CustomTheme.colors.surface
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
