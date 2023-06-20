@@ -40,7 +40,7 @@ fun PizzaLoader(isPlaying: MutableState<Boolean>){
 @Composable
 fun PizzaLoaderDialog(isPlaying: MutableState<Boolean>){
     Dialog(
-        onDismissRequest = { isPlaying.value != isPlaying.value },
+        onDismissRequest = { isPlaying.value = !isPlaying.value },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = false
