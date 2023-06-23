@@ -51,7 +51,7 @@ fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
 @Composable
 fun ShiftPreferenceScreen(){
     val configuration = LocalConfiguration.current
-    var selectedWeek : Int by remember { mutableStateOf(1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -74,7 +74,7 @@ fun ShiftPreferenceScreen(){
                 selectedMonth = month
                 selectedWeek = 1
             }
-            WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
+            WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int -> selectedWeek = weekNumber }
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
                 val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
@@ -138,7 +138,7 @@ fun ShiftPreferenceScreen(){
                     selectedMonth = month
                     selectedWeek = 1
                 }
-                WeeksList(selectedMonth, selectedYear, selectedWeek, true) { weekNumber: Int -> selectedWeek = weekNumber }
+                WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
 

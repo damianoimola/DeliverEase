@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
@@ -47,7 +48,7 @@ val MonthMap = mapOf(
 )
 
 @Parcelize
-data class WeekDay(val number: Int, val name: String) : Parcelable
+data class WeekDay(val number: Int, val month: Int, val name: String) : Parcelable
 
 fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     val firstDayOfMonth = LocalDate.of(year, month, 1)
@@ -59,8 +60,10 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
 
     for (i in 0 until 7) {
         val dayNumber = currentDate.dayOfMonth
+        val dayMonth = currentDate.monthValue
         val dayName = currentDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        weekDays.add(WeekDay(dayNumber, dayName))
+        println("GIORNOOOOOO    "+dayNumber+"   "+dayMonth+ "     ")
+        weekDays.add(WeekDay(dayNumber, dayMonth, dayName))
         currentDate = currentDate.plusDays(1)
     }
 
@@ -74,7 +77,7 @@ fun Int.integerToTwoDigit() : String {
 }
 
 
-fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
+fun getMondays(year: Int, month: Int): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
     val lastOfMonth = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth())
     val today = LocalDate.now()
@@ -83,11 +86,13 @@ fun getMondays(year: Int, month: Int, afterCurrentDay : Boolean): List<Int> {
     var currentDate = firstOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
 
     while (currentDate.isBefore(lastOfMonth) || currentDate.isEqual(lastOfMonth)) {
-        if(afterCurrentDay && (currentDate > today)) {
+       /* if(afterCurrentDay && (currentDate > today)) {
             mondays.add(currentDate.dayOfMonth)
         } else if (!afterCurrentDay){
+
+        */
             mondays.add(currentDate.dayOfMonth)
-        }
+        //}
 
         currentDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
     }
@@ -171,7 +176,42 @@ fun MonthSelector(
 @Composable
 fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit, lastItem: @Composable () -> Unit = {}){
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
+    val currentMonth = Calendar.getInstance().get(Calendar.MONTH)+1
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
+    var emptyScreen = false
+
+    for(day in days){
+        println("YEAR   "+selectedYear+"    "+currentYear+"" +
+                "\nMONTH   "+day.month+"    "+currentMonth+
+        "\nDAY     "+day.number+"     "+currentDay)
+        if(selectedYear> currentYear)  break
+        else if(day.month > currentMonth){
+            emptyScreen = false
+            break
+        }
+        else if(day.number < currentDay) {
+            emptyScreen = true
+        }
+
+    }
+
+    if(emptyScreen){
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(nonePadding, smallPadding)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text( stringResource(id = R.string.previous_message),
+                style = CustomTheme.typography.body1,
+                color = CustomTheme.colors.onBackground,
+                textAlign = TextAlign.Center
+            )
+        }
+    }else{
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround,
@@ -179,6 +219,7 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
             .padding(top = mediumPadding)
             .fillMaxHeight()
     ) {
+
         itemsIndexed(days){_, day ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -206,13 +247,14 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
         }
     }
 }
+}
 
 
 @Composable
-fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurrentDay: Boolean, function: (Int) -> Unit) {
+fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function: (Int) -> Unit) {
     // list of all mondays (first day of week) of the selected month
     val mondaysList =
-        getMondays(selectedYear, (selectedMonth % 12) + 1, afterCurrentDay)
+        getMondays(selectedYear, (selectedMonth % 12) + 1)
             .toList()
             .toIntArray()
             .map { i -> i.integerToTwoDigit() }
@@ -220,15 +262,19 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, afterCurr
     // list of all days of the selected week
     var daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
 
+    var selectedWeekString: String
     // the selected week
-    var selectedWeekString = mondaysList[selectedWeek-1]
+
+    selectedWeekString = mondaysList[selectedWeek - 1]
+
     println("################# SELECTED WEEK $selectedWeek")
     println("################# MONDAY LIST $mondaysList")
     println("################# SELECTED WEEK STRING $selectedWeekString")
 
     Row (
         modifier = Modifier
-            .fillMaxWidth().padding(0.dp)
+            .fillMaxWidth()
+            .padding(0.dp)
             .horizontalScroll(rememberScrollState())
     ){
         mondaysList.forEach {
