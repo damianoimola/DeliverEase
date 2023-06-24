@@ -259,27 +259,41 @@ fun ShiftsScreen() {
                             }
                         }
                     }
-                }
-            ) {
-                ButtonDraftAndSubmit({
-                    errorMessages = shiftsConstraintsErrorMessage(
-                        context,
-                        ArrayList(weekWorkingDays),
-                        selectedWeek,
-                        selectedMonth,
-                        selectedYear
-                    )
+                },
+                lastItem = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        defaultButton(
+                            text = stringResource(R.string.save_draft),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            errorMessages = shiftsConstraintsErrorMessage(
+                                context,
+                                ArrayList(weekWorkingDays),
+                                selectedWeek,
+                                selectedMonth,
+                                selectedYear
+                            )
+                            showDialog = true
+                        }
 
-                    showDialog = true
-                }) {
-                    Message(
-                        senderID = globalUser!!.id,
-                        receiverID = "0",
-                        body = defaultMessage,
-                        type = Message.MessageType.NOTIFICATION.displayName
-                    ).send(context)
+                        defaultButton(
+                            text = stringResource(R.string.submit),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            Message(
+                                senderID = globalUser!!.id,
+                                receiverID = "0",
+                                body = defaultMessage,
+                                type = Message.MessageType.NOTIFICATION.displayName
+                            ).send(context)
+                        }
+                    }
                 }
-            }
+            )
         }
     } else {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -458,26 +472,40 @@ fun ShiftsScreen() {
                         }
                     }
                 },
-            ) {
-                ButtonDraftAndSubmit({
-                    errorMessages = shiftsConstraintsErrorMessage(
-                        context,
-                        ArrayList(weekWorkingDays),
-                        selectedWeek,
-                        selectedMonth,
-                        selectedYear
-                    )
+                lastItem = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        defaultButton(
+                            text = stringResource(R.string.save_draft),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            errorMessages = shiftsConstraintsErrorMessage(
+                                context,
+                                ArrayList(weekWorkingDays),
+                                selectedWeek,
+                                selectedMonth,
+                                selectedYear
+                            )
+                            showDialog = true
+                        }
 
-                    showDialog = true
-                }) {
-                    Message(
-                        senderID = globalUser!!.id,
-                        receiverID = "0",
-                        body = defaultMessage,
-                        type = Message.MessageType.NOTIFICATION.displayName
-                    ).send(context)
+                        defaultButton(
+                            text = stringResource(R.string.submit),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            Message(
+                                senderID = globalUser!!.id,
+                                receiverID = "0",
+                                body = defaultMessage,
+                                type = Message.MessageType.NOTIFICATION.displayName
+                            ).send(context)
+                        }
+                    }
                 }
-            }
+            )
         }
     }
 }
