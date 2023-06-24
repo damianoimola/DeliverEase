@@ -9,6 +9,8 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -38,12 +40,13 @@ fun SwipeToRevealRiderList(
 ) {
     val context = LocalContext.current
 
-    LazyColumn(
+    Column(
         Modifier
             .padding(smallPadding)
             .heightIn(0.dp, maxHeight)
+            .verticalScroll(rememberScrollState())
     ) {
-        items(riderList) { rider ->
+        riderList.forEach { rider ->
             Box(Modifier.fillMaxWidth()) {
                 var isRevealed by remember { mutableStateOf(false) }
 

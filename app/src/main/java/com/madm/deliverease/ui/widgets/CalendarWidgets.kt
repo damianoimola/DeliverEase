@@ -1,13 +1,8 @@
 package com.madm.deliverease.ui.widgets
 
 import android.os.Parcelable
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -62,7 +57,7 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
         val dayNumber = currentDate.dayOfMonth
         val dayMonth = currentDate.monthValue
         val dayName = currentDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        println("GIORNOOOOOO    "+dayNumber+"   "+dayMonth+ "     ")
+        
         weekDays.add(WeekDay(dayNumber, dayMonth, dayName))
         currentDate = currentDate.plusDays(1)
     }
@@ -173,7 +168,13 @@ fun MonthSelector(
 }
 
 @Composable
-fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content: @Composable (WeekDay) -> Unit, lastItem: @Composable () -> Unit = {}){
+fun WeekContent(
+    weekNumber: Int,
+    selectedMonth: Int,
+    selectedYear: Int,
+    content: @Composable (WeekDay) -> Unit,
+    lastItem: @Composable () -> Unit = {},
+) {
     val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]+1
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
@@ -210,42 +211,40 @@ fun WeekContent(weekNumber: Int, selectedMonth: Int, selectedYear: Int, content:
                 textAlign = TextAlign.Center
             )
         }
-    }else{
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier
-            .padding(top = mediumPadding)
-            .fillMaxHeight()
-    ) {
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier
+                .padding(top = mediumPadding)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ) {
+            days.forEach {day ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(nonePadding, smallPadding)
+                ) {
+                    Text(
+                        "${day.number} ${day.name}",
+                        style = CustomTheme.typography.body1,
+                        color = CustomTheme.colors.onBackground
+                    )
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .width(2.dp)
+                            .padding(start = smallPadding),
+                        color = CustomTheme.colors.onBackground
+                    )
+                }
 
-        itemsIndexed(days){_, day ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(nonePadding, smallPadding)
-            ) {
-                Text(
-                    "${day.number} ${day.name}",
-                    style = CustomTheme.typography.body1,
-                    color = CustomTheme.colors.onBackground
-                )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .width(2.dp)
-                        .padding(start = smallPadding),
-                    color = CustomTheme.colors.onBackground
-                )
+                content(day)
             }
 
-            content(day)
-        }
-
-        item {
             lastItem()
         }
     }
-}
 }
 
 
@@ -284,11 +283,6 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
                     // update the list of days of the selected week
                     daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
                 },
-//                elevation = ButtonDefaults.elevation(
-//                    defaultElevation = 6.dp,
-//                    pressedElevation = 8.dp,
-//                    disabledElevation = 2.dp
-//                ),
                 modifier = Modifier
                     .padding(smallPadding, smallPadding)
                     .clip(shape = RoundedCornerShape(20)),
