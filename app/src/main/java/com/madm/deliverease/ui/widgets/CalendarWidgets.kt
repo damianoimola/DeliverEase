@@ -3,8 +3,6 @@ package com.madm.deliverease.ui.widgets
 import android.os.Parcelable
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -17,11 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.CustomTheme
-import com.madm.deliverease.ui.theme.gilroy
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.*
 import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -59,7 +53,7 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
         val dayNumber = currentDate.dayOfMonth
         val dayMonth = currentDate.monthValue
         val dayName = currentDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        println("GIORNOOOOOO    "+dayNumber+"   "+dayMonth+ "     ")
+
         weekDays.add(WeekDay(dayNumber, dayMonth, dayName))
         currentDate = currentDate.plusDays(1)
     }
