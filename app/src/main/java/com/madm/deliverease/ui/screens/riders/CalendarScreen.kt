@@ -31,37 +31,42 @@ import java.util.Calendar
 
 @Preview
 @Composable
-fun CalendarScreen(){
+fun CalendarScreen() {
     val configuration = LocalConfiguration.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
-    val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
-    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    var selectedWeek: Int by remember {
+        mutableStateOf(
+            Calendar.getInstance()[Calendar.WEEK_OF_MONTH] - 1
+        )
+    }
+    val currentMonth = Calendar.getInstance()[Calendar.MONTH]
+    val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = (currentMonth..currentMonth + 11).toList().map{i-> i%12}.toIntArray()
+    val months = (currentMonth..currentMonth + 11).toList().map { i -> i % 12 }.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
     //list of previous change requests done by user
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
-    var shiftRequestList : ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
-    var workDayList : List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
+    var shiftRequestList: ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
+    var workDayList: List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     val calendarManager = CalendarManager(LocalContext.current)
 
-    calendarManager.getDays { days : List<WorkDay> ->
+    calendarManager.getDays { days: List<WorkDay> ->
         workDayList = days
     }
-    messagesManager.getReceivedMessages{ list: List<Message> ->
+    messagesManager.getReceivedMessages { list: List<Message> ->
         shiftRequestList = ArrayList(list.filter {
             it.messageType == Message.MessageType.REQUEST
                     &&
-                    it.senderID == globalUser!!.id}
-            )
+                    it.senderID == globalUser!!.id
+        }
+        )
     }
 
     var offeredDay = mutableListOf<WeekDay>()
 
 
-    for(shift in shiftRequestList){
+    for (shift in shiftRequestList) {
         var dayStr = shift.body!!.split("#")[0]
         var offDate = dayStr.split("-")[0]
         var offMonth = dayStr.split("-")[1]
@@ -69,19 +74,19 @@ fun CalendarScreen(){
     }
 
     //variable used to change interface when the change shift button is clicked
-    val swap = remember{ mutableStateOf(false)}
+    val swap = remember { mutableStateOf(false) }
 
     //variable used to store the date of the day we would like to trade
     var clickedWeekday: WeekDay? by remember { mutableStateOf(null) }
 
     //variable used to store the date of the day we would like to change
-    var previousWeekDay: WeekDay ? by remember { mutableStateOf(null) }
+    var previousWeekDay: WeekDay? by remember { mutableStateOf(null) }
 
     // getting API data
-    var shiftList : List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
+    var shiftList: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
 
 
-    calendarManager.getDays{ list: List<WorkDay> ->
+    calendarManager.getDays { list: List<WorkDay> ->
         shiftList = list.filter { it.riders!!.contains(globalUser!!.id) }
     }
 
@@ -89,9 +94,14 @@ fun CalendarScreen(){
     var showCustomDialog by rememberSaveable { mutableStateOf(false) }
 
     //where the dialog is actually shown
-    if (showCustomDialog) ChangeShiftDialog(dayOfTheWeek = clickedWeekday, previousWeekDay, selectedMonth, selectedYear ) { showCustomDialog = false }
+    if (showCustomDialog) ChangeShiftDialog(
+        dayOfTheWeek = clickedWeekday,
+        previousWeekDay,
+        selectedMonth,
+        selectedYear
+    ) { showCustomDialog = false }
 
-    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
         Column {
             //month selector
@@ -103,22 +113,26 @@ fun CalendarScreen(){
                 selectedWeek = 1
             }
             //horizontal weekList
-            WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int -> selectedWeek = weekNumber }
+            WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int ->
+                selectedWeek = weekNumber
+            }
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
                 ShiftRow( // TODO Ralisin: set theme
                     shiftList.any {
-                        var selectedDate: LocalDate? = null
+                        var selectedDate: LocalDate?
 
                         // create a date from selected day
-                        selectedDate = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                            LocalDate.of(selectedYear, (selectedMonth + 2)%12, weekDay.number)
-                        else
-                            LocalDate.of(selectedYear, (selectedMonth + 1)%12, weekDay.number)
+                        selectedDate =
+                            if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                                LocalDate.of(selectedYear, (selectedMonth + 2) % 12, weekDay.number)
+                            else
+                                LocalDate.of(selectedYear, (selectedMonth + 1) % 12, weekDay.number)
 
                         // converting API date
                         val inputDateString = it.workDayDate.toString()
-                        val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val inputDateFormat =
+                            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
                         val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         val date: Date = inputDateFormat.parse(inputDateString)!!
                         val outputDateString: String = outputDateFormat.format(date)
@@ -132,16 +146,20 @@ fun CalendarScreen(){
                         previousWeekDay = weekDay
                     }
 
-                )  { showCustomDialog = it }
+                ) { showCustomDialog = it }
                 swap.value = false
             })
         }
     } else {
         println("ECCOLO QUA")
         Row(modifier = Modifier.fillMaxSize()) {
-            Column (modifier = Modifier.width(IntrinsicSize.Min)) {
+            Column(modifier = Modifier.width(IntrinsicSize.Min)) {
                 //month selector
-                MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                MonthSelector(
+                    months,
+                    selectedMonth,
+                    currentYear
+                ) { month: Int, isNextYear: Boolean ->
                     selectedYear = if (isNextYear)
                         currentYear + 1
                     else currentYear
@@ -149,24 +167,28 @@ fun CalendarScreen(){
                     selectedWeek = 1
                 }
                 //horizontal weekList
-                WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int -> selectedWeek = weekNumber }
+                WeeksList(
+                    selectedMonth,
+                    selectedYear,
+                    selectedWeek
+                ) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
                 ShiftRow( // TODO Ralisin: set theme
                     shiftList.any {
-                        var selectedDate: LocalDate? = null
 
                         // create a date from selected day
-                        selectedDate = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                            LocalDate.of(selectedYear, (selectedMonth + 2)%11, weekDay.number)
-                        else
-                            LocalDate.of(selectedYear, (selectedMonth + 1)%11, weekDay.number)
+                        val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                                LocalDate.of(selectedYear, (selectedMonth + 2) % 11, weekDay.number)
+                            else
+                                LocalDate.of(selectedYear, (selectedMonth + 1) % 11, weekDay.number)
 
                         // converting API date
                         val inputDateString = it.workDayDate.toString()
-                        val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val inputDateFormat =
+                            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
                         val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         val date: Date = inputDateFormat.parse(inputDateString)!!
                         val outputDateString: String = outputDateFormat.format(date)
@@ -180,15 +202,13 @@ fun CalendarScreen(){
                         previousWeekDay = weekDay
                     }
 
-                )  { showCustomDialog = it }
+                ) { showCustomDialog = it }
                 swap.value = false
             })
         }
     }
 
 }
-
-
 
 
 /*
@@ -199,22 +219,36 @@ fun CalendarScreen(){
 * showDialog is used to set true or false the variable showCustomDialog declared in the calling function
  */
 @Composable
-fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, shiftList: List<WeekDay>, weekDay: WeekDay, context: Context, setWeekDay: ()->Unit, setPreviousWeekday: () -> Unit, ShowDialog: (Boolean) -> Unit){
+fun ShiftRow(
+    haveAShift: Boolean,
+    swap: MutableState<Boolean>,
+    shiftList: List<WeekDay>,
+    weekDay: WeekDay,
+    context: Context,
+    setWeekDay: () -> Unit,
+    setPreviousWeekday: () -> Unit,
+    showDialog: (Boolean) -> Unit
+) {
 
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20))
             .background(
-                color =
-                (if (!haveAShift && !swap.value) {
-                    Color.LightGray
-                } else if (!swap.value) {
-                    Color(0xFFFF9800)
-                } else if (!haveAShift && swap.value) {
-                    Color(0xFFFF9800)
-                } else {
-                    Color.LightGray
-                })
+                color = when(Pair(haveAShift, swap.value)){
+                    Pair(false, false) -> Color.LightGray
+                    Pair(true, false) -> Color(0xFFFF9800)
+                    Pair(false, true) -> Color(0xFFFF9800)
+                    else -> Color.LightGray
+                }
+//                (if (!haveAShift && !swap.value) {
+//                    Color.LightGray
+//                } else if (!swap.value) {
+//                    Color(0xFFFF9800)
+//                } else if (!haveAShift && swap.value) {
+//                    Color(0xFFFF9800)
+//                } else {
+//                    Color.LightGray
+//                })
             )
             .fillMaxWidth()
             .padding(smallPadding)
@@ -226,21 +260,28 @@ fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, shiftList: List<W
                 if (swap.value && !haveAShift) {
 
                     setWeekDay()
-                    ShowDialog(true)
+                    showDialog(true)
 
                 }
             }
 
     ) {
         Text(
-            text = (if (!haveAShift && !swap.value) {"No shift"}
-            else if(!swap.value){
-             "You have a shift!"}
-            else if(!haveAShift && swap.value){
-                 "Click here to swap day"
-            } else {
-                "You already have a turn"
-            }),
+            text = when(Pair(haveAShift, swap.value)){
+                Pair(false, false) -> "No shift"
+                Pair(true, false) -> "You have a shift!"
+                Pair(false, true) -> "Click here to swap day"
+                else -> "You already have a turn"
+            } ,
+//            (if (!haveAShift && !swap.value) {
+//                "No shift"
+//            } else if (!swap.value) {
+//                "You have a shift!"
+//            } else if (!haveAShift && swap.value) {
+//                "Click here to swap day"
+//            } else {
+//                "You already have a turn"
+//            }),
             style = CustomTheme.typography.body1,
             modifier = Modifier.align(Alignment.CenterStart)
         )
@@ -262,7 +303,10 @@ fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, shiftList: List<W
                         var found = false
                         for (shift in shiftList) {
                             if (shift.number == weekDay.number && shift.month == weekDay.month) {
-                                Toast.makeText(context, "You have already asked to change shift for this day",
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "You have already asked to change shift for this day",
                                         Toast.LENGTH_SHORT
                                     )
                                     .show()
@@ -277,7 +321,7 @@ fun ShiftRow(haveAShift: Boolean, swap: MutableState<Boolean>, shiftList: List<W
                     },
                 tint = Color.Red
             )
-        }else if(haveAShift && swap.value){
+        } else if (haveAShift && swap.value) {
             Icon(
                 painter = painterResource(id = R.drawable.x_button),
                 contentDescription = "back",

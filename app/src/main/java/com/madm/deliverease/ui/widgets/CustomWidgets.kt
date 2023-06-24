@@ -162,9 +162,6 @@ fun LoginButton(
 
 @Composable
 fun ConfirmExitingApp(onDismiss: () -> Unit){
-
-    val context = LocalContext.current
-
     Dialog(onDismissRequest = { onDismiss()},
         properties = DialogProperties(
             dismissOnBackPress = true,

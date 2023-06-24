@@ -2,7 +2,6 @@ package com.madm.common_libs.model
 
 import android.content.Context
 import android.os.Parcelable
-import com.madm.common_libs.network.NetworkConnection
 import com.madm.common_libs.server.Server
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize

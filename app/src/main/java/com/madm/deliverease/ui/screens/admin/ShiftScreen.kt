@@ -54,9 +54,9 @@ fun ShiftsScreen() {
     println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance().get(Calendar.WEEK_OF_MONTH) - 1) }
-    val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
-    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH] - 1) }
+    val currentMonth = Calendar.getInstance()[Calendar.MONTH]
+    val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
     val months = (currentMonth..currentMonth + 11).map { i -> i % 12 }.toList().toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
@@ -516,24 +516,24 @@ fun shiftsConstraintsErrorMessage(
 
     // retrieving first and last day of selected week
     val calendar = Calendar.getInstance()
-    calendar.set(Calendar.YEAR, selectedYear)
-    calendar.set(Calendar.MONTH, selectedMonth)
-    calendar.set(Calendar.WEEK_OF_MONTH, selectedWeek + 1)
-    calendar.set(Calendar.HOUR, 0)
+    calendar[Calendar.YEAR] = selectedYear
+    calendar[Calendar.MONTH] = selectedMonth
+    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 1
+    calendar[Calendar.HOUR] = 0
 
     // Set the start and end dates of the selected week
-    calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-    calendar.set(Calendar.HOUR_OF_DAY, 0)
-    calendar.set(Calendar.MINUTE, 0)
-    calendar.set(Calendar.SECOND, 0)
-    calendar.set(Calendar.MILLISECOND, 0)
+    calendar[Calendar.DAY_OF_WEEK] = Calendar.MONDAY
+    calendar[Calendar.HOUR_OF_DAY] = 0
+    calendar[Calendar.MINUTE] = 0
+    calendar[Calendar.SECOND] = 0
+    calendar[Calendar.MILLISECOND] = 0
     val startDate = calendar.time
 
-    calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
-    calendar.set(Calendar.HOUR_OF_DAY, 23)
-    calendar.set(Calendar.MINUTE, 59)
-    calendar.set(Calendar.SECOND, 59)
-    calendar.set(Calendar.MILLISECOND, 999)
+    calendar[Calendar.DAY_OF_WEEK] = Calendar.SUNDAY
+    calendar[Calendar.HOUR_OF_DAY] = 23
+    calendar[Calendar.MINUTE] = 59
+    calendar[Calendar.SECOND] = 59
+    calendar[Calendar.MILLISECOND] = 999
     val endDate = calendar.time
 
 

@@ -437,7 +437,6 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
 
 @Composable
 fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismiss: () -> Unit){
-    val context = LocalContext.current
     Dialog(onDismissRequest = { onDismiss()},
         properties = DialogProperties(
             dismissOnBackPress = true,

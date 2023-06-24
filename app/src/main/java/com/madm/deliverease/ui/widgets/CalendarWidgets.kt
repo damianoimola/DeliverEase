@@ -80,7 +80,6 @@ fun Int.integerToTwoDigit() : String {
 fun getMondays(year: Int, month: Int): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
     val lastOfMonth = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth())
-    val today = LocalDate.now()
 
     val mondays = mutableListOf<Int>()
     var currentDate = firstOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
