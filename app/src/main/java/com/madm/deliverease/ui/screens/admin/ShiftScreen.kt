@@ -64,7 +64,7 @@ fun ShiftsScreen() {
 
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    var errorMessage: String by rememberSaveable { mutableStateOf("") }
+    var errorMessages: List<String> by rememberSaveable { mutableStateOf(listOf()) }
 
 
     // retrieving all working days in server
@@ -84,7 +84,8 @@ fun ShiftsScreen() {
         }
     else if (showDialog && weekWorkingDays.isNotEmpty())
         WrongConstraintsDialog(
-            errorMessage.ifBlank { "Are you sure to continue?" },
+            errorMessages,
+//            errorMessage.ifBlank { "Are you sure to continue?" },
             {
                 if (updatedWorkingDays.isNotEmpty()) {
                     weekWorkingDays.clear()
@@ -175,14 +176,12 @@ fun ShiftsScreen() {
 
                         (permanent || nonPermanent) && user.id != "0"
                     }
+
                     //to do animation
-                    var isVisible by remember {
-                        mutableStateOf(false)
-                    }
+                    var isVisible by remember { mutableStateOf(false) }
 
                     //AGGIUNTA
-                    Box(
-                        modifier = Modifier
+                    Box(modifier = Modifier
                             .clip(RoundedCornerShape(20))
                             .background(
                                 color = CustomTheme.colors.tertiary
@@ -191,10 +190,7 @@ fun ShiftsScreen() {
                             .padding(smallPadding)
                             .clickable {
                                 isVisible = !isVisible
-                            }
-
-                    ) {
-
+                            }) {
                         Text(
                             text = stringResource(R.string.click_to_see_shift),
                             style = CustomTheme.typography.body1,
@@ -273,7 +269,7 @@ fun ShiftsScreen() {
                 }
             ) {
                 ButtonDraftAndSubmit({
-                    errorMessage = shiftsConstraintsErrorMessage(
+                    errorMessages = shiftsConstraintsErrorMessage(
                         context,
                         ArrayList(weekWorkingDays),
                         selectedWeek,
@@ -293,7 +289,6 @@ fun ShiftsScreen() {
             }
         }
     } else {
-        println("ECCOLO QUA") // TODO Ralisin to @Damiano: può essere rimosso?
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.width(IntrinsicSize.Min)) {
                 MonthSelector(
@@ -473,7 +468,7 @@ fun ShiftsScreen() {
                 },
             ) {
                 ButtonDraftAndSubmit({
-                    errorMessage = shiftsConstraintsErrorMessage(
+                    errorMessages = shiftsConstraintsErrorMessage(
                         context,
                         ArrayList(weekWorkingDays),
                         selectedWeek,
@@ -501,7 +496,7 @@ fun shiftsConstraintsErrorMessage(
     selectedWeek: Int,
     selectedMonth: Int,
     selectedYear: Int
-): String {
+): List<String> {
     // open the shared prefs file
     val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -512,7 +507,7 @@ fun shiftsConstraintsErrorMessage(
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
     val maxDay = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
 
-    var errorMessage = ""
+    val errorMessages : ArrayList<String> = arrayListOf()
 
     // retrieving first and last day of selected week
     val calendar = Calendar.getInstance()
@@ -560,20 +555,23 @@ fun shiftsConstraintsErrorMessage(
         .map { it.id }
         .distinct()
 
-    errorMessage += if (filter.isNotEmpty())
-        "• PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
-    else ""
+    if (filter.isNotEmpty())
+        errorMessages.add("PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n")
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() }
         .forEach {
             if (it.riders?.count() !in minDay..maxDay) {
-                errorMessage += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+                errorMessages.add("PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n")
 
                 println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
             }
         }
-    return errorMessage
+
+    if(errorMessages.isEmpty())
+        errorMessages.add("Are you sure to continue?")
+
+    return errorMessages.toList()
 }
 
 

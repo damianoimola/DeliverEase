@@ -422,10 +422,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                         }
                         //closing dialog
                         onDismiss()
-
-
                     }
-
                 }
             }
         }
@@ -436,7 +433,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
 
 
 @Composable
-fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismiss: () -> Unit){
+fun WrongConstraintsDialog(errorMessages: List<String>, onContinue: () -> Unit, onDismiss: () -> Unit){
     Dialog(onDismissRequest = { onDismiss()},
         properties = DialogProperties(
             dismissOnBackPress = true,
@@ -454,14 +451,16 @@ fun WrongConstraintsDialog(errorMessage: String, onContinue: () -> Unit, onDismi
                 .wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(25.dp)) {
 
-                Text(errorMessage,
-                    style = TextStyle(
-                        fontFamily = gilroy,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
+                errorMessages.forEach {
+                    Text(it,
+                        style = TextStyle(
+                            fontFamily = gilroy,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center
+                        )
                     )
-                )
+                }
 
                 Row(
                     modifier = Modifier.width(400.dp),
