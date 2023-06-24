@@ -142,6 +142,8 @@ fun Language(){
 
 fun switchLanguage(languageCode: String, context: Context) {
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    if(sharedPreferences.getString(STARTUP_LANGUAGE_FIELD, "en") == languageCode) return
+
     val editor = sharedPreferences.edit()
 
     // setting up the default language inside internal storage
@@ -220,7 +222,7 @@ fun DarkMode(){
 fun SettingRow(
     title: String,
     icon: Painter,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ){
     Box(Modifier.fillMaxWidth()) {
         Row(

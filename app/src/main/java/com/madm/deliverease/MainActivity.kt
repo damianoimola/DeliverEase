@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
 
             val sharedPreferences = LocalContext.current.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
             val savedTheme = sharedPreferences.getString(SELECTED_THEME, if(isSystemInDarkTheme()) "dark" else "light")
-
             darkMode = savedTheme != "light"
 
             DeliverEaseTheme(darkTheme = darkMode) {
@@ -52,7 +51,7 @@ class MainActivity : ComponentActivity() {
         val language = sharedPreferences.getString(STARTUP_LANGUAGE_FIELD, "en")
 
         // setting up the locale
-        val locale = Locale(language!!)
+        val locale = Locale(language.toString())
         Locale.setDefault(locale)
 
         // provide the locale to the ContextWrapper custom child
