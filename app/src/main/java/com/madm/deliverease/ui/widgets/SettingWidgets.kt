@@ -25,29 +25,39 @@ import com.madm.deliverease.ui.theme.*
 
 
 @Composable
-fun PreferencesSetting(logoutCallback: () -> Unit){
+fun PreferencesSetting(logoutCallback: () -> Unit) {
     Column(
         Modifier.padding(nonePadding, smallPadding),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CustomDivider(stringResource(R.string.setting))
-        Language()
-        DarkMode()
-        CustomDivider(stringResource(R.string.general))
-        SettingRow(
-            stringResource(R.string.report_bug),
-            painterResource(id = R.drawable.bug)
-        )
-        SettingRow(
-            stringResource(R.string.terms_conditions),
-            painterResource(id = R.drawable.terms_and_conditions)
-        )
+        SettingSection(title = stringResource(R.string.setting)) {
+            Language()
+            DarkMode()
+        }
+
+        SettingSection(title = stringResource(R.string.general)) {
+            SettingSectionItem(
+                stringResource(R.string.report_bug),
+                painterResource(id = R.drawable.bug)
+            )
+            SettingSectionItem(
+                stringResource(R.string.terms_conditions),
+                painterResource(id = R.drawable.terms_and_conditions)
+            )
+        }
+
         LogOut(logoutCallback)
     }
 }
 
 @Composable
-fun CustomDivider(text: String ){
+fun SettingSection(title: String, content: @Composable () -> Unit) {
+    SectionTitle(text = title)
+    content()
+}
+
+@Composable
+fun SectionTitle(text: String ){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,8 +148,6 @@ fun Language(){
     }
 }
 
-
-
 fun switchLanguage(languageCode: String, context: Context) {
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
     if(sharedPreferences.getString(STARTUP_LANGUAGE_FIELD, "en") == languageCode) return
@@ -155,9 +163,6 @@ fun switchLanguage(languageCode: String, context: Context) {
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     context.startActivity(intent)
 }
-
-
-
 
 @Composable
 fun DarkMode(){
@@ -219,7 +224,7 @@ fun DarkMode(){
 }
 
 @Composable
-fun SettingRow(
+fun SettingSectionItem(
     title: String,
     icon: Painter,
     onClick: () -> Unit = {},

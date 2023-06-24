@@ -58,4 +58,5 @@
     <string name="hire">Hire</string>
     <string name="previous_message">Previous week can not be modified</string>
     <string name="already_requested">You have already asked to change shift for that day</string>
+    <string name="click_to_hide_shifts">Click here to hide availabilities</string>
 </resources>

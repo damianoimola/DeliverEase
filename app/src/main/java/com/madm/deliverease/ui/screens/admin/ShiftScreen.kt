@@ -47,7 +47,6 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
 }
 
 
-@Preview
 @Composable
 fun ShiftsScreen() {
     val configuration = LocalConfiguration.current
@@ -84,8 +83,8 @@ fun ShiftsScreen() {
         }
     else if (showDialog && weekWorkingDays.isNotEmpty())
         WrongConstraintsDialog(
-            errorMessage.ifBlank { "Are you sure to continue?" },
-            {
+            errorMessage = errorMessage.ifBlank { "Are you sure to continue?" },
+            onContinue = {
                 if (updatedWorkingDays.isNotEmpty()) {
                     weekWorkingDays.clear()
                     calendarManager.insertDays(updatedWorkingDays)
@@ -95,8 +94,9 @@ fun ShiftsScreen() {
                         "Shifts are not changed, calendar has not been updated",
                         Toast.LENGTH_SHORT
                     ).show()
-            }
-        ) { showDialog = !showDialog }
+            },
+            onDismiss = { showDialog = !showDialog }
+        )
 
 
     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -113,58 +113,50 @@ fun ShiftsScreen() {
             }
 
             WeeksList(
-                selectedMonth,
-                selectedYear,
-                selectedWeek
+                selectedMonth = selectedMonth,
+                selectedYear = selectedYear,
+                selectedWeek = selectedWeek
             ) { weekNumber: Int -> selectedWeek = weekNumber }
 
-            WeekContent(selectedWeek, selectedMonth, selectedYear,
-                { weekDay ->
-                    // retrieve the selected date in a full format
-                    val selectedDateFormatted =
-                        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                            Date.from(
-                                LocalDate.of(
-                                    selectedYear,
-                                    (selectedMonth + 2) % 12,
-                                    weekDay.number
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-                            )
-                        else
-                            Date.from(
-                                LocalDate.of(
-                                    selectedYear,
-                                    (selectedMonth + 1) % 12,
-                                    weekDay.number
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-                            )
+            WeekContent(
+                weekNumber = selectedWeek,
+                selectedMonth = selectedMonth,
+                selectedYear = selectedYear,
+                content = { weekDay ->
+                    // Retrieve the selected date in a full format
+                    val selectedDateFormatted = Date.from(
+                        LocalDate.of(
+                            selectedYear,
+                            (selectedMonth + if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1) 2 else 1) % 12,
+                            weekDay.number
+                        ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                    )
 
                     println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
 
-                    // filter all users that are available
+                    // Filter all users to get available
                     val availableRidersList: List<User> = globalAllUsers.filter { user ->
                         val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant()
+                            val daySelected = selectedDateFormatted.toInstant()
                                 .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                                    &&
-                                    it.type!!.lowercase() != "open"
+
+                            it.dayOfWeek == daySelected && it.type!!.lowercase() != "open"
                         } == null
 
                         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-                            it.constraintDate == selectedDateFormatted
-                                    &&
-                                    it.type!!.lowercase() != "open"
+                            it.constraintDate == selectedDateFormatted && it.type!!.lowercase() != "open"
                         } == null
 
                         permanent && nonPermanent && user.id != "0"
                     }
 
+                    // Filter all users to get available only if needed
                     val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
                         val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant()
+                            val daySelected = selectedDateFormatted.toInstant()
                                 .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                                    &&
-                                    it.type == "light"
+
+                            it.dayOfWeek == daySelected && it.type == "light"
                         } != null
 
                         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
@@ -175,33 +167,24 @@ fun ShiftsScreen() {
 
                         (permanent || nonPermanent) && user.id != "0"
                     }
-                    //to do animation
-                    var isVisible by remember {
-                        mutableStateOf(false)
-                    }
 
-                    //AGGIUNTA
+                    // To do animation
+                    var isVisible by remember { mutableStateOf(false) }
+
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20))
-                            .background(
-                                color = CustomTheme.colors.tertiary
-                            )
+                            .background(color = if (!isVisible) CustomTheme.colors.tertiary else CustomTheme.colors.tertiaryVariant)
                             .fillMaxWidth()
                             .padding(smallPadding)
-                            .clickable {
-                                isVisible = !isVisible
-                            }
-
+                            .clickable { isVisible = !isVisible }
                     ) {
-
                         Text(
-                            text = stringResource(R.string.click_to_see_shift),
+                            stringResource(if (!isVisible) R.string.click_to_see_shift else R.string.click_to_hide_shifts),
                             style = CustomTheme.typography.body1,
-                            color = CustomTheme.colors.onTertiary
+                            color = if(!isVisible) CustomTheme.colors.onTertiary else CustomTheme.colors.onTertiaryVariant
                         )
                     }
-
 
                     AnimatedVisibility(visible = isVisible) {
                         RidersAvailabilities(
@@ -210,7 +193,6 @@ fun ShiftsScreen() {
                             selectedDate = selectedDateFormatted,
                             workingDays = weekWorkingDays
                         ) { riderId, isAllocated ->
-
                             var riderList: ArrayList<String> = arrayListOf()
 
                             var anyWd =
@@ -240,8 +222,6 @@ fun ShiftsScreen() {
                                 updatedWorkingDays.add(wd)
                             }
 
-
-
                             riderList = arrayListOf()
                             anyWd =
                                 weekWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
@@ -270,37 +250,47 @@ fun ShiftsScreen() {
                             }
                         }
                     }
-                }
-            ) {
-                ButtonDraftAndSubmit({
-                    errorMessage = shiftsConstraintsErrorMessage(
-                        context,
-                        ArrayList(weekWorkingDays),
-                        selectedWeek,
-                        selectedMonth,
-                        selectedYear
-                    )
+                },
+                lastItem = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        defaultButton(
+                            text = stringResource(R.string.save_draft),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            errorMessage = shiftsConstraintsErrorMessage(
+                                context,
+                                ArrayList(weekWorkingDays),
+                                selectedWeek,
+                                selectedMonth,
+                                selectedYear
+                            )
+                            showDialog = true
+                        }
 
-                    showDialog = true
-                }) {
-                    Message(
-                        senderID = globalUser!!.id,
-                        receiverID = "0",
-                        body = defaultMessage,
-                        type = Message.MessageType.NOTIFICATION.displayName
-                    ).send(context)
+                        defaultButton(
+                            text = stringResource(R.string.submit),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            Message(
+                                senderID = globalUser!!.id,
+                                receiverID = "0",
+                                body = defaultMessage,
+                                type = Message.MessageType.NOTIFICATION.displayName
+                            ).send(context)
+                        }
+                    }
                 }
-            }
+            )
         }
     } else {
         println("ECCOLO QUA") // TODO Ralisin to @Damiano: può essere rimosso?
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.width(IntrinsicSize.Min)) {
-                MonthSelector(
-                    months,
-                    selectedMonth,
-                    currentYear
-                ) { month: Int, isNextYear: Boolean ->
+                MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
                     selectedYear = if (isNextYear)
                         currentYear + 1
                     else currentYear
@@ -309,9 +299,9 @@ fun ShiftsScreen() {
                 }
 
                 WeeksList(
-                    selectedMonth,
-                    selectedYear,
-                    selectedWeek
+                    selectedMonth = selectedMonth,
+                    selectedYear = selectedYear,
+                    selectedWeek = selectedWeek
                 ) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
@@ -385,9 +375,7 @@ fun ShiftsScreen() {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20))
-                            .background(
-                                color = CustomTheme.colors.tertiary,
-                            )
+                            .background(color = if (!isVisible) CustomTheme.colors.tertiary else CustomTheme.colors.tertiaryVariant)
                             .fillMaxWidth()
                             .padding(smallPadding)
                             .clickable {
@@ -395,7 +383,8 @@ fun ShiftsScreen() {
                             },
                     ) {
                         Text(
-                            text = stringResource(R.string.click_to_see_shift),
+                            text = if(!isVisible) stringResource(R.string.click_to_see_shift) else stringResource(
+                                R.string.click_to_hide_shifts),
                             style = CustomTheme.typography.body1,
                             color = CustomTheme.colors.onTertiary,
                             modifier = Modifier.align(Alignment.CenterStart),
@@ -471,26 +460,40 @@ fun ShiftsScreen() {
                         }
                     }
                 },
-            ) {
-                ButtonDraftAndSubmit({
-                    errorMessage = shiftsConstraintsErrorMessage(
-                        context,
-                        ArrayList(weekWorkingDays),
-                        selectedWeek,
-                        selectedMonth,
-                        selectedYear
-                    )
+                lastItem = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        defaultButton(
+                            text = stringResource(R.string.save_draft),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            errorMessage = shiftsConstraintsErrorMessage(
+                                context,
+                                ArrayList(weekWorkingDays),
+                                selectedWeek,
+                                selectedMonth,
+                                selectedYear
+                            )
+                            showDialog = true
+                        }
 
-                    showDialog = true
-                }) {
-                    Message(
-                        senderID = globalUser!!.id,
-                        receiverID = "0",
-                        body = defaultMessage,
-                        type = Message.MessageType.NOTIFICATION.displayName
-                    ).send(context)
+                        defaultButton(
+                            text = stringResource(R.string.submit),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(10.dp)
+                        ) {
+                            Message(
+                                senderID = globalUser!!.id,
+                                receiverID = "0",
+                                body = defaultMessage,
+                                type = Message.MessageType.NOTIFICATION.displayName
+                            ).send(context)
+                        }
+                    }
                 }
-            }
+            )
         }
     }
 }
@@ -683,30 +686,3 @@ fun RidersCheckboxCard(
         }
     }
 }
-
-
-@Composable
-fun ButtonDraftAndSubmit(
-    updateServer: () -> Unit,
-    notifyRiders: () -> Unit
-) {
-    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-
-        defaultButton(text = stringResource(R.string.save_draft), modifier = Modifier
-            .weight(1f)
-            .padding(10.dp)) {
-            updateServer()
-        }
-
-        defaultButton(text = stringResource(R.string.submit), modifier = Modifier
-            .weight(1f)
-            .padding(10.dp)) {
-            updateServer()
-            notifyRiders()
-        }
-
-    }
-}
-
-
-

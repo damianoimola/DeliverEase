@@ -57,4 +57,5 @@
     <string name="hire">Assumi</string>
     <string name="previous_message">Le settimane precedenti non possono essere modificate</string>
     <string name="already_requested">Hai già effettuato la richiesta di cambio turno per questo giorno</string>
+    <string name="click_to_hide_shifts">Clicca per nascondere le disponibilità</string>
 </resources>

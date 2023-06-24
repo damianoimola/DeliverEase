@@ -24,7 +24,7 @@ import java.util.*
 fun HomeScreen() {
     val configuration = LocalConfiguration.current
 
-    // getting API data
+    // Getting API data
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
@@ -56,9 +56,7 @@ fun HomeScreen() {
         println("TODAY WORK DAY $todayWorkDay riders = $riderList")
     }
 
-    if(isPlaying.value)
-        PizzaLoaderDialog(isPlaying = isPlaying)
-
+    if(isPlaying.value) PizzaLoaderDialog(isPlaying = isPlaying)
 
     if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
         Column(
