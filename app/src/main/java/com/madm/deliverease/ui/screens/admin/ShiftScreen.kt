@@ -63,7 +63,7 @@ fun ShiftsScreen() {
 
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    var errorMessage: String by rememberSaveable { mutableStateOf("") }
+    var errorMessages: List<String> by rememberSaveable { mutableStateOf(listOf()) }
 
 
     // retrieving all working days in server
@@ -83,8 +83,9 @@ fun ShiftsScreen() {
         }
     else if (showDialog && weekWorkingDays.isNotEmpty())
         WrongConstraintsDialog(
-            errorMessage = errorMessage.ifBlank { "Are you sure to continue?" },
-            onContinue = {
+            errorMessages,
+//            errorMessage.ifBlank { "Are you sure to continue?" },
+            {
                 if (updatedWorkingDays.isNotEmpty()) {
                     weekWorkingDays.clear()
                     calendarManager.insertDays(updatedWorkingDays)
@@ -113,24 +114,31 @@ fun ShiftsScreen() {
             }
 
             WeeksList(
-                selectedMonth = selectedMonth,
-                selectedYear = selectedYear,
-                selectedWeek = selectedWeek
+                selectedMonth,
+                selectedYear,
+                selectedWeek
             ) { weekNumber: Int -> selectedWeek = weekNumber }
 
-            WeekContent(
-                weekNumber = selectedWeek,
-                selectedMonth = selectedMonth,
-                selectedYear = selectedYear,
-                content = { weekDay ->
-                    // Retrieve the selected date in a full format
-                    val selectedDateFormatted = Date.from(
-                        LocalDate.of(
-                            selectedYear,
-                            (selectedMonth + if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1) 2 else 1) % 12,
-                            weekDay.number
-                        ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-                    )
+            WeekContent(selectedWeek, selectedMonth, selectedYear,
+                { weekDay ->
+                    // retrieve the selected date in a full format
+                    val selectedDateFormatted =
+                        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                            Date.from(
+                                LocalDate.of(
+                                    selectedYear,
+                                    (selectedMonth + 2) % 12,
+                                    weekDay.number
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
+                        else
+                            Date.from(
+                                LocalDate.of(
+                                    selectedYear,
+                                    (selectedMonth + 1) % 12,
+                                    weekDay.number
+                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
 
                     println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
 
@@ -168,9 +176,10 @@ fun ShiftsScreen() {
                         (permanent || nonPermanent) && user.id != "0"
                     }
 
-                    // To do animation
+                    //to do animation
                     var isVisible by remember { mutableStateOf(false) }
 
+                    //AGGIUNTA
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20))
@@ -250,47 +259,36 @@ fun ShiftsScreen() {
                             }
                         }
                     }
-                },
-                lastItem = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        defaultButton(
-                            text = stringResource(R.string.save_draft),
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(10.dp)
-                        ) {
-                            errorMessage = shiftsConstraintsErrorMessage(
-                                context,
-                                ArrayList(weekWorkingDays),
-                                selectedWeek,
-                                selectedMonth,
-                                selectedYear
-                            )
-                            showDialog = true
-                        }
-
-                        defaultButton(
-                            text = stringResource(R.string.submit),
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(10.dp)
-                        ) {
-                            Message(
-                                senderID = globalUser!!.id,
-                                receiverID = "0",
-                                body = defaultMessage,
-                                type = Message.MessageType.NOTIFICATION.displayName
-                            ).send(context)
-                        }
-                    }
                 }
-            )
+            ) {
+                ButtonDraftAndSubmit({
+                    errorMessages = shiftsConstraintsErrorMessage(
+                        context,
+                        ArrayList(weekWorkingDays),
+                        selectedWeek,
+                        selectedMonth,
+                        selectedYear
+                    )
+
+                    showDialog = true
+                }) {
+                    Message(
+                        senderID = globalUser!!.id,
+                        receiverID = "0",
+                        body = defaultMessage,
+                        type = Message.MessageType.NOTIFICATION.displayName
+                    ).send(context)
+                }
+            }
         }
     } else {
-        println("ECCOLO QUA") // TODO Ralisin to @Damiano: può essere rimosso?
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.width(IntrinsicSize.Min)) {
-                MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                MonthSelector(
+                    months,
+                    selectedMonth,
+                    currentYear
+                ) { month: Int, isNextYear: Boolean ->
                     selectedYear = if (isNextYear)
                         currentYear + 1
                     else currentYear
@@ -460,40 +458,26 @@ fun ShiftsScreen() {
                         }
                     }
                 },
-                lastItem = {
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        defaultButton(
-                            text = stringResource(R.string.save_draft),
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(10.dp)
-                        ) {
-                            errorMessage = shiftsConstraintsErrorMessage(
-                                context,
-                                ArrayList(weekWorkingDays),
-                                selectedWeek,
-                                selectedMonth,
-                                selectedYear
-                            )
-                            showDialog = true
-                        }
+            ) {
+                ButtonDraftAndSubmit({
+                    errorMessages = shiftsConstraintsErrorMessage(
+                        context,
+                        ArrayList(weekWorkingDays),
+                        selectedWeek,
+                        selectedMonth,
+                        selectedYear
+                    )
 
-                        defaultButton(
-                            text = stringResource(R.string.submit),
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(10.dp)
-                        ) {
-                            Message(
-                                senderID = globalUser!!.id,
-                                receiverID = "0",
-                                body = defaultMessage,
-                                type = Message.MessageType.NOTIFICATION.displayName
-                            ).send(context)
-                        }
-                    }
+                    showDialog = true
+                }) {
+                    Message(
+                        senderID = globalUser!!.id,
+                        receiverID = "0",
+                        body = defaultMessage,
+                        type = Message.MessageType.NOTIFICATION.displayName
+                    ).send(context)
                 }
-            )
+            }
         }
     }
 }
@@ -504,7 +488,7 @@ fun shiftsConstraintsErrorMessage(
     selectedWeek: Int,
     selectedMonth: Int,
     selectedYear: Int
-): String {
+): List<String> {
     // open the shared prefs file
     val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -515,7 +499,7 @@ fun shiftsConstraintsErrorMessage(
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
     val maxDay = sharedPreferences.getInt(ADMIN_MAX_DAY, 0)
 
-    var errorMessage = ""
+    val errorMessages : ArrayList<String> = arrayListOf()
 
     // retrieving first and last day of selected week
     val calendar = Calendar.getInstance()
@@ -563,20 +547,23 @@ fun shiftsConstraintsErrorMessage(
         .map { it.id }
         .distinct()
 
-    errorMessage += if (filter.isNotEmpty())
-        "• PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n"
-    else ""
+    if (filter.isNotEmpty())
+        errorMessages.add("PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n")
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() }
         .forEach {
             if (it.riders?.count() !in minDay..maxDay) {
-                errorMessage += "• PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n"
+                errorMessages.add("PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n")
 
                 println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
             }
         }
-    return errorMessage
+
+    if(errorMessages.isEmpty())
+        errorMessages.add("Are you sure to continue?")
+
+    return errorMessages.toList()
 }
 
 
@@ -686,3 +673,30 @@ fun RidersCheckboxCard(
         }
     }
 }
+
+
+@Composable
+fun ButtonDraftAndSubmit(
+    updateServer: () -> Unit,
+    notifyRiders: () -> Unit
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+
+        defaultButton(text = stringResource(R.string.save_draft), modifier = Modifier
+            .weight(1f)
+            .padding(10.dp)) {
+            updateServer()
+        }
+
+        defaultButton(text = stringResource(R.string.submit), modifier = Modifier
+            .weight(1f)
+            .padding(10.dp)) {
+            updateServer()
+            notifyRiders()
+        }
+
+    }
+}
+
+
+
