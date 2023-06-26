@@ -3,9 +3,9 @@ package com.madm.deliverease.ui.screens.admin
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Parcelable
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -119,153 +119,18 @@ fun ShiftsScreen() {
                 selectedWeek
             ) { weekNumber: Int -> selectedWeek = weekNumber }
 
+
             WeekContent(selectedWeek, selectedMonth, selectedYear,
                 { weekDay ->
-                    // retrieve the selected date in a full format
-                    val selectedDateFormatted =
-                        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                            Date.from(
-                                LocalDate.of(
-                                    selectedYear,
-                                    (selectedMonth + 2) % 12,
-                                    weekDay.number
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-                            )
-                        else
-                            Date.from(
-                                LocalDate.of(
-                                    selectedYear,
-                                    (selectedMonth + 1) % 12,
-                                    weekDay.number
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-                            )
-
-                    println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
-
-                    // filter all users that are available
-                    val availableRidersList: List<User> = globalAllUsers.filter { user ->
-                        val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant()
-                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                                    &&
-                                    it.type!!.lowercase() != "open"
-                        } == null
-
-                        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-                            it.constraintDate == selectedDateFormatted
-                                    &&
-                                    it.type!!.lowercase() != "open"
-                        } == null
-
-                        permanent && nonPermanent && user.id != "0"
-                    }
-
-                    val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
-                        val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant()
-                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                                    &&
-                                    it.type == "light"
-                        } != null
-
-                        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-                            it.constraintDate == selectedDateFormatted
-                                    &&
-                                    it.type == "light"
-                        } != null
-
-                        (permanent || nonPermanent) && user.id != "0"
-                    }
-
-                    //to do animation
-                    var isVisible by remember { mutableStateOf(false) }
-
-                    //AGGIUNTA
-                    Box(modifier = Modifier
-                            .clip(RoundedCornerShape(20))
-                            .background(
-                                color = CustomTheme.colors.tertiary
-                            )
-                            .fillMaxWidth()
-                            .padding(smallPadding)
-                            .clickable {
-                                isVisible = !isVisible
-                            }) {
-                        Text(
-                            text = stringResource(R.string.click_to_see_shift),
-                            style = CustomTheme.typography.body1,
-                            color = CustomTheme.colors.onTertiary
-                        )
-                    }
-
-
-                    AnimatedVisibility(visible = isVisible) {
-                        RidersAvailabilities(
-                            availableRidersList = availableRidersList,
-                            ifNeededRidersList = ifNeededRidersList,
-                            selectedDate = selectedDateFormatted,
-                            workingDays = weekWorkingDays
-                        ) { riderId, isAllocated ->
-
-                            var riderList: ArrayList<String> = arrayListOf()
-
-                            var anyWd =
-                                updatedWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
-
-                            if (anyWd) {
-                                val wd =
-                                    updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                                wd.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                wd.riders = riderList.distinct()
-                            } else {
-                                val tmp =
-                                    workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
-
-                                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                val wd = WorkDay()
-                                wd.riders = riderList
-                                wd.workDayDate = selectedDateFormatted
-                                updatedWorkingDays.add(wd)
-                            }
-
-
-
-                            riderList = arrayListOf()
-                            anyWd =
-                                weekWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
-                            if (anyWd) {
-                                val wwd =
-                                    weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                                wwd.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                wwd.riders = riderList.distinct()
-                            } else {
-                                val tmp =
-                                    updatedWorkingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
-
-                                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                val wd = WorkDay()
-                                wd.riders = riderList
-                                wd.workDayDate = selectedDateFormatted
-                                weekWorkingDays.add(wd)
-                            }
-                        }
-                    }
+                    ShiftItem(
+                        weekDay,
+                        selectedWeek,
+                        selectedYear,
+                        selectedMonth,
+                        weekWorkingDays,
+                        updatedWorkingDays,
+                        workingDays
+                    )
                 }
             ) {
                 ButtonDraftAndSubmit({
@@ -310,162 +175,19 @@ fun ShiftsScreen() {
                 ) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
-            WeekContent(
-                weekNumber = selectedWeek,
-                selectedMonth = selectedMonth,
-                selectedYear = selectedYear,
-                content = { weekDay ->
-                    // retrieve the selected date in a full format
-                    val selectedDateFormatted =
-                        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                            Date.from(
-                                LocalDate.of(
-                                    selectedYear,
-                                    (selectedMonth + 2) % 12,
-                                    weekDay.number,
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant(),
-                            )
-                        else
-                            Date.from(
-                                LocalDate.of(
-                                    selectedYear,
-                                    (selectedMonth + 1) % 12,
-                                    weekDay.number,
-                                ).atStartOfDay(ZoneId.systemDefault()).toInstant(),
-                            )
 
-                    println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
-
-                    // filter all users that are available
-                    val availableRidersList: List<User> = globalAllUsers.filter { user ->
-                        val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant()
-                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                                    &&
-                                    it.type!!.lowercase() != "open"
-                        } == null
-
-                        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-                            it.constraintDate == selectedDateFormatted
-                                    &&
-                                    it.type!!.lowercase() != "open"
-                        } == null
-
-                        permanent && nonPermanent && user.id != "0"
-                    }
-
-                    val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
-                        val permanent = user.permanentConstraints.firstOrNull {
-                            it.dayOfWeek == selectedDateFormatted.toInstant()
-                                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                                    &&
-                                    it.type == "light"
-                        } != null
-
-                        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-                            it.constraintDate == selectedDateFormatted
-                                    &&
-                                    it.type == "light"
-                        } != null
-
-                        (permanent || nonPermanent) && user.id != "0"
-                    }
-
-                    //to do animation
-                    var isVisible by remember {
-                        mutableStateOf(false)
-                    }
-
-                    //AGGIUNTA
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20))
-                            .background(
-                                color = CustomTheme.colors.tertiary,
-                            )
-                            .fillMaxWidth()
-                            .padding(smallPadding)
-                            .clickable {
-                                isVisible = !isVisible
-                            },
-                    ) {
-                        Text(
-                            text = stringResource(R.string.click_to_see_shift),
-                            style = CustomTheme.typography.body1,
-                            color = CustomTheme.colors.onTertiary,
-                            modifier = Modifier.align(Alignment.CenterStart),
-                        )
-                    }
-
-
-                    AnimatedVisibility(visible = isVisible) {
-                        RidersAvailabilities(
-                            availableRidersList = availableRidersList,
-                            ifNeededRidersList = ifNeededRidersList,
-                            selectedDate = selectedDateFormatted,
-                            workingDays = weekWorkingDays,
-                        ) { riderId, isAllocated ->
-
-                            var riderList: ArrayList<String> = arrayListOf()
-
-                            var anyWd =
-                                updatedWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
-
-                            if (anyWd) {
-                                val wd =
-                                    updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                                wd.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                wd.riders = riderList.distinct()
-                            } else {
-                                val tmp =
-                                    workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
-
-                                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                val wd = WorkDay()
-                                wd.riders = riderList
-                                wd.workDayDate = selectedDateFormatted
-                                updatedWorkingDays.add(wd)
-                            }
-
-
-
-                            riderList = arrayListOf()
-                            anyWd =
-                                weekWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
-                            if (anyWd) {
-                                val wwd =
-                                    weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
-                                wwd.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                wwd.riders = riderList.distinct()
-                            } else {
-                                val tmp =
-                                    updatedWorkingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
-
-                                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
-
-                                if (!isAllocated) riderList.remove(riderId)
-                                else riderList.add(riderId)
-
-                                val wd = WorkDay()
-                                wd.riders = riderList
-                                wd.workDayDate = selectedDateFormatted
-                                weekWorkingDays.add(wd)
-                            }
-                        }
-                    }
-                },
+            WeekContent(selectedWeek, selectedMonth, selectedYear,
+                { weekDay ->
+                    ShiftItem(
+                        weekDay,
+                        selectedWeek,
+                        selectedYear,
+                        selectedMonth,
+                        weekWorkingDays,
+                        updatedWorkingDays,
+                        workingDays
+                    )
+                }
             ) {
                 ButtonDraftAndSubmit({
                     errorMessages = shiftsConstraintsErrorMessage(
@@ -485,6 +207,173 @@ fun ShiftsScreen() {
                         type = Message.MessageType.NOTIFICATION.displayName
                     ).send(context)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShiftItem(
+    weekDay: WeekDay,
+    selectedWeek: Int,
+    selectedYear: Int,
+    selectedMonth: Int,
+    weekWorkingDays: ArrayList<WorkDay>,
+    updatedWorkingDays: ArrayList<WorkDay>,
+    workingDays: List<WorkDay>
+) {
+    // retrieve the selected date in a full format
+    val selectedDateFormatted =
+        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+            Date.from(
+                LocalDate.of(
+                    selectedYear,
+                    (selectedMonth + 2) % 12,
+                    weekDay.number
+                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+            )
+        else
+            Date.from(
+                LocalDate.of(
+                    selectedYear,
+                    (selectedMonth + 1) % 12,
+                    weekDay.number
+                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+            )
+
+    println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
+
+    // filter all users that are available
+    val availableRidersList: List<User> = globalAllUsers.filter { user ->
+        val permanent = user.permanentConstraints.firstOrNull {
+            it.dayOfWeek == selectedDateFormatted.toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                    &&
+                    it.type!!.lowercase() != "open"
+        } == null
+
+        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
+            it.constraintDate == selectedDateFormatted
+                    &&
+                    it.type!!.lowercase() != "open"
+        } == null
+
+        permanent && nonPermanent && user.id != "0"
+    }
+
+    val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
+        val permanent = user.permanentConstraints.firstOrNull {
+            it.dayOfWeek == selectedDateFormatted.toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
+                    &&
+                    it.type == "light"
+        } != null
+
+        val nonPermanent = user.nonPermanentConstraints.firstOrNull {
+            it.constraintDate == selectedDateFormatted
+                    &&
+                    it.type == "light"
+        } != null
+
+        (permanent || nonPermanent) && user.id != "0"
+    }
+
+    //to do animation
+    var isVisible by remember { mutableStateOf(false) }
+
+    //AGGIUNTA
+    Box(modifier = Modifier
+        .clip(RoundedCornerShape(20))
+        .background(
+            color = CustomTheme.colors.tertiary
+        )
+        .fillMaxWidth()
+        .padding(smallPadding)
+        .clickable {
+            isVisible = !isVisible
+        }) {
+        Text(
+            text = stringResource(R.string.click_to_see_shift),
+            style = CustomTheme.typography.body1,
+            color = CustomTheme.colors.onTertiary
+        )
+    }
+
+
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = slideInVertically() + expandVertically(
+                    // Expand from the top.
+                    expandFrom = Alignment.Top
+                ) + fadeIn(
+                    // Fade in with the initial alpha of 0.3f.
+                    initialAlpha = 0.3f
+                ),
+        exit = shrinkVertically() + fadeOut()
+    ) {
+        RidersAvailabilities(
+            availableRidersList = availableRidersList,
+            ifNeededRidersList = ifNeededRidersList,
+            selectedDate = selectedDateFormatted,
+            workingDays = weekWorkingDays
+        ) { riderId, isAllocated ->
+
+            var riderList: ArrayList<String> = arrayListOf()
+
+            var anyWd =
+                updatedWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
+
+            if (anyWd) {
+                val wd =
+                    updatedWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                wd.riders!!.forEach { riderList.add(it) }
+
+                if (!isAllocated) riderList.remove(riderId)
+                else riderList.add(riderId)
+
+                wd.riders = riderList.distinct()
+            } else {
+                val tmp =
+                    workingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+
+                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
+
+                if (!isAllocated) riderList.remove(riderId)
+                else riderList.add(riderId)
+
+                val wd = WorkDay()
+                wd.riders = riderList
+                wd.workDayDate = selectedDateFormatted
+                updatedWorkingDays.add(wd)
+            }
+
+
+
+            riderList = arrayListOf()
+            anyWd =
+                weekWorkingDays.any { d -> d.workDayDate == selectedDateFormatted }
+            if (anyWd) {
+                val wwd =
+                    weekWorkingDays.first { d -> d.workDayDate == selectedDateFormatted }
+                wwd.riders!!.forEach { riderList.add(it) }
+
+                if (!isAllocated) riderList.remove(riderId)
+                else riderList.add(riderId)
+
+                wwd.riders = riderList.distinct()
+            } else {
+                val tmp =
+                    updatedWorkingDays.singleOrNull { d -> d.workDayDate == selectedDateFormatted }
+
+                if (tmp != null) tmp.riders!!.forEach { riderList.add(it) }
+
+                if (!isAllocated) riderList.remove(riderId)
+                else riderList.add(riderId)
+
+                val wd = WorkDay()
+                wd.riders = riderList
+                wd.workDayDate = selectedDateFormatted
+                weekWorkingDays.add(wd)
             }
         }
     }
