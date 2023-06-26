@@ -54,12 +54,12 @@ fun ShiftsScreen() {
     println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH] - 1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH]) }
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = (currentMonth..currentMonth + 11).map { i -> i % 12 }.toList().toIntArray()
-    var selectedMonth by remember { mutableStateOf(months[0]) }
+    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    var selectedMonth by remember { mutableStateOf(months[2]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 

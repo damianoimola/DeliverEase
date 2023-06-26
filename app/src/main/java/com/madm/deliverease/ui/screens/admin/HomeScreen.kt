@@ -42,23 +42,13 @@ fun HomeScreen() {
     }
 
     calendarManager.getDays{ list: List<WorkDay> ->
-        println("date = ${Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())}")
-        todayWorkDay = list.first {
-            it.workDayDate == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())
-        }
+        todayWorkDay = list.first { it.workDayDate == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()) }
 
-        println("TODAY WORK DAY $todayWorkDay riders = $riderList")
-
-        riderList = globalAllUsers.filter { user ->
-            user.id in todayWorkDay.riders!!.toList()
-        }
-
-        println("TODAY WORK DAY $todayWorkDay riders = $riderList")
+        riderList = globalAllUsers.filter { user -> user.id in todayWorkDay.riders!!.toList() }
     }
 
     if(isPlaying.value)
         PizzaLoaderDialog(isPlaying = isPlaying)
-
 
     if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
         Column(
