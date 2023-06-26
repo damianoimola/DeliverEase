@@ -66,12 +66,12 @@ fun HomeScreen() {
 
     if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 1)
+            CommunicationCard(communicationList, false, Modifier.weight(1f), 1)
             ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 1)
         }
     } else {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            CommunicationCard(communicationList, false, Modifier.weight(1f), isPlaying, 0)
+            CommunicationCard(communicationList, false, Modifier.weight(1f), 0)
             ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 0)
         }
     }
