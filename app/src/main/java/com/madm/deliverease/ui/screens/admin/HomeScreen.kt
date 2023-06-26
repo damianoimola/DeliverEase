@@ -56,7 +56,7 @@ fun HomeScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 1)
-            CommunicationCard(communicationList, true, Modifier.weight(1f), isPlaying, 1)
+            CommunicationCard(communicationList, true, Modifier.weight(1f), 1)
         }
     } else {
         Row(
@@ -64,7 +64,7 @@ fun HomeScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 0)
-            CommunicationCard(communicationList, true, Modifier.weight(1f), isPlaying, 0)
+            CommunicationCard(communicationList, true, Modifier.weight(1f), 0)
         }
     }
 }

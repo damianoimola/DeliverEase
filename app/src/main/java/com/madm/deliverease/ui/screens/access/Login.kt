@@ -3,9 +3,12 @@ package com.madm.deliverease.ui.screens.access
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -51,7 +54,8 @@ fun LoginScreen(
                 interactionSource = interactionSource,
                 onClick = { focusManager.clearFocus() }
             )
-            .background(CustomTheme.colors.background),
+            .background(CustomTheme.colors.background)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

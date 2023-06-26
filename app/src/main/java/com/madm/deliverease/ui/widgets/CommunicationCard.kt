@@ -43,7 +43,6 @@ fun CommunicationCard(
     communicationList: MutableList<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
-    isPlaying: MutableState<Boolean>,
     isPortrait: Int
 ) {
     val context = LocalContext.current
@@ -153,7 +152,6 @@ fun CommunicationCard(
                     ) {
                         defaultButton(text = stringResource(R.string.send), Modifier ) {
                             showTextField.value = !showTextField.value
-                            isPlaying.value = true
 
                             val msg = Message(                  // declaration of the message
                                 senderID = globalUser!!.id,
@@ -189,7 +187,6 @@ fun CommunicationCard(
                             }
 
                             textFieldValue.value = ""
-                            isPlaying.value = false
                         }
                         Spacer(Modifier.width(4.dp))
                         defaultButton(text = stringResource(R.string.cancel), Modifier) {

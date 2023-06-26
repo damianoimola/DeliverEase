@@ -558,15 +558,20 @@ fun shiftsConstraintsErrorMessage(
     if (filter.isNotEmpty())
         errorMessages.add("PER-WEEK CONSTRAINTS EXCEEDED FOR USERS ${filter}\n")
 
-    weekWorkingDays
-        .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() }
-        .forEach {
-            if (it.riders?.count() !in minDay..maxDay) {
-                errorMessages.add("PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n")
+   val filter1 = weekWorkingDays
+        .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() && it.riders?.count() !in minDay..maxDay}
+       .map { it.date!! }
+       .distinct()
+//        .forEach {
+////            if (it.riders?.count() !in minDay..maxDay) {
+////                errorMessages.add("PER-DAY CONSTRAINTS EXCEEDED FOR THE DAY ${it.date}\n")
+//
+//                println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
+//            }
+//        }
 
-                println("############ ${it.riders} - ${it.riders?.count()} - ${minDay..maxDay} - ${it.riders?.count() !in minDay..maxDay}")
-            }
-        }
+    if (filter.isNotEmpty())
+        errorMessages.add("PER-DAY CONSTRAINTS EXCEEDED FOR USERS ${filter1}\n")
 
     if(errorMessages.isEmpty())
         errorMessages.add("Are you sure to continue?")
