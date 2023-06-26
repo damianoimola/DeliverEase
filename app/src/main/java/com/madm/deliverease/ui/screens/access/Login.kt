@@ -43,7 +43,8 @@ fun LoginScreen(
 ){
     println("########### LOGIN") // TODO Ralisin: remove on deploy version
     val focusManager = LocalFocusManager.current
-    val interactionSource = rememberSaveable { MutableInteractionSource() }
+    val interactionSource = remember { MutableInteractionSource() }
+
 
     Column(
         modifier = Modifier
