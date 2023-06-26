@@ -57,4 +57,20 @@
     <string name="hire">Assumi</string>
     <string name="previous_message">Le settimane precedenti non possono essere modificate</string>
     <string name="already_requested">Hai già effettuato la richiesta di cambio turno per questo giorno</string>
+    <string name="january">January</string>
+    <string name="february">Febbraio</string>
+    <string name="march">Marzo</string>
+    <string name="april">Aprile</string>
+    <string name="may">Maggio</string>
+    <string name="june">Giugno</string>
+    <string name="july">Luglio</string>
+    <string name="august">Agosto</string>
+    <string name="september">Settembre</string>
+    <string name="october">Ottobre</string>
+    <string name="november">Novembre</string>
+    <string name="december">Dicembre</string>
+    <string name="noShift">Nessun turno</string>
+    <string name="yesShift">Hai un turno!</string>
+    <string name="swapText">Clicca qui per cambiare giorno</string>
+    <string name="haveATurn">Hai già un turno</string>
 </resources>

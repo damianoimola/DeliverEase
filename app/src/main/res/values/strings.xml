@@ -58,4 +58,20 @@
     <string name="hire">Hire</string>
     <string name="previous_message">Previous week can not be modified</string>
     <string name="already_requested">You have already asked to change shift for that day</string>
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+    <string name="noShift">No shift</string>
+    <string name="yesShift">You have a shift!</string>
+    <string name="swapText">Click here to swap day</string>
+    <string name="haveATurn">You already have a turn</string>
 </resources>
