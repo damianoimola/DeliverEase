@@ -53,6 +53,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.android.material:material:1.9.0'
+
     // AVOID DUPLICATE CLASSES ERROR
     modules {
         module("org.jetbrains.kotlin:kotlin-stdlib-jdk7") {

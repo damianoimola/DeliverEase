@@ -90,7 +90,7 @@ fun RidersScreen() {
         }
 
         Row {
-            defaultButton(text = stringResource(R.string.hire_new_rider), modifier = Modifier
+            DefaultButton(text = stringResource(R.string.hire_new_rider), modifier = Modifier
                 .wrapContentSize()
                 .weight(1f)) {
                 showHireDialog = !showHireDialog
