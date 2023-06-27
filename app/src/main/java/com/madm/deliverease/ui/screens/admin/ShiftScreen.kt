@@ -50,7 +50,6 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
 @Preview
 @Composable
 fun ShiftsScreen() {
-    var extraString = stringResource(id = R.string.empty_days)
     val configuration = LocalConfiguration.current
     println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
