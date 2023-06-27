@@ -497,7 +497,6 @@ fun ConstraintsDialog(
                 else if(emptyDaysConstraint.isNotEmpty())
                     LazyColumn(
                         Modifier
-                            .height(200.dp)
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
