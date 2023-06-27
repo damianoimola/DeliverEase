@@ -119,7 +119,7 @@ fun CalendarScreen() {
             }
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
-                ShiftRow( // TODO Ralisin: set theme
+                ShiftRow(
                     shiftList.any {
 
                         // create a date from selected day
@@ -150,7 +150,6 @@ fun CalendarScreen() {
             })
         }
     } else {
-        println("ECCOLO QUA")
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.width(IntrinsicSize.Min)) {
                 //month selector
@@ -175,7 +174,7 @@ fun CalendarScreen() {
 
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
-                ShiftRow( // TODO Ralisin: set theme
+                ShiftRow(
                     shiftList.any {
 
                         // create a date from selected day
@@ -210,7 +209,7 @@ fun CalendarScreen() {
 }
 
 
-/*
+/**
 *haveAShift is used to memorize if the rider has a turn in that day
 * swap is passed because it need to be set true when clicking the swap button
 * setWeekDay is used to initialize the variable clickedWeekDay declared in the calling function

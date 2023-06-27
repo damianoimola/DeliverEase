@@ -20,51 +20,50 @@ import com.madm.deliverease.ui.widgets.*
 @Composable
 fun HomeScreen() {
     val configuration = LocalConfiguration.current
-    var workDayList : List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
-    var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
-    var shiftRequestList : ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
-    val isPlaying = rememberSaveable { mutableStateOf (false) }
+    var workDayList: List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
+    var communicationList: MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
+    var shiftRequestList: ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
-    val calendarManager : CalendarManager=
-        CalendarManager(LocalContext.current)
+    val calendarManager = CalendarManager(LocalContext.current)
 
-    calendarManager.getDays { days : List<WorkDay> ->
+    calendarManager.getDays { days: List<WorkDay> ->
         workDayList = days
     }
 
-    messagesManager.getReceivedMessages{ list: List<Message> ->
+    messagesManager.getReceivedMessages { list: List<Message> ->
         communicationList = list
             .filter { it.messageType == Message.MessageType.NOTIFICATION }
             .sortedByDescending { it.messageDate }
             .toMutableList()
     }
 
-    messagesManager.getReceivedMessages{ list: List<Message> ->
+    messagesManager.getReceivedMessages { list: List<Message> ->
         shiftRequestList = ArrayList(list.filter {
             it.messageType == Message.MessageType.REQUEST
-            &&
-            it.senderID != globalUser!!.id
-            &&
-            // index 0 = offered day, index 1 = wanted day (by the sender)
-            (
-                workDayList.any { d -> globalUser!!.id in d.riders!! }
-                &&
-                (
-                    it.body!!.split("#")[0] !in workDayList.filter { d -> globalUser!!.id in d.riders!! }.map { d -> d.date }.toList()
                     &&
-                    it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }.map { d -> d.date }.toList()
-                )
-            )
+                    it.senderID != globalUser!!.id
+                    &&
+                    // index 0 = offered day, index 1 = wanted day (by the sender)
+                    (
+                            workDayList.any { d -> globalUser!!.id in d.riders!! }
+                                    &&
+                                    (
+                                            it.body!!.split("#")[0] !in workDayList.filter { d -> globalUser!!.id in d.riders!! }
+                                                .map { d -> d.date }.toList()
+                                                    &&
+                                                    it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }
+                                                .map { d -> d.date }.toList()
+                                            )
+                            )
         })
     }
 
-    // TODO: da testare (Damiano)
     // to remove the request message from the list of messages
-    val updateList : (Message) -> Unit = { shiftRequestList.remove(it) }
+    val updateList: (Message) -> Unit = { shiftRequestList.remove(it) }
 
-    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CommunicationCard(communicationList, false, Modifier.weight(1f), 1)
             ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 1)

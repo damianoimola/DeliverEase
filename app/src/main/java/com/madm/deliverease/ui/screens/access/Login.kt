@@ -3,7 +3,6 @@ package com.madm.deliverease.ui.screens.access
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,20 +25,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.madm.common_libs.internal_storage_manager.deleteDraftDays
-import com.madm.common_libs.internal_storage_manager.retrieveDraftCalendar
-import com.madm.common_libs.internal_storage_manager.saveDraftCalendar
-import com.madm.common_libs.model.Calendar
 import com.madm.common_libs.model.User
 import com.madm.common_libs.model.UserManager
-import com.madm.common_libs.model.WorkDay
 import com.madm.deliverease.*
 import com.madm.deliverease.R
-import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.*
-import com.madm.deliverease.ui.widgets.*
-import java.util.*
+import com.madm.deliverease.ui.theme.CustomTheme
+import com.madm.deliverease.ui.theme.largePadding
+import com.madm.deliverease.ui.theme.mediumPadding
+import com.madm.deliverease.ui.widgets.LoginButton
+import com.madm.deliverease.ui.widgets.MyButton
+import com.madm.deliverease.ui.widgets.MyOutlinedTextField
+import com.madm.deliverease.ui.widgets.PizzaLoaderDialog
 
 
 @Composable
@@ -47,7 +43,6 @@ fun LoginScreen(
     goToRiderHome: () -> Unit,
     goToAdminHome: () -> Unit,
 ){
-    println("########### LOGIN") // TODO Ralisin: remove on deploy version
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
 
