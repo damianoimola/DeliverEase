@@ -33,6 +33,7 @@
     <string name="language">Language</string>
     <string name="english" translatable="false">English</string>
     <string name="italian" translatable="false">Italiano</string>
+    <string name="empty_days">the dates above do not have riders assigned. Are you sure to continue?</string>
     <string name="setting">Setting</string>
     <string name="general">General</string>
     <string name="add">Add</string>

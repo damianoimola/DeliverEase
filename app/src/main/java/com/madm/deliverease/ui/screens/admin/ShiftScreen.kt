@@ -50,15 +50,17 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
 @Preview
 @Composable
 fun ShiftsScreen() {
+    var extraString = stringResource(id = R.string.empty_days)
     val configuration = LocalConfiguration.current
     println("SHIFT SCREEN")
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH]) }
+    var selectedWeek: Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH]) }
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }
+        .toIntArray()
     var selectedMonth by remember { mutableStateOf(months[2]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
@@ -66,6 +68,7 @@ fun ShiftsScreen() {
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var perWeekConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
     var perDayConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
+    var emptyDaysConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
 
 
     // retrieving all working days in server
@@ -89,6 +92,7 @@ fun ShiftsScreen() {
             title = stringResource(R.string.constraints_not_respected),
             perWeekConstraint = perWeekConstraint,
             perDayConstraint = perDayConstraint,
+            emptyDaysConstraint = emptyDaysConstraint,
             onContinue = {
                 if (updatedWorkingDays.isNotEmpty()) {
                     weekWorkingDays.clear()
@@ -139,7 +143,7 @@ fun ShiftsScreen() {
             ) {
                 ButtonDraftAndSubmit(
                     updateServer = {
-                        val (perWeekList, perDayList) = constraintsChecker(
+                        val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
                             context = context,
                             weekWorkingDays = ArrayList(weekWorkingDays),
                             selectedWeek = selectedWeek,
@@ -149,6 +153,7 @@ fun ShiftsScreen() {
 
                         perWeekConstraint = perWeekList
                         perDayConstraint = perDayList
+                        emptyDaysConstraint = emptyDaysList
 
                         showDialog = true
                     },
@@ -199,24 +204,31 @@ fun ShiftsScreen() {
                     )
                 }
             ) {
-                ButtonDraftAndSubmit({
-                    errorMessages = shiftsConstraintsErrorMessage(
-                        context,
-                        ArrayList(weekWorkingDays),
-                        selectedWeek,
-                        selectedMonth,
-                        selectedYear
-                    )
+                ButtonDraftAndSubmit(
+                    updateServer = {
+                        val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
+                            context = context,
+                            weekWorkingDays = ArrayList(weekWorkingDays),
+                            selectedWeek = selectedWeek,
+                            selectedMonth = selectedMonth,
+                            selectedYear = selectedYear
+                        )
 
-                    showDialog = true
-                }) {
-                    Message(
-                        senderID = globalUser!!.id,
-                        receiverID = "0",
-                        body = defaultMessage,
-                        type = Message.MessageType.NOTIFICATION.displayName
-                    ).send(context)
-                }
+                        perWeekConstraint = perWeekList
+                        perDayConstraint = perDayList
+                        emptyDaysConstraint = emptyDaysList
+
+                        showDialog = true
+                    },
+                    notifyRiders = {
+                        Message(
+                            senderID = globalUser!!.id,
+                            receiverID = "0",
+                            body = defaultMessage,
+                            type = Message.MessageType.NOTIFICATION.displayName
+                        ).send(context)
+                    }
+                )
             }
         }
     }
@@ -291,36 +303,36 @@ private fun ShiftItem(
     //to do animation
     var isVisible by remember { mutableStateOf(false) }
 
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20))
-                            .background(
-                                color = CustomTheme.colors.tertiary,
-                            )
-                            .fillMaxWidth()
-                            .padding(smallPadding)
-                            .clickable {
-                                isVisible = !isVisible
-                            },
-                    ) {
-                        Text(
-                            text = stringResource(R.string.click_to_see_shift),
-                            style = CustomTheme.typography.body1,
-                            color = CustomTheme.colors.onTertiary,
-                            modifier = Modifier.align(Alignment.CenterStart),
-                        )
-                    }
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20))
+            .background(
+                color = CustomTheme.colors.tertiary,
+            )
+            .fillMaxWidth()
+            .padding(smallPadding)
+            .clickable {
+                isVisible = !isVisible
+            },
+    ) {
+        Text(
+            text = stringResource(R.string.click_to_see_shift),
+            style = CustomTheme.typography.body1,
+            color = CustomTheme.colors.onTertiary,
+            modifier = Modifier.align(Alignment.CenterStart),
+        )
+    }
 
 
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInVertically() + expandVertically(
-                    // Expand from the top.
-                    expandFrom = Alignment.Top
-                ) + fadeIn(
-                    // Fade in with the initial alpha of 0.3f.
-                    initialAlpha = 0.3f
-                ),
+            // Expand from the top.
+            expandFrom = Alignment.Top
+        ) + fadeIn(
+            // Fade in with the initial alpha of 0.3f.
+            initialAlpha = 0.3f
+        ),
         exit = shrinkVertically() + fadeOut()
     ) {
         RidersAvailabilities(
@@ -382,39 +394,10 @@ private fun ShiftItem(
                 if (!isAllocated) riderList.remove(riderId)
                 else riderList.add(riderId)
 
-                                val wd = WorkDay()
-                                wd.riders = riderList
-                                wd.workDayDate = selectedDateFormatted
-                                weekWorkingDays.add(wd)
-                            }
-                        }
-                    }
-                },
-            ) {
-                ButtonDraftAndSubmit(
-                    updateServer = {
-                        val (perWeekList, perDayList) = constraintsChecker(
-                            context = context,
-                            weekWorkingDays = ArrayList(weekWorkingDays),
-                            selectedWeek = selectedWeek,
-                            selectedMonth = selectedMonth,
-                            selectedYear = selectedYear
-                        )
-
-                        perWeekConstraint = perWeekList
-                        perDayConstraint = perDayList
-
-                        showDialog = true
-                    },
-                    notifyRiders = {
-                        Message(
-                            senderID = globalUser!!.id,
-                            receiverID = "0",
-                            body = defaultMessage,
-                            type = Message.MessageType.NOTIFICATION.displayName
-                        ).send(context)
-                    }
-                )
+                val wd = WorkDay()
+                wd.riders = riderList
+                wd.workDayDate = selectedDateFormatted
+                weekWorkingDays.add(wd)
             }
         }
     }
@@ -429,9 +412,14 @@ fun constraintsChecker(
     selectedWeek: Int,
     selectedMonth: Int,
     selectedYear: Int
-): Pair<List<String>, List<String>> {
+): Triple<List<String>, List<String>, List<String>> {
+    println("WWD $weekWorkingDays")
+
+
+
     // open the shared prefs file
-    val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    val sharedPreferences =
+        context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
     // TODO: load just one time when composable starts up (Damiano)
     val minWeek = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
@@ -443,7 +431,7 @@ fun constraintsChecker(
     val calendar = Calendar.getInstance()
     calendar[Calendar.YEAR] = selectedYear
     calendar[Calendar.MONTH] = selectedMonth
-    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 1
+    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek
     calendar[Calendar.HOUR] = 0
 
     // Set the start and end dates of the selected week
@@ -454,7 +442,7 @@ fun constraintsChecker(
     calendar[Calendar.MILLISECOND] = 0
     val startDate = calendar.time
 
-    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 2
+    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 1
     calendar[Calendar.DAY_OF_WEEK] = Calendar.SUNDAY
     calendar[Calendar.HOUR_OF_DAY] = 23
     calendar[Calendar.MINUTE] = 59
@@ -462,11 +450,20 @@ fun constraintsChecker(
     calendar[Calendar.MILLISECOND] = 999
     val endDate = calendar.time
 
-    data class WeeklyRider(val id: String = "", var name: String = "", var surname: String = "", var workingDays: Int = 0)
+    println("DATE ${startDate..endDate}")
+
+    data class WeeklyRider(
+        val id: String = "",
+        var name: String = "",
+        var surname: String = "",
+        var workingDays: Int = 0
+    )
+
     val ridersThisWeek: ArrayList<WeeklyRider> = arrayListOf()
 
     val perWeekList: MutableList<String> = mutableListOf()
     val perDayList: MutableList<String> = mutableListOf()
+    val emptyDays: MutableList<String> = mutableListOf()
 
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() }
@@ -493,11 +490,16 @@ fun constraintsChecker(
         .forEach { perWeekList += "${it.name} ${it.surname}" }
 
     weekWorkingDays
-        .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() && it.riders?.count() !in minDay..maxDay}
+        .filter { it.workDayDate in startDate..endDate && it.riders!!.isNotEmpty() && it.riders?.count() !in minDay..maxDay }
         .forEach { perDayList += it.date.toString() }
 
-    return Pair(perWeekList, perDayList)
+    weekWorkingDays
+        .filter { it.workDayDate in startDate..endDate && it.riders!!.isEmpty() }
+        .forEach { emptyDays += it.date.toString() }
+
+    return Triple(perWeekList, perDayList, emptyDays)
 }
+
 
 @Composable
 fun RidersAvailabilities(
@@ -614,15 +616,19 @@ fun ButtonDraftAndSubmit(
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
-        DefaultButton(text = stringResource(R.string.save_draft), modifier = Modifier
-            .weight(1f)
-            .padding(10.dp)) {
+        DefaultButton(
+            text = stringResource(R.string.save_draft), modifier = Modifier
+                .weight(1f)
+                .padding(10.dp)
+        ) {
             updateServer()
         }
 
-        DefaultButton(text = stringResource(R.string.submit), modifier = Modifier
-            .weight(1f)
-            .padding(10.dp)) {
+        DefaultButton(
+            text = stringResource(R.string.submit), modifier = Modifier
+                .weight(1f)
+                .padding(10.dp)
+        ) {
             updateServer()
             notifyRiders()
         }

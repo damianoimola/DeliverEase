@@ -434,6 +434,7 @@ fun ConstraintsDialog(
     title: String,
     perWeekConstraint: List<String> = listOf(),
     perDayConstraint: List<String> = listOf(),
+    emptyDaysConstraint: List<String> = listOf(),
     onContinue: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -452,6 +453,7 @@ fun ConstraintsDialog(
             modifier = Modifier
                 .wrapContentWidth()
         ) {
+            println("############### EDC $emptyDaysConstraint")
             Column(
                 modifier = Modifier.padding(smallPadding, nonePadding),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -470,9 +472,7 @@ fun ConstraintsDialog(
                     )
                 }
 
-                if(perWeekConstraint.isEmpty() && perDayConstraint.isEmpty())
-                    Text("Are you sure to continue?", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold))
-                else
+                if(perWeekConstraint.isNotEmpty() || perDayConstraint.isNotEmpty())
                     LazyColumn(
                         Modifier
                             .height(200.dp)
@@ -493,6 +493,20 @@ fun ConstraintsDialog(
                                 Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
                             }
                         }
+                    }
+                else if(emptyDaysConstraint.isNotEmpty())
+                    LazyColumn(
+                        Modifier
+                            .height(200.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        println("############### ECCOLO QUA")
+                        item { Text("Days without riders", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
+                        items(emptyDaysConstraint) {
+                            Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
+                        }
+                        item { Text("Are you sure to continue?", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
                     }
 
                 Row(
