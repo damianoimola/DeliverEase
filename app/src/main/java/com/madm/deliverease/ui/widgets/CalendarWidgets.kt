@@ -65,11 +65,10 @@ fun Int.integerToTwoDigit(): String {
 fun getNumberOfWeeks(month: Int, year: Int): Int {
     val yearMonth = YearMonth.of(year, month)
     val weekFields = WeekFields.of(Locale.getDefault())
-    val firstDayOfWeek = weekFields.firstDayOfWeek
     val firstOfMonth = yearMonth.atDay(1)
-    val firstWeekOfMonth = firstOfMonth.get(weekFields.weekOfWeekBasedYear())
+    val firstWeekOfMonth = firstOfMonth[weekFields.weekOfWeekBasedYear()]
     val lastOfMonth = yearMonth.atEndOfMonth()
-    val lastWeekOfMonth = lastOfMonth.get(weekFields.weekOfWeekBasedYear())
+    val lastWeekOfMonth = lastOfMonth[weekFields.weekOfWeekBasedYear()]
 
     return lastWeekOfMonth - firstWeekOfMonth + 1
 }
@@ -102,7 +101,7 @@ fun isWeekBeforeCurrentWeek(
     selectedMonth: Int,
     selectedWeekOfMonth: Int
 ): Boolean {
-    val currentWeek = LocalDate.now().get(WeekFields.of(Locale.getDefault()).weekOfMonth())
+    val currentWeek = LocalDate.now()[WeekFields.of(Locale.getDefault()).weekOfMonth()]
     val currentMonth = LocalDate.now().monthValue
     val currentYear = LocalDate.now().year
 
@@ -298,9 +297,9 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
             .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    var daysList: List<WeekDay> = listOf()
+    var daysList: List<WeekDay>
 
-    var selectedWeekString: String = ""
+    var selectedWeekString : String
     // the selected week
 
     // the problem is that the number of mondays is not the same as the number of weeks

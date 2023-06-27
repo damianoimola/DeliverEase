@@ -1,7 +1,6 @@
 package com.madm.deliverease.localization
 
 import android.content.Context
-import android.os.Build
 import android.os.LocaleList
 import java.util.*
 
@@ -9,9 +8,6 @@ import java.util.*
 class ContextWrapper(base: Context) : android.content.ContextWrapper(base) {
     companion object {
         fun wrap(context: Context, newLocale: Locale?): ContextWrapper {
-            // create a copy of context
-            var ctx = context
-
             // retrieve app's resources and configuration
             val resources = context.resources
             val configuration = resources.configuration
@@ -23,7 +19,7 @@ class ContextWrapper(base: Context) : android.content.ContextWrapper(base) {
             configuration.setLocale(newLocale)
 
             // override the existing configuration
-            ctx = context.createConfigurationContext(configuration)
+            val ctx = context.createConfigurationContext(configuration)
 
             // provide the ContextWrapper to the caller
             return ContextWrapper(ctx)

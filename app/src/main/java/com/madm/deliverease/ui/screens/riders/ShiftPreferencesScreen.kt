@@ -44,8 +44,7 @@ val ReverseShiftOptionMap = mapOf(
 fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
     val date = LocalDate.of(year, month, day)
     val dayOfWeek = date.dayOfWeek
-    val dayOfWeekNumber = (dayOfWeek.value - 1) % 7
-    return dayOfWeekNumber
+    return (dayOfWeek.value - 1) % 7
 }
 
 @Composable
@@ -128,7 +127,6 @@ fun ShiftPreferenceScreen(){
             })
         }
     } else {
-        println("ECCOLO QUA")
         Row(modifier = Modifier.fillMaxSize()) {
             Column (modifier = Modifier.width(IntrinsicSize.Min)) {
                 MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
@@ -232,9 +230,6 @@ fun ShiftOptions(
 
     val onOptionSelected: (String) -> Unit = { selectedOption = it }
     onOptionSelected(radioOptions[actualOption])
-
-//    val (selectedOption, onOptionSelected) = rememberSaveable { mutableStateOf(radioOptions[actualOption]) }
-//    onOptionSelected(radioOptions[actualOption])
 
     LazyVerticalGrid(
         userScrollEnabled = true,
