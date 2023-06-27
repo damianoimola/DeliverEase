@@ -23,24 +23,11 @@ import com.madm.deliverease.ui.theme.smallPadding
 import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
+import java.time.temporal.WeekFields
 import java.util.*
 
-
-val MonthMap = mapOf(
-    0 to "January",
-    1 to "February",
-    2 to "March",
-    3 to "April",
-    4 to "May",
-    5 to "June",
-    6 to "July",
-    7 to "August",
-    8 to "September",
-    9 to "October",
-    10 to "November",
-    11 to "December"
-)
 
 @Parcelize
 data class WeekDay(val number: Int, val month: Int, val name: String) : Parcelable
@@ -56,8 +43,11 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     for (i in 0 until 7) {
         val dayNumber = currentDate.dayOfMonth
         val dayMonth = currentDate.monthValue
-        val dayName = currentDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
-        
+        val dayName = currentDate.dayOfWeek.getDisplayName(
+            java.time.format.TextStyle.FULL,
+            Locale.getDefault()
+        )
+
         weekDays.add(WeekDay(dayNumber, dayMonth, dayName))
         currentDate = currentDate.plusDays(1)
     }
@@ -65,10 +55,23 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     return weekDays
 }
 
-fun Int.integerToTwoDigit() : String {
-    return if(this < 10)
+fun Int.integerToTwoDigit(): String {
+    return if (this < 10)
         "0$this"
     else "$this"
+}
+
+
+fun getNumberOfWeeks(month: Int, year: Int): Int {
+    val yearMonth = YearMonth.of(year, month)
+    val weekFields = WeekFields.of(Locale.getDefault())
+    val firstDayOfWeek = weekFields.firstDayOfWeek
+    val firstOfMonth = yearMonth.atDay(1)
+    val firstWeekOfMonth = firstOfMonth.get(weekFields.weekOfWeekBasedYear())
+    val lastOfMonth = yearMonth.atEndOfMonth()
+    val lastWeekOfMonth = lastOfMonth.get(weekFields.weekOfWeekBasedYear())
+
+    return lastWeekOfMonth - firstWeekOfMonth + 1
 }
 
 
@@ -80,12 +83,12 @@ fun getMondays(year: Int, month: Int): List<Int> {
     var currentDate = firstOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
 
     while (currentDate.isBefore(lastOfMonth) || currentDate.isEqual(lastOfMonth)) {
-       /* if(afterCurrentDay && (currentDate > today)) {
-            mondays.add(currentDate.dayOfMonth)
-        } else if (!afterCurrentDay){
+        /* if(afterCurrentDay && (currentDate > today)) {
+             mondays.add(currentDate.dayOfMonth)
+         } else if (!afterCurrentDay){
 
-        */
-            mondays.add(currentDate.dayOfMonth)
+         */
+        mondays.add(currentDate.dayOfMonth)
         //}
 
         currentDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
@@ -94,7 +97,17 @@ fun getMondays(year: Int, month: Int): List<Int> {
     return mondays
 }
 
+fun isWeekBeforeCurrentWeek(
+    selectedYear: Int,
+    selectedMonth: Int,
+    selectedWeekOfMonth: Int
+): Boolean {
+    val currentWeek = LocalDate.now().get(WeekFields.of(Locale.getDefault()).weekOfMonth())
+    val currentMonth = LocalDate.now().monthValue
+    val currentYear = LocalDate.now().year
 
+    return (selectedYear < currentYear) || (selectedYear == currentYear && selectedMonth < currentMonth) || (selectedYear == currentYear && selectedMonth == currentMonth && selectedWeekOfMonth < currentWeek)
+}
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -105,6 +118,20 @@ fun MonthSelector(
     currentYear: Int,
     function: (Int, Boolean) -> Unit
 ){
+    val monthMap = mapOf(
+        0 to stringResource(R.string.january),
+        1 to stringResource(R.string.february),
+        2 to stringResource(R.string.march),
+        3 to stringResource(R.string.april),
+        4 to stringResource(R.string.may),
+        5 to stringResource(R.string.june),
+        6 to stringResource(R.string.july),
+        7 to stringResource(R.string.august),
+        8 to stringResource(R.string.september),
+        9 to stringResource(R.string.october),
+        10 to stringResource(R.string.november),
+        11 to stringResource(R.string.december)
+    )
     var expanded by remember { mutableStateOf(false) }
     var isNextYearSelected by remember { mutableStateOf(false) }
 
@@ -115,9 +142,9 @@ fun MonthSelector(
     ) {
         TextField(
             value = if(!isNextYearSelected)
-                "${MonthMap[selectedMonth]} $currentYear"
+                "${monthMap[selectedMonth]} $currentYear"
             else
-                "${MonthMap[selectedMonth]} ${currentYear + 1}",
+                "${monthMap[selectedMonth]} ${currentYear + 1}",
             onValueChange = { },
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -147,16 +174,15 @@ fun MonthSelector(
                         expanded = false
                     },
                 ) {
-                    if(option < months[0]) {
+                    if (option < months[0]) {
                         Text(
-                            "${MonthMap[option]} ${currentYear + 1}",
+                            "${monthMap[option]} ${currentYear + 1}",
                             style = CustomTheme.typography.body2,
                             color = CustomTheme.colors.onBackgroundVariant
                         )
-                    }
-                    else {
+                    } else {
                         Text(
-                            "${MonthMap[option]} $currentYear",
+                            "${monthMap[option]} $currentYear",
                             style = CustomTheme.typography.body1,
                             color = CustomTheme.colors.onBackgroundVariant
                         )
@@ -175,29 +201,27 @@ fun WeekContent(
     content: @Composable (WeekDay) -> Unit,
     lastItem: @Composable () -> Unit = {},
 ) {
-    val days = getWeekDays(selectedYear, selectedMonth+1, weekNumber)
-    val currentMonth = Calendar.getInstance()[Calendar.MONTH]+1
-    val currentYear = Calendar.getInstance()[Calendar.YEAR]
-    val currentDay = Calendar.getInstance()[Calendar.DAY_OF_MONTH]
+    // list of all mondays (first day of week) of the selected month
+    val mondaysList =
+        getMondays(selectedYear, (selectedMonth % 12) + 1)
+            .toList()
+            .toIntArray()
+            .map { i -> i.integerToTwoDigit() }
 
-    var emptyScreen = false
+    val days: List<WeekDay> = if (
+        mondaysList.count() != getNumberOfWeeks( selectedMonth, selectedYear )
+        && weekNumber !in 1..4
+    )
+        getWeekDays(selectedYear, selectedMonth + 1, weekNumber - 1)
+    else getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
 
-    for(day in days){
-        println("YEAR   "+selectedYear+"    "+currentYear+"" +
-                "\nMONTH   "+day.month+"    "+currentMonth+
-        "\nDAY     "+day.number+"     "+currentDay)
-        if(selectedYear> currentYear)  break
-        else if(day.month > currentMonth){
-            emptyScreen = false
-            break
-        }
-        else if(day.number < currentDay) {
-            emptyScreen = true
-        }
 
-    }
+    println("SELECTED WEEK $weekNumber")
 
-    if(emptyScreen){
+
+    val emptyScreen = isWeekBeforeCurrentWeek(selectedYear, selectedMonth + 1, weekNumber + 1)
+
+    if (emptyScreen) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -205,7 +229,8 @@ fun WeekContent(
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text( stringResource(id = R.string.previous_message),
+            Text(
+                stringResource(id = R.string.previous_message),
                 style = CustomTheme.typography.body1,
                 color = CustomTheme.colors.onBackground,
                 textAlign = TextAlign.Center
@@ -220,7 +245,7 @@ fun WeekContent(
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
         ) {
-            days.forEach {day ->
+            days.forEach { day ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(nonePadding, smallPadding)
@@ -250,6 +275,21 @@ fun WeekContent(
 
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function: (Int) -> Unit) {
+
+    val monthMap = mapOf(
+        0 to stringResource(R.string.january),
+        1 to stringResource(R.string.february),
+        2 to stringResource(R.string.march),
+        3 to stringResource(R.string.april),
+        4 to stringResource(R.string.may),
+        5 to stringResource(R.string.june),
+        6 to stringResource(R.string.july),
+        7 to stringResource(R.string.august),
+        8 to stringResource(R.string.september),
+        9 to stringResource(R.string.october),
+        10 to stringResource(R.string.november),
+        11 to stringResource(R.string.december)
+    )
     // list of all mondays (first day of week) of the selected month
     val mondaysList =
         getMondays(selectedYear, (selectedMonth % 12) + 1)
@@ -258,30 +298,36 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
             .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    var daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
+    var daysList: List<WeekDay> = listOf()
 
-    var selectedWeekString: String
+    var selectedWeekString: String = ""
     // the selected week
 
-    selectedWeekString = mondaysList[selectedWeek - 1]
+    // the problem is that the number of mondays is not the same as the number of weeks
+    if (mondaysList.count() != getNumberOfWeeks(selectedMonth, selectedYear)
+        && selectedWeek !in 1..4
+    ) {
+        selectedWeekString = mondaysList[selectedWeek - 2]
+        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek - 1)
+    } else {
+        selectedWeekString = mondaysList[selectedWeek - 1]
+        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
+    }
 
-    println("################# SELECTED WEEK $selectedWeek")
-    println("################# MONDAY LIST $mondaysList")
-    println("################# SELECTED WEEK STRING $selectedWeekString")
-
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp)
             .horizontalScroll(rememberScrollState())
-    ){
+    ) {
         mondaysList.forEach {
             Button(
                 onClick = {
                     function(mondaysList.indexOf(it) + 1)
                     selectedWeekString = it
                     // update the list of days of the selected week
-                    daysList = getWeekDays(selectedYear, selectedMonth+1, mondaysList.indexOf(it) + 1)
+                    daysList =
+                        getWeekDays(selectedYear, selectedMonth + 1, mondaysList.indexOf(it) + 1)
                 },
                 modifier = Modifier
                     .padding(smallPadding, smallPadding)
@@ -290,7 +336,10 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
                     backgroundColor = if (selectedWeekString == it) CustomTheme.colors.tertiary else CustomTheme.colors.primary,
                     contentColor = if (selectedWeekString == it) CustomTheme.colors.onTertiary else CustomTheme.colors.onPrimary,
                 ),
-                border = BorderStroke(width = 1.dp, color = if (selectedWeekString == it) CustomTheme.colors.primary else CustomTheme.colors.tertiary),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = if (selectedWeekString == it) CustomTheme.colors.primary else CustomTheme.colors.tertiary
+                ),
                 shape = RoundedCornerShape(20)
             ) {
                 Text(
@@ -304,18 +353,18 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
         }
     }
 
-    Row (
+    Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier.padding(0.dp)
-    ){
+    ) {
         Text(
             text = stringResource(R.string.week),
             style = CustomTheme.typography.h2,
             color = CustomTheme.colors.onBackground
         )
         Text(
-            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) MonthMap[(selectedMonth + 1)%12] else MonthMap[selectedMonth]}",
+            text = "${daysList.first().number} ${monthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) monthMap[(selectedMonth + 1)%12] else monthMap[selectedMonth]}",
             style = CustomTheme.typography.h2,
             color = CustomTheme.colors.tertiary
         )

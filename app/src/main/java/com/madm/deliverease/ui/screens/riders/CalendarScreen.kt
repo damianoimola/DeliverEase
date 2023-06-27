@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.madm.common_libs.model.*
@@ -34,15 +35,14 @@ import java.util.Calendar
 fun CalendarScreen() {
     val configuration = LocalConfiguration.current
     var selectedWeek: Int by remember {
-        mutableStateOf(
-            Calendar.getInstance()[Calendar.WEEK_OF_MONTH] - 1
-        )
+        mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH])
     }
+
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = (currentMonth..currentMonth + 11).toList().map { i -> i % 12 }.toIntArray()
-    var selectedMonth by remember { mutableStateOf(months[0]) }
+    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    var selectedMonth by remember { mutableStateOf(months[2]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
     //list of previous change requests done by user
@@ -55,21 +55,22 @@ fun CalendarScreen() {
         workDayList = days
     }
     messagesManager.getReceivedMessages { list: List<Message> ->
-        shiftRequestList = ArrayList(list.filter {
-            it.messageType == Message.MessageType.REQUEST
-                    &&
-                    it.senderID == globalUser!!.id
-        }
+        shiftRequestList = ArrayList(
+            list.filter {
+                it.messageType == Message.MessageType.REQUEST
+                &&
+                it.senderID == globalUser!!.id
+            }
         )
     }
 
-    var offeredDay = mutableListOf<WeekDay>()
 
+    val offeredDay = mutableListOf<WeekDay>()
 
     for (shift in shiftRequestList) {
-        var dayStr = shift.body!!.split("#")[0]
-        var offDate = dayStr.split("-")[0]
-        var offMonth = dayStr.split("-")[1]
+        val dayStr = shift.body!!.split("#")[0]
+        val offDate = dayStr.split("-")[0]
+        val offMonth = dayStr.split("-")[1]
         offeredDay.add(WeekDay(offDate.toInt(), offMonth.toInt(), ""))
     }
 
@@ -120,11 +121,9 @@ fun CalendarScreen() {
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
                 ShiftRow( // TODO Ralisin: set theme
                     shiftList.any {
-                        var selectedDate: LocalDate?
 
                         // create a date from selected day
-                        selectedDate =
-                            if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                        val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
                                 LocalDate.of(selectedYear, (selectedMonth + 2) % 12, weekDay.number)
                             else
                                 LocalDate.of(selectedYear, (selectedMonth + 1) % 12, weekDay.number)
@@ -240,15 +239,6 @@ fun ShiftRow(
                     Pair(false, true) -> Color(0xFFFF9800)
                     else -> Color.LightGray
                 }
-//                (if (!haveAShift && !swap.value) {
-//                    Color.LightGray
-//                } else if (!swap.value) {
-//                    Color(0xFFFF9800)
-//                } else if (!haveAShift && swap.value) {
-//                    Color(0xFFFF9800)
-//                } else {
-//                    Color.LightGray
-//                })
             )
             .fillMaxWidth()
             .padding(smallPadding)
@@ -268,20 +258,11 @@ fun ShiftRow(
     ) {
         Text(
             text = when(Pair(haveAShift, swap.value)){
-                Pair(false, false) -> "No shift"
-                Pair(true, false) -> "You have a shift!"
-                Pair(false, true) -> "Click here to swap day"
-                else -> "You already have a turn"
+                Pair(false, false) -> stringResource(R.string.noShift)
+                Pair(true, false) -> stringResource(R.string.yesShift)
+                Pair(false, true) -> stringResource(R.string.swapText)
+                else -> stringResource(R.string.haveATurn)
             } ,
-//            (if (!haveAShift && !swap.value) {
-//                "No shift"
-//            } else if (!swap.value) {
-//                "You have a shift!"
-//            } else if (!haveAShift && swap.value) {
-//                "Click here to swap day"
-//            } else {
-//                "You already have a turn"
-//            }),
             style = CustomTheme.typography.body1,
             modifier = Modifier.align(Alignment.CenterStart)
         )

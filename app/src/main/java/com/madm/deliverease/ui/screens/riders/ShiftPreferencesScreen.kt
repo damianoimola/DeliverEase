@@ -51,12 +51,12 @@ fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
 @Composable
 fun ShiftPreferenceScreen(){
     val configuration = LocalConfiguration.current
-    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH] - 1) }
+    var selectedWeek : Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH]) }
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = (currentMonth..currentMonth + 11).map{i -> i%12}.toList().toIntArray()
-    var selectedMonth by remember { mutableStateOf(months[0]) }
+    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    var selectedMonth by remember { mutableStateOf(months[2]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
     val permanentConstraints = globalUser!!.permanentConstraints.sortedByDescending { x -> x.dayOfWeek }
