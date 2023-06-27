@@ -294,7 +294,7 @@ fun ShiftOptions(
                     modifier = Modifier.fillMaxWidth()
                 ){
 
-                    defaultButton(text = stringResource(R.string.save_your_preference), modifier = Modifier
+                    DefaultButton(text = stringResource(R.string.save_your_preference), modifier = Modifier
                         .clip(shape = CustomTheme.shapes.large)
                         .fillMaxWidth()) {
                         println("BEFORE ON COMPLETE")

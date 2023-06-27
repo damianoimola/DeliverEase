@@ -106,12 +106,12 @@ fun ClassicLogin(
     goToAdminHome: () -> Unit
 ) {
     val isPlaying = rememberSaveable { mutableStateOf (false) }
-    val username = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    var isError by remember { mutableStateOf(false) }
+    val username = rememberSaveable { mutableStateOf("") }
+    val password = rememberSaveable { mutableStateOf("") }
+    var isError by rememberSaveable { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val user: MutableState<User?> = remember { mutableStateOf(null) }
+    val user: MutableState<User?> = rememberSaveable { mutableStateOf(null) }
 
     if(user.value != null){
         globalUser = user.value

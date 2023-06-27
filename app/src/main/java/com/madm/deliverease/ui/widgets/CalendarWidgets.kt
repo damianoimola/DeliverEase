@@ -29,21 +29,6 @@ import java.time.temporal.WeekFields
 import java.util.*
 
 
-val MonthMap = mapOf(
-    0 to "January",
-    1 to "February",
-    2 to "March",
-    3 to "April",
-    4 to "May",
-    5 to "June",
-    6 to "July",
-    7 to "August",
-    8 to "September",
-    9 to "October",
-    10 to "November",
-    11 to "December"
-)
-
 @Parcelize
 data class WeekDay(val number: Int, val month: Int, val name: String) : Parcelable
 
@@ -132,7 +117,21 @@ fun MonthSelector(
     selectedMonth: Int,
     currentYear: Int,
     function: (Int, Boolean) -> Unit
-) {
+){
+    val monthMap = mapOf(
+        0 to stringResource(R.string.january),
+        1 to stringResource(R.string.february),
+        2 to stringResource(R.string.march),
+        3 to stringResource(R.string.april),
+        4 to stringResource(R.string.may),
+        5 to stringResource(R.string.june),
+        6 to stringResource(R.string.july),
+        7 to stringResource(R.string.august),
+        8 to stringResource(R.string.september),
+        9 to stringResource(R.string.october),
+        10 to stringResource(R.string.november),
+        11 to stringResource(R.string.december)
+    )
     var expanded by remember { mutableStateOf(false) }
     var isNextYearSelected by remember { mutableStateOf(false) }
 
@@ -142,10 +141,10 @@ fun MonthSelector(
         modifier = Modifier.width(IntrinsicSize.Min)
     ) {
         TextField(
-            value = if (!isNextYearSelected)
-                "${MonthMap[selectedMonth]} $currentYear"
+            value = if(!isNextYearSelected)
+                "${monthMap[selectedMonth]} $currentYear"
             else
-                "${MonthMap[selectedMonth]} ${currentYear + 1}",
+                "${monthMap[selectedMonth]} ${currentYear + 1}",
             onValueChange = { },
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -177,13 +176,13 @@ fun MonthSelector(
                 ) {
                     if (option < months[0]) {
                         Text(
-                            "${MonthMap[option]} ${currentYear + 1}",
+                            "${monthMap[option]} ${currentYear + 1}",
                             style = CustomTheme.typography.body2,
                             color = CustomTheme.colors.onBackgroundVariant
                         )
                     } else {
                         Text(
-                            "${MonthMap[option]} $currentYear",
+                            "${monthMap[option]} $currentYear",
                             style = CustomTheme.typography.body1,
                             color = CustomTheme.colors.onBackgroundVariant
                         )
@@ -275,7 +274,22 @@ fun WeekContent(
 
 
 @Composable
-fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek: Int, function: (Int) -> Unit) {
+fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function: (Int) -> Unit) {
+
+    val monthMap = mapOf(
+        0 to stringResource(R.string.january),
+        1 to stringResource(R.string.february),
+        2 to stringResource(R.string.march),
+        3 to stringResource(R.string.april),
+        4 to stringResource(R.string.may),
+        5 to stringResource(R.string.june),
+        6 to stringResource(R.string.july),
+        7 to stringResource(R.string.august),
+        8 to stringResource(R.string.september),
+        9 to stringResource(R.string.october),
+        10 to stringResource(R.string.november),
+        11 to stringResource(R.string.december)
+    )
     // list of all mondays (first day of week) of the selected month
     val mondaysList =
         getMondays(selectedYear, (selectedMonth % 12) + 1)
@@ -350,7 +364,7 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek: Int, function
             color = CustomTheme.colors.onBackground
         )
         Text(
-            text = "${daysList.first().number} ${MonthMap[selectedMonth]} - ${daysList.last().number} ${if (daysList.first().number > daysList.last().number) MonthMap[(selectedMonth + 1) % 12] else MonthMap[selectedMonth]}",
+            text = "${daysList.first().number} ${monthMap[selectedMonth]} - ${daysList.last().number} ${ if(daysList.first().number>daysList.last().number) monthMap[(selectedMonth + 1)%12] else monthMap[selectedMonth]}",
             style = CustomTheme.typography.h2,
             color = CustomTheme.colors.tertiary
         )

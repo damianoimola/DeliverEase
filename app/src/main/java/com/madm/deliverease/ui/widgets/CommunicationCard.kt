@@ -13,7 +13,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -54,7 +53,7 @@ fun CommunicationCard(
 
     Card(
         elevation = mediumCardElevation,
-        shape = MaterialTheme.shapes.medium,
+        shape = CustomTheme.shapes.medium,
         modifier = modifier
             .fillMaxSize()
             .padding(smallPadding * (1 - isPortrait), smallPadding * isPortrait),
@@ -150,7 +149,7 @@ fun CommunicationCard(
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        defaultButton(text = stringResource(R.string.send), Modifier ) {
+                        DefaultButton(text = stringResource(R.string.send), Modifier ) {
                             showTextField.value = !showTextField.value
 
                             val msg = Message(                  // declaration of the message
@@ -189,7 +188,7 @@ fun CommunicationCard(
                             textFieldValue.value = ""
                         }
                         Spacer(Modifier.width(4.dp))
-                        defaultButton(text = stringResource(R.string.cancel), Modifier) {
+                        DefaultButton(text = stringResource(R.string.cancel), Modifier) {
                             textFieldValue.value = ""
                             showTextField.value = !showTextField.value
                         }
