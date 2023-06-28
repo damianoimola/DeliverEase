@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -42,7 +43,8 @@ fun CommunicationCard(
     communicationList: MutableList<Message>,
     showAddButton: Boolean,
     modifier: Modifier = Modifier,
-    isPortrait: Int
+    isPortrait: Int,
+    isLoading: Boolean = false
 ) {
     val context = LocalContext.current
     val showTextField = remember { mutableStateOf(false) }
@@ -80,6 +82,7 @@ fun CommunicationCard(
                     ) {
                         IconButton(
                             onClick = { showTextField.value = !showTextField.value },
+                            enabled = !isLoading,
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(CustomTheme.colors.primary)
@@ -197,7 +200,7 @@ fun CommunicationCard(
             }
 
             // Text if have not any notification
-            if(communicationList.isEmpty()) Text(
+            if(communicationList.isEmpty() && !isLoading) Text(
                 stringResource(R.string.no_communications),
                 style = CustomTheme.typography.body1,
                 color = CustomTheme.colors.onSurface
@@ -206,13 +209,20 @@ fun CommunicationCard(
             // CommunicationList
             LazyColumn(
                 content = {
-                    items(communicationList) { item ->
+                    items(if(isLoading) listOf(1,2,3,4,5,6,7,8) else communicationList) { item ->
                         Card(
                             Modifier.padding(smallPadding),
                             backgroundColor = CustomTheme.colors.surface,
                             contentColor = CustomTheme.colors.onSurface,
                             elevation = extraSmallCardElevation
-                        ) { CustomCommunication(item.body!!, item.date) }
+                        ) {
+                            if(isLoading)
+                                ShimmerCustomCommunication()
+                            else {
+                                item as Message
+                                CustomCommunication(item.body!!, item.date)
+                            }
+                        }
                     }
                 }
             )
@@ -243,73 +253,6 @@ fun CustomCommunication(
 }
 
 @Composable
-fun ShimmerCommunicationCard(
-    showAddButton: Boolean,
-    modifier: Modifier = Modifier,
-    isPortrait: Int
-) {
-    Card(
-        elevation = mediumCardElevation,
-        shape = CustomTheme.shapes.medium,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(smallPadding * (1 - isPortrait), smallPadding * isPortrait),
-        backgroundColor = CustomTheme.colors.surface
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(smallPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    stringResource(R.string.communication_title),
-                    style = CustomTheme.typography.h3,
-                    textAlign = TextAlign.Center,
-                    color = CustomTheme.colors.onSurface
-                )
-                if (showAddButton) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(CustomTheme.colors.primary)
-                                .size(40.dp),
-                            enabled = false,
-                            content = {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = stringResource(R.string.add),
-                                    tint = CustomTheme.colors.onPrimary
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-
-            LazyColumn(
-                content = {
-                    items(listOf(1,2,3,4,5,6,7,8)) {
-                        Card(
-                            Modifier.padding(smallPadding),
-                            backgroundColor = CustomTheme.colors.surface,
-                            contentColor = CustomTheme.colors.onSurface,
-                            elevation = extraSmallCardElevation
-                        ) { ShimmerCustomCommunication() }
-                    }
-                }
-            )
-        }
-    }
-}
-
-@Composable
 fun ShimmerCustomCommunication() {
     Column(
         modifier = Modifier
@@ -321,6 +264,7 @@ fun ShimmerCustomCommunication() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp)
+                .clip(RoundedCornerShape(2.dp))
                 .shimmerEffect()
         )
 
@@ -333,6 +277,7 @@ fun ShimmerCustomCommunication() {
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(20.dp)
+                    .clip(RoundedCornerShape(2.dp))
                     .shimmerEffect()
             )
         }

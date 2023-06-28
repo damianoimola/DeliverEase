@@ -1,11 +1,9 @@
 package com.madm.deliverease.ui.screens.riders
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +13,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.madm.common_libs.model.*
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.widgets.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@SuppressLint("MutableCollectionMutableState")
 @Preview
 @Composable
 fun HomeScreen() {
@@ -23,41 +25,54 @@ fun HomeScreen() {
     var workDayList: List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var communicationList: MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var shiftRequestList: ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
+    var loadingData by rememberSaveable { mutableStateOf(true) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     val calendarManager = CalendarManager(LocalContext.current)
 
-    calendarManager.getDays { days: List<WorkDay> ->
-        workDayList = days
-    }
+    LaunchedEffect(key1 = rememberCoroutineScope()) {
+        coroutineScope {
+            launch {
+                calendarManager.getDays { days: List<WorkDay> ->
+                    workDayList = days
+                }
+            }
+            launch {
+                messagesManager.getReceivedMessages { list: List<Message> ->
+                    communicationList = list
+                        .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                        .sortedByDescending { it.messageDate }
+                        .toMutableList()
+                }
+            }
+            launch {
+                messagesManager.getReceivedMessages { list: List<Message> ->
+                    shiftRequestList = ArrayList(list.filter {
+                        it.messageType == Message.MessageType.REQUEST
+                                &&
+                                it.senderID != globalUser!!.id
+                                &&
+                                // index 0 = offered day, index 1 = wanted day (by the sender)
+                                (
+                                        workDayList.any { d -> globalUser!!.id in d.riders!! }
+                                                &&
+                                                (
+                                                        it.body!!.split("#")[0] !in workDayList.filter { d -> globalUser!!.id in d.riders!! }
+                                                            .map { d -> d.date }.toList()
+                                                                &&
+                                                                it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }
+                                                            .map { d -> d.date }.toList()
+                                                        )
+                                        )
+                    })
+                }
+            }
+        }
 
-    messagesManager.getReceivedMessages { list: List<Message> ->
-        communicationList = list
-            .filter { it.messageType == Message.MessageType.NOTIFICATION }
-            .sortedByDescending { it.messageDate }
-            .toMutableList()
-    }
+        delay(500)
 
-    messagesManager.getReceivedMessages { list: List<Message> ->
-        shiftRequestList = ArrayList(list.filter {
-            it.messageType == Message.MessageType.REQUEST
-                    &&
-                    it.senderID != globalUser!!.id
-                    &&
-                    // index 0 = offered day, index 1 = wanted day (by the sender)
-                    (
-                            workDayList.any { d -> globalUser!!.id in d.riders!! }
-                                    &&
-                                    (
-                                            it.body!!.split("#")[0] !in workDayList.filter { d -> globalUser!!.id in d.riders!! }
-                                                .map { d -> d.date }.toList()
-                                                    &&
-                                                    it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }
-                                                .map { d -> d.date }.toList()
-                                            )
-                            )
-        })
+        loadingData = false
     }
 
     // to remove the request message from the list of messages
@@ -65,13 +80,13 @@ fun HomeScreen() {
 
     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CommunicationCard(communicationList, false, Modifier.weight(1f), 1)
-            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 1)
+            CommunicationCard(communicationList, false, Modifier.weight(1f), 1, loadingData)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 1, loadingData)
         }
     } else {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            CommunicationCard(communicationList, false, Modifier.weight(1f), 0)
-            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 0)
+            CommunicationCard(communicationList, false, Modifier.weight(1f), 0, loadingData)
+            ShiftChangeCard(shiftRequestList, Modifier.weight(1f), updateList, 0, loadingData)
         }
     }
 

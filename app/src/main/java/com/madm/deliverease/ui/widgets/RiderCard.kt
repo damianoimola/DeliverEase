@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -28,7 +29,8 @@ fun TodayRidersCard(
     modifier: Modifier = Modifier,
     riderList: List<User>,
     columns: Int = 2,
-    isPortrait: Int
+    isPortrait: Int,
+    isLoading: Boolean = false
 ) {
     Card(
         elevation = mediumCardElevation,
@@ -48,7 +50,7 @@ fun TodayRidersCard(
                 color = CustomTheme.colors.onSurface,
             )
             
-            if(riderList.isEmpty()) Text(
+            if(riderList.isEmpty() && !isLoading)  Text(
                 stringResource(R.string.no_riders_today),
                 style = CustomTheme.typography.body1,
                 color = CustomTheme.colors.onSurface
@@ -57,13 +59,20 @@ fun TodayRidersCard(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),
                 content = {
-                    items(riderList) {rider ->
+                    items(if(isLoading) listOf(1,2,3,4,5,6,7,8) else riderList) {rider ->
                         Card(
                             Modifier.padding(smallPadding),
                             backgroundColor = CustomTheme.colors.surface,
                             contentColor = CustomTheme.colors.onSurface,
                             elevation = extraSmallCardElevation
-                        ) { RiderRow(rider) }
+                        ) {
+                            if (isLoading)
+                                ShimmerRiderRow()
+                            else {
+                                rider as User
+                                RiderRow(rider)
+                            }
+                        }
                     }
                 }
             )
@@ -74,7 +83,7 @@ fun TodayRidersCard(
 @Composable
 fun RiderRow(
     rider: User,
-    inLine: Boolean = false // Let you switch name from Column to Row structure
+    inLine: Boolean = false, // Let you switch name from Column to Row structure
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -120,6 +129,68 @@ fun RiderRow(
                     rider.surname!!,
                     style = CustomTheme.typography.body1,
                     color = CustomTheme.colors.onSurface
+                )
+            }
+    }
+}
+
+@Composable
+fun ShimmerRiderRow(
+    inLine: Boolean = false
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(CustomTheme.shapes.large)
+            .padding(mediumPadding)
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.rider),
+            contentDescription = "rider",
+            Modifier.size(30.dp)
+        )
+
+        if(inLine)
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .shimmerEffect()
+                )
+                Divider(Modifier.width(smallPadding), Color.Transparent)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .shimmerEffect()
+                )
+            }
+        else
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .shimmerEffect()
+                )
+                Divider(Modifier.width(2.dp), Color.Transparent)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .shimmerEffect()
                 )
             }
     }

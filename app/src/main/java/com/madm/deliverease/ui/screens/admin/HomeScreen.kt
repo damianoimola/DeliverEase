@@ -48,7 +48,9 @@ fun HomeScreen() {
                             .filter { it.messageType == Message.MessageType.NOTIFICATION }
                             .sortedByDescending { it.date }.toMutableList()
                 }
+            }
 
+            launch {
                 calendarManager.getDays { list: List<WorkDay> ->
                     todayWorkDay = list.first {
                         it.workDayDate == Date.from(
@@ -73,18 +75,16 @@ fun HomeScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 1)
-            if(loadingData) ShimmerCommunicationCard(true, Modifier.weight(1f), 1)
-            else CommunicationCard(communicationList, true, Modifier.weight(1f), 1)
+            TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 1, loadingData)
+            CommunicationCard(communicationList, true, Modifier.weight(1f), 1, loadingData)
         }
     } else {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 0)
-            if(loadingData) ShimmerCommunicationCard(true, Modifier.weight(1f), 0)
-            else CommunicationCard(communicationList, true, Modifier.weight(1f), 0)
+            TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 0, loadingData)
+            CommunicationCard(communicationList, true, Modifier.weight(1f), 0, loadingData)
         }
     }
 }
