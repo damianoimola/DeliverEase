@@ -241,3 +241,100 @@ fun CustomCommunication(
         }
     }
 }
+
+@Composable
+fun ShimmerCommunicationCard(
+    showAddButton: Boolean,
+    modifier: Modifier = Modifier,
+    isPortrait: Int
+) {
+    Card(
+        elevation = mediumCardElevation,
+        shape = CustomTheme.shapes.medium,
+        modifier = modifier
+            .fillMaxSize()
+            .padding(smallPadding * (1 - isPortrait), smallPadding * isPortrait),
+        backgroundColor = CustomTheme.colors.surface
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(smallPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    stringResource(R.string.communication_title),
+                    style = CustomTheme.typography.h3,
+                    textAlign = TextAlign.Center,
+                    color = CustomTheme.colors.onSurface
+                )
+                if (showAddButton) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(
+                            onClick = {},
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(CustomTheme.colors.primary)
+                                .size(40.dp),
+                            enabled = false,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = stringResource(R.string.add),
+                                    tint = CustomTheme.colors.onPrimary
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+
+            LazyColumn(
+                content = {
+                    items(listOf(1,2,3,4,5,6,7,8)) {
+                        Card(
+                            Modifier.padding(smallPadding),
+                            backgroundColor = CustomTheme.colors.surface,
+                            contentColor = CustomTheme.colors.onSurface,
+                            elevation = extraSmallCardElevation
+                        ) { ShimmerCustomCommunication() }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ShimmerCustomCommunication() {
+    Column(
+        modifier = Modifier
+            .clip(CustomTheme.shapes.small)
+            .fillMaxWidth()
+            .padding(smallPadding)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .shimmerEffect()
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(20.dp)
+                    .shimmerEffect()
+            )
+        }
+    }
+}

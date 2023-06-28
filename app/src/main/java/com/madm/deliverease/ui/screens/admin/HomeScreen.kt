@@ -1,6 +1,8 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -18,7 +20,9 @@ import com.madm.deliverease.ui.widgets.*
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import kotlinx.coroutines.*
 
+@SuppressLint("MutableCollectionMutableState")
 @Preview
 @Composable
 fun HomeScreen() {
@@ -28,23 +32,37 @@ fun HomeScreen() {
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
-    var isPlaying = rememberSaveable { mutableStateOf (false) }
+    val isPlaying = rememberSaveable { mutableStateOf (false) }
+    var loadingData by rememberSaveable { mutableStateOf(true) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     val calendarManager = CalendarManager(LocalContext.current)
 
-    messagesManager.getAllMessages{ list: List<Message>? ->
-        if(list != null )
-            communicationList = list
-                .filter { it.messageType == Message.MessageType.NOTIFICATION }
-                .sortedByDescending { it.date }.toMutableList()
-    }
+    LaunchedEffect(key1 = rememberCoroutineScope()) {
+        coroutineScope {
+            launch {
+                messagesManager.getAllMessages { list: List<Message>? ->
+                    if (list != null)
+                        communicationList = list
+                            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                            .sortedByDescending { it.date }.toMutableList()
+                }
 
-    calendarManager.getDays{ list: List<WorkDay> ->
-        todayWorkDay = list.first { it.workDayDate == Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()) }
+                calendarManager.getDays { list: List<WorkDay> ->
+                    todayWorkDay = list.first {
+                        it.workDayDate == Date.from(
+                            LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                        )
+                    }
+                    riderList = globalAllUsers.filter { user -> user.id in todayWorkDay.riders!!.toList() }
+                }
+            }
+        }
 
-        riderList = globalAllUsers.filter { user -> user.id in todayWorkDay.riders!!.toList() }
+        delay(500)
+
+        loadingData = false
     }
 
     if(isPlaying.value)
@@ -56,7 +74,8 @@ fun HomeScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 1)
-            CommunicationCard(communicationList, true, Modifier.weight(1f), 1)
+            if(loadingData) ShimmerCommunicationCard(true, Modifier.weight(1f), 1)
+            else CommunicationCard(communicationList, true, Modifier.weight(1f), 1)
         }
     } else {
         Row(
@@ -64,7 +83,8 @@ fun HomeScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             TodayRidersCard(modifier = Modifier.weight(1f), riderList, 2, 0)
-            CommunicationCard(communicationList, true, Modifier.weight(1f), 0)
+            if(loadingData) ShimmerCommunicationCard(true, Modifier.weight(1f), 0)
+            else CommunicationCard(communicationList, true, Modifier.weight(1f), 0)
         }
     }
 }
