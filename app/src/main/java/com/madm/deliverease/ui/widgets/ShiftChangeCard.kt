@@ -1,24 +1,24 @@
 package com.madm.deliverease.ui.widgets
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
-import com.madm.common_libs.model.*
+import androidx.compose.ui.unit.dp
+import com.madm.common_libs.model.Message
 import com.madm.deliverease.R
 import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
@@ -29,7 +29,8 @@ fun ShiftChangeCard(
     shiftsList: List<Message>,
     modifier: Modifier = Modifier,
     updateList: (Message) -> Unit,
-    isPortrait : Int
+    isPortrait: Int,
+    isLoading: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -55,11 +56,15 @@ fun ShiftChangeCard(
                 color = CustomTheme.colors.onSurface
             )
 
-            // List of customShift
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                if(shiftsList.isNotEmpty()){
-                    shiftsList.forEach { shift ->
+            if (shiftsList.isEmpty() && !isLoading) Text(
+                stringResource(R.string.no_shift_change_requests),
+                style = CustomTheme.typography.body1,
+                color = CustomTheme.colors.onSurface
+            )
 
+            LazyColumn(
+                content = {
+                    items(if(isLoading) listOf(1,2,3,4) else shiftsList) {shift ->
                         val isVisibile = remember { mutableStateOf(true) }
                         Card(
                             Modifier.padding(nonePadding, smallPadding),
@@ -67,42 +72,40 @@ fun ShiftChangeCard(
                             contentColor = CustomTheme.colors.onSurface,
                             elevation = extraSmallCardElevation
                         ) {
-                            if(isVisibile.value) {
-                                CustomShiftChangeRequest(shift) {
-                                    Message(
-                                        senderID = globalUser!!.id,
-                                        receiverID = shift.senderID,
-                                        body = shift.id,
-                                        type = Message.MessageType.ACCEPTANCE.displayName
-                                    ).send(context) { if (it) updateList(shift) }
-                                    isVisibile.value = false
+                            if (isVisibile.value) {
+                                if(isLoading)
+                                    ShimmerShiftChangeRequest()
+                                else {
+                                    shift as Message
+                                    ShiftChangeRequest(shift) {
+                                        Message(
+                                            senderID = globalUser!!.id,
+                                            receiverID = shift.senderID,
+                                            body = shift.id,
+                                            type = Message.MessageType.ACCEPTANCE.displayName
+                                        ).send(context) { if (it) updateList(shift) }
+                                        isVisibile.value = false
+                                    }
                                 }
                             }
                         }
                     }
-                } else {
-                    Text(
-                        stringResource(R.string.no_shift_change_requests),
-                        style = CustomTheme.typography.body1,
-                        color = CustomTheme.colors.onSurface
-                    )
                 }
-            }
+            )
         }
     }
 }
 
 @Composable
-fun CustomShiftChangeRequest(
+fun ShiftChangeRequest(
     shiftRequest: Message,
-    onAccept: () -> Unit = {}
+    onAccept: () -> Unit = {},
 ) {
     val (offeredDay, wantedDay) = shiftRequest.body!!.split("#")
 
     val requestingUserFullName = with(
         globalAllUsers.first { user -> user.id == shiftRequest.senderID!! }
-    ){ "$name $surname" }
-
+    ) { "$name $surname" }
 
     Row(
         Modifier
@@ -114,9 +117,13 @@ fun CustomShiftChangeRequest(
         Column(
             Modifier
                 .padding(smallPadding)
-                .weight(1f),horizontalAlignment = Alignment.Start) {
+                .weight(1f), horizontalAlignment = Alignment.Start
+        ) {
             Text(requestingUserFullName, style = CustomTheme.typography.h5)
-            Text(stringResource(R.string.offered) + offeredDay, style = CustomTheme.typography.body2)
+            Text(
+                stringResource(R.string.offered) + offeredDay,
+                style = CustomTheme.typography.body2
+            )
             Text(stringResource(R.string.wanted) + wantedDay, style = CustomTheme.typography.body2)
         }
 
@@ -127,8 +134,69 @@ fun CustomShiftChangeRequest(
                 .padding(smallPadding, nonePadding),
             Arrangement.End,
             Alignment.CenterVertically
-        ){
+        ) {
             IconButton(onClick = { onAccept() }) {
+                Icon(
+                    ImageVector.vectorResource(id = R.drawable.accept),
+                    contentDescription = "accept",
+                    tint = CustomTheme.colors.primary
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ShimmerShiftChangeRequest() {
+    Row(
+        Modifier
+            .clip(Shapes.large)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Text column with name, offered day and wanted day
+        Column(
+            Modifier
+                .padding(smallPadding)
+                .weight(1f), horizontalAlignment = Alignment.Start
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(14.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .shimmerEffect()
+            )
+            Divider(Modifier.width(2.dp), Color.Transparent)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .shimmerEffect()
+            )
+            Divider(Modifier.width(2.dp), Color.Transparent)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.6f)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .shimmerEffect()
+            )
+        }
+
+        // Icon button accept
+        Row(
+            Modifier
+                .weight(0.2f)
+                .padding(smallPadding, nonePadding),
+            Arrangement.End,
+            Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {},
+                enabled = false
+            ) {
                 Icon(
                     ImageVector.vectorResource(id = R.drawable.accept),
                     contentDescription = "accept",
