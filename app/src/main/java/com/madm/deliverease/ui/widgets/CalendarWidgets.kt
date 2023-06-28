@@ -24,6 +24,7 @@ import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.*
@@ -107,6 +108,40 @@ fun isWeekBeforeCurrentWeek(
 
     return (selectedYear < currentYear) || (selectedYear == currentYear && selectedMonth < currentMonth) || (selectedYear == currentYear && selectedMonth == currentMonth && selectedWeekOfMonth < currentWeek)
 }
+
+
+
+fun getWeekDatesInFormat(
+    year: Int,
+    month: Int,
+    weekOfMonth: Int
+): List<String> {
+    val firstDayOfMonth = LocalDate.of(year, month, 1)
+    val firstDayOfWeek = firstDayOfMonth.withDayOfMonth(1)
+        .with(DayOfWeek.MONDAY)
+        .plusWeeks((weekOfMonth - 1).toLong())
+
+    val dates = mutableListOf<String>()
+    val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
+    for (i in 0 until 7) {
+        val currentDate = firstDayOfWeek.plusDays(i.toLong())
+        dates.add(currentDate.format(dateFormatter))
+    }
+
+    return dates
+}
+
+
+fun getCurrentWeekOfMonth(): Int {
+    val currentDate = LocalDate.now()
+    val firstDayOfMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth())
+    val firstMonday = firstDayOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
+    val currentMonday = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    val weekNumber = (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
+    return weekNumber
+}
+
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -207,12 +242,13 @@ fun WeekContent(
             .toIntArray()
             .map { i -> i.integerToTwoDigit() }
 
-    val days: List<WeekDay> = if (
-        mondaysList.count() != getNumberOfWeeks( selectedMonth, selectedYear )
-        && weekNumber !in 1..4
-    )
-        getWeekDays(selectedYear, selectedMonth + 1, weekNumber - 1)
-    else getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
+    val days: List<WeekDay> = getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
+//    val days: List<WeekDay> = if (
+//        mondaysList.count() != getNumberOfWeeks( selectedMonth, selectedYear )
+//        && weekNumber !in 1..4
+//    )
+//        getWeekDays(selectedYear, selectedMonth + 1, weekNumber - 1)
+//    else getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
 
 
     println("SELECTED WEEK $weekNumber")
@@ -303,15 +339,18 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
     // the selected week
 
     // the problem is that the number of mondays is not the same as the number of weeks
-    if (mondaysList.count() != getNumberOfWeeks(selectedMonth, selectedYear)
-        && selectedWeek !in 1..4
-    ) {
-        selectedWeekString = mondaysList[selectedWeek - 2]
-        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek - 1)
-    } else {
-        selectedWeekString = mondaysList[selectedWeek - 1]
-        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
-    }
+//    if (mondaysList.count() != getNumberOfWeeks(selectedMonth, selectedYear)
+//        && selectedWeek !in 1..4
+//    ) {
+//        selectedWeekString = mondaysList[selectedWeek - 2]
+//        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek - 1)
+//    } else {
+//        selectedWeekString = mondaysList[selectedWeek - 1]
+//        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
+//    }
+
+    selectedWeekString = mondaysList[selectedWeek - 1]
+    daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
 
     Row(
         modifier = Modifier

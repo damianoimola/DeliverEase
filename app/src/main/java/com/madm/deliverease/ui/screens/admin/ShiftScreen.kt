@@ -20,6 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.madm.common_libs.internal_storage_manager.deleteDraftDays
+import com.madm.common_libs.internal_storage_manager.retrieveDraftCalendar
+import com.madm.common_libs.internal_storage_manager.saveDraftCalendar
 import com.madm.common_libs.model.*
 import com.madm.deliverease.*
 import com.madm.deliverease.R
@@ -31,10 +34,15 @@ import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 import java.util.Calendar
 import kotlin.collections.ArrayList
@@ -47,19 +55,19 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
 }
 
 
+
 @Preview
 @Composable
 fun ShiftsScreen() {
     val configuration = LocalConfiguration.current
-    println("SHIFT SCREEN")
+
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
     val context = LocalContext.current
-    var selectedWeek: Int by remember { mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH]) }
+    var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }
-        .toIntArray()
+    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[2]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
@@ -77,15 +85,49 @@ fun ShiftsScreen() {
     // EVERY working day both server and newly added
     var weekWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
 
+
+
+
+
+    // handling drafted working days
+    val draftedWorkingDays: List<WorkDay> = retrieveDraftCalendar(context) ?: listOf()
+    val thisWeekDays = getWeekDatesInFormat(selectedYear, selectedMonth + 1, selectedWeek + 1)
+    val thisWeekDrafted = draftedWorkingDays.any { it.date in thisWeekDays }
+    val thisWeekPublicized = workingDays.any { it.date in thisWeekDays }
+
+    draftedWorkingDays.forEach { println("DRAFTED ${it.date} ANY $thisWeekDrafted") }
+    var updated by rememberSaveable { mutableStateOf(false) }
+
+//    workingDays = if((!thisWeekPublicized && !thisWeekDrafted) || thisWeekPublicized)
+//        workingDays
+//    else draftedWorkingDays
+
+//    weekWorkingDays = if((!thisWeekPublicized && !thisWeekDrafted) || thisWeekPublicized)
+//        ArrayList(workingDays)
+//    else ArrayList(draftedWorkingDays)
+
+//    weekWorkingDays = ArrayList(workingDays)
+
+    // if the selected week has not been publicized
+    // and there is a draft about this week, take it
+    if(!thisWeekPublicized && thisWeekDrafted && !updated) {
+        weekWorkingDays = ArrayList(draftedWorkingDays)
+        updatedWorkingDays.addAll(draftedWorkingDays)
+        updated = true
+    }
+
     val calendarManager = CalendarManager(context)
 
-    if (!showDialog && weekWorkingDays.isEmpty())
+    if (!showDialog && weekWorkingDays.isEmpty()) {
         calendarManager.getDays { days ->
             println("API CALL")
+
+            runBlocking { delay(500) }
+
             workingDays = days
             weekWorkingDays = ArrayList(days)
         }
-    else if (showDialog && weekWorkingDays.isNotEmpty()) {
+    } else if (showDialog && weekWorkingDays.isNotEmpty()) {
         val toastMessage = stringResource(R.string.shift_not_changed)
         ConstraintsDialog(
             title = stringResource(R.string.constraints_not_respected),
@@ -96,12 +138,14 @@ fun ShiftsScreen() {
                 if (updatedWorkingDays.isNotEmpty()) {
                     weekWorkingDays.clear()
                     calendarManager.insertDays(updatedWorkingDays)
+                    deleteDraftDays(context, updatedWorkingDays)
                 } else
                     Toast.makeText(
                         context,
                         toastMessage,
                         Toast.LENGTH_SHORT
                     ).show()
+                showDialog = !showDialog
             },
             onDismiss = { showDialog = !showDialog }
         )
@@ -141,6 +185,10 @@ fun ShiftsScreen() {
                 }
             ) {
                 ButtonDraftAndSubmit(
+                    saveDraft = {
+                        val cal = com.madm.common_libs.model.Calendar(updatedWorkingDays.toList())
+                        saveDraftCalendar(context, cal)
+                    },
                     updateServer = {
                         val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
                             context = context,
@@ -189,7 +237,6 @@ fun ShiftsScreen() {
                 ) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
-
             WeekContent(selectedWeek, selectedMonth, selectedYear,
                 { weekDay ->
                     ShiftItem(
@@ -204,6 +251,7 @@ fun ShiftsScreen() {
                 }
             ) {
                 ButtonDraftAndSubmit(
+                    saveDraft = {},
                     updateServer = {
                         val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
                             context = context,
@@ -402,6 +450,10 @@ private fun ShiftItem(
     }
 }
 
+
+
+
+
 /**
  * @return a Pair object, in first place there is perWeekConstraints, in second place there is perDayConstraints
  */
@@ -412,10 +464,6 @@ fun constraintsChecker(
     selectedMonth: Int,
     selectedYear: Int
 ): Triple<List<String>, List<String>, List<String>> {
-    println("WWD $weekWorkingDays")
-
-
-
     // open the shared prefs file
     val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -610,6 +658,7 @@ fun RidersCheckboxCard(
 
 @Composable
 fun ButtonDraftAndSubmit(
+    saveDraft: () -> Unit,
     updateServer: () -> Unit,
     notifyRiders: () -> Unit
 ) {
@@ -620,7 +669,7 @@ fun ButtonDraftAndSubmit(
                 .weight(1f)
                 .padding(10.dp)
         ) {
-            updateServer()
+            saveDraft()
         }
 
         DefaultButton(

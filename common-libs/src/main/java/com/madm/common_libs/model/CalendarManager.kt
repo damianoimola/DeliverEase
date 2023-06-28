@@ -9,27 +9,26 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-data class CalendarManager (
+data class CalendarManager(
     var context: Context
 ) {
-    private var calendar : Calendar? = null
+    private var calendar: Calendar? = null
     private val s: Server = Server.getInstance(context)
 
 
-
-    fun insertDays(workDays : List<WorkDay>) : Boolean {
-        val s : Server = Server.getInstance(context)
+    fun insertDays(workDays: List<WorkDay>): Boolean {
+        val s: Server = Server.getInstance(context)
 
         return s.makePostRequest<List<WorkDay>>(workDays, Server.RequestKind.CALENDAR)
     }
 
 
-    fun getDays(callbackFunction: (List<WorkDay>) -> Unit) : Boolean {
+    fun getDays(callbackFunction: (List<WorkDay>) -> Unit): Boolean {
 
         return s.makeGetRequest<Calendar>(Server.RequestKind.CALENDAR) { ret ->
-                this.calendar = ret
-                callbackFunction(this.calendar!!.days)
-            }
+            this.calendar = ret
+            callbackFunction(this.calendar!!.days)
+        }
     }
 }
 
@@ -53,22 +52,22 @@ class WorkDay(
     @Transient
     @IgnoredOnParcel
     var workDayDate: Date? = null
-    set(value){
-        field = value
-        if(value != null)
-            this.date = dateFormat.format(value)
-    }
-    get() {
-        return if(field == null && this.date != null)
-            dateFormat.parse(this.date!!)
-        else if (field == null && this.date == null)
-            null
-        else
-            field
-    }
+        set(value) {
+            field = value
+            if (value != null)
+                this.date = dateFormat.format(value)
+        }
+        get() {
+            return if (field == null && this.date != null)
+                dateFormat.parse(this.date!!)
+            else if (field == null && this.date == null)
+                null
+            else
+                field
+        }
 
-    fun insertOrUpdate(context : Context) : Boolean{
-        val s : Server = Server.getInstance(context)
+    fun insertOrUpdate(context: Context): Boolean {
+        val s: Server = Server.getInstance(context)
 
         return s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
     }

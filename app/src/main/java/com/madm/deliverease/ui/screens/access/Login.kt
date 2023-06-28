@@ -25,8 +25,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.madm.common_libs.internal_storage_manager.deleteDraftDays
+import com.madm.common_libs.internal_storage_manager.retrieveDraftCalendar
+import com.madm.common_libs.internal_storage_manager.saveDraftCalendar
 import com.madm.common_libs.model.User
 import com.madm.common_libs.model.UserManager
+import com.madm.common_libs.model.WorkDay
 import com.madm.deliverease.*
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
@@ -36,6 +40,7 @@ import com.madm.deliverease.ui.widgets.LoginButton
 import com.madm.deliverease.ui.widgets.MyButton
 import com.madm.deliverease.ui.widgets.MyOutlinedTextField
 import com.madm.deliverease.ui.widgets.PizzaLoaderDialog
+import java.util.*
 
 
 @Composable
@@ -154,25 +159,6 @@ fun ClassicLogin(
             username = username,
             password = password,
             onClick = {
-//                val w1 = WorkDay(listOf("1", "2"))
-//                w1.workDayDate = Date(2023, 6, 28)
-//                val w2 = WorkDay(listOf("1", "3"))
-//                w2.workDayDate = Date(2023, 6, 27)
-//                val w3 = WorkDay(listOf("2", "3"))
-//                w3.workDayDate = Date(2023, 6, 26)
-//                val w4 = WorkDay(listOf("3"))
-//                w4.workDayDate = Date(2023, 6, 25)
-//
-//                val c = Calendar(listOf(w1, w2, w3, w4))
-//
-//                saveDraftCalendar(context, c)
-//
-//                println(retrieveDraftCalendar(context))
-//
-//                deleteDraftDays(context, listOf(w3))
-//
-//                println(retrieveDraftCalendar(context))
-
                 focusManager.clearFocus()
                 isError = false
                 isPlaying.value = true

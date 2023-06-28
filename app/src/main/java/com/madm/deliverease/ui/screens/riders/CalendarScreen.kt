@@ -34,10 +34,8 @@ import java.util.Calendar
 @Composable
 fun CalendarScreen() {
     val configuration = LocalConfiguration.current
-    var selectedWeek: Int by remember {
-        mutableStateOf(Calendar.getInstance()[Calendar.WEEK_OF_MONTH])
-    }
 
+    var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 

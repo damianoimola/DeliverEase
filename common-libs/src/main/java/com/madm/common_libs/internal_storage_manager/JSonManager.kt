@@ -10,7 +10,7 @@ import java.io.IOException
 import kotlin.collections.ArrayList
 
 
-fun saveDraftCalendar(context: Context, calendar: Calendar) {
+fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
     val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     try {
@@ -20,8 +20,8 @@ fun saveDraftCalendar(context: Context, calendar: Calendar) {
         if (!file.exists())
             file.createNewFile()
 
-
-        val cal: Calendar = if (file.exists()) {
+        // Retrieve file content if exists
+        val existingCalendar: Calendar = if (file.exists()) {
             // If the file exists, read its content
             val jsonContent = file.readText()
             gson.fromJson(jsonContent, Calendar::class.java) ?: Calendar()
@@ -30,19 +30,30 @@ fun saveDraftCalendar(context: Context, calendar: Calendar) {
             Calendar()
         }
 
-//        val objectList: MutableList<WorkDay> = if (file.exists()) {
-//            // If the file exists, read its content
-//            val jsonContent = file.readText()
-//            gson.fromJson(jsonContent, Calendar::class.java)?.days?.toMutableList() ?: mutableListOf()
-//        } else {
-//            // If the file doesn't exist, create an empty list
-//            mutableListOf()
-//        }
+        // create a copy of actual drafted days (because is a List, so unmodifiable)
+        val copyExistingCalendarDays = ArrayList(existingCalendar.days)
 
-        cal.days = cal.days + calendar.days
+        println(copyExistingCalendarDays)
+
+        // if new days are still drafted, updates it
+        newDraftCalendar.days.forEach { workDay ->
+            val stillDraftedDate = workDay.date in existingCalendar.days.map { it.date }.distinct()
+            println("${workDay.date} -- ${existingCalendar.days.map { it.date }.distinct()}")
+
+            if(stillDraftedDate) {
+                val prevDraftedDay = copyExistingCalendarDays.indexOfFirst { it.date == workDay.date }
+                copyExistingCalendarDays[prevDraftedDay] = workDay
+            } else {
+                copyExistingCalendarDays.add(workDay)
+            }
+        }
+
+//        existingCalendar.days = existingCalendar.days + draftCalendar.days
+        // update old drafted days with the new ones
+        existingCalendar.days = copyExistingCalendarDays
 
         // Convert the updated list back to JSON
-        val updatedJson = gson.toJson(cal)
+        val updatedJson = gson.toJson(existingCalendar)
 
         // Write the JSON back to the file
         file.writeText(updatedJson)
