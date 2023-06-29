@@ -187,8 +187,6 @@ fun ShiftPreferenceScreen(){
             })
         }
     }
-
-
 }
 
 
@@ -218,9 +216,7 @@ fun ShiftOptions(
         ShiftOptionMap[nonPermanentConstraint.type]!!
     else 0
 
-    var actualOption = if(nonPermanentConstraint != null)
-        nonPermanentPreferenceKind
-    else permanentPreferenceKind
+    var actualOption = if(nonPermanentConstraint != null) nonPermanentPreferenceKind else permanentPreferenceKind
 
     println("PERMANENT $permanentConstraint")
     println("NON PERMANENT $nonPermanentConstraint")
@@ -228,7 +224,10 @@ fun ShiftOptions(
 
     var selectedOption by remember { mutableStateOf(radioOptions[actualOption]) }
 
-    val onOptionSelected: (String) -> Unit = { selectedOption = it }
+    // TEST
+    val shiftRememberString = stringResource(id = R.string.shift_remember)
+
+    val onOptionSelected: (String) -> Unit = { if (it != shiftRememberString) selectedOption = it }
     onOptionSelected(radioOptions[actualOption])
 
     LazyVerticalGrid(
@@ -288,7 +287,6 @@ fun ShiftOptions(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ){
-
                     DefaultButton(text = stringResource(R.string.save_your_preference), modifier = Modifier
                         .clip(shape = CustomTheme.shapes.large)
                         .fillMaxWidth()) {
