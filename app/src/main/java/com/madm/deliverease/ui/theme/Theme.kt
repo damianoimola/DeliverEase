@@ -94,7 +94,7 @@ fun DeliverEaseTheme(
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = Color(0xFFB94434),
+            color = if(darkTheme) darkPrimary else lightPrimary,
             darkIcons = false
         )
     }
