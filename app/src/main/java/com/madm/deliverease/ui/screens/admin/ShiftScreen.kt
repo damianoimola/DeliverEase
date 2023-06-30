@@ -421,10 +421,6 @@ private fun ShiftItem(
     }
 }
 
-
-
-
-
 /**
  * @return a Pair object, in first place there is perWeekConstraints, in second place there is perDayConstraints
  */
@@ -513,7 +509,6 @@ fun constraintsChecker(
     return Triple(perWeekList, perDayList, emptyDays)
 }
 
-
 @Composable
 fun RidersAvailabilities(
     availableRidersList: List<User>,
@@ -549,7 +544,6 @@ fun RidersAvailabilities(
         }
     }
 }
-
 
 @Composable
 fun TextLineSeparator(text: String) {
@@ -620,7 +614,6 @@ fun RidersCheckboxCard(
         }
     }
 }
-
 
 @Composable
 fun ButtonDraftAndSubmit(
