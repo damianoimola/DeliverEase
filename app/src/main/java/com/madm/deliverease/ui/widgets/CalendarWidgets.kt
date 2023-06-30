@@ -212,7 +212,6 @@ fun WeekContent(
 ) {
     val days: List<WeekDay> = getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
 
-    println("SELECTED WEEK $weekNumber")
 
     val emptyScreen = isWeekBeforeCurrentWeek(selectedYear, selectedMonth + 1, weekNumber + 1)
 
