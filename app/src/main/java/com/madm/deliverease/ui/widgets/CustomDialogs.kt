@@ -199,6 +199,7 @@ fun HireNewRiderDialog(
                             else Toast.makeText(context, messageErrorOccurred, Toast.LENGTH_SHORT)
                                 .show()
                     }
+
                 }
             }
         }
@@ -380,6 +381,7 @@ fun EditRiderDialog(
                             else Toast.makeText(context, messageErrorOccurred, Toast.LENGTH_SHORT)
                                 .show()
                     }
+
                 }
             }
         }
@@ -387,13 +389,7 @@ fun EditRiderDialog(
 }
 
 @Composable
-fun ChangeShiftDialog(
-    dayOfTheWeek: WeekDay?,
-    previousWeekDay: WeekDay?,
-    month: Int,
-    year: Int,
-    onDismiss: () -> Unit,
-) {
+fun ChangeShiftDialog(dayOfTheWeek: String, previousWeekDay: String, month: Int, year: Int, onDismiss: () -> Unit) {
     val context = LocalContext.current
 
     val requestSent = stringResource(R.string.request_sent)
@@ -422,8 +418,7 @@ fun ChangeShiftDialog(
                 verticalArrangement = Arrangement.spacedBy(25.dp)
             ) {
 
-                Text(
-                    stringResource(id = R.string.confirmation_change) + " " + dayOfTheWeek?.name + " ?",
+                Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek+" ?",
                     style = TextStyle(
                         fontFamily = gilroy,
                         fontWeight = FontWeight.Normal,
@@ -451,7 +446,8 @@ fun ChangeShiftDialog(
                         val msg = Message(
                             senderID = globalUser!!.id,
                             receiverID = "0",
-                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month + 1) % 12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month + 1) % 12).integerToTwoDigit()}-${year}",
+//                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
+                            body = "$previousWeekDay#$dayOfTheWeek",
                             type = Message.MessageType.REQUEST.displayName
                         )
 
@@ -581,7 +577,7 @@ fun ConstraintsDialog(
                             Text(
                                 it,
                                 style = CustomTheme.typography.body1
-                            )//, color = CustomTheme.colors.onSurface)
+                            )
                         }
                         item {
                             Text(
