@@ -135,7 +135,6 @@ fun CalendarScreen() {
                         outputDateString == selectedDate.toString()
                     }, swap, offeredDay, weekDay, LocalContext.current,
                     {
-                        println("###### SELECTED DATE CLCK $selectedDate")
                         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                         val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
                         val date: Date = inputDateFormat.parse(selectedDate.toString())!!
@@ -143,7 +142,6 @@ fun CalendarScreen() {
                         clickedWeekday = outputDateString
                     },
                     {
-                        println("###### SELECTED DATE PREV $selectedDate")
                         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                         val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
                         val date: Date = inputDateFormat.parse(selectedDate.toString())!!
@@ -199,14 +197,19 @@ fun CalendarScreen() {
                         outputDateString == selectedDate.toString()
                     }, swap, offeredDay, weekDay, LocalContext.current,
                     {
-                        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
-                        clickedWeekday = dateFormat.format(selectedDate)
+                        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                        val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+                        val date: Date = inputDateFormat.parse(selectedDate.toString())!!
+                        val outputDateString: String = outputDateFormat.format(date)
+                        clickedWeekday = outputDateString
                     },
                     {
-                        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
-                        previousWeekDay = dateFormat.format(selectedDate)
+                        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                        val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+                        val date: Date = inputDateFormat.parse(selectedDate.toString())!!
+                        val outputDateString: String = outputDateFormat.format(date)
+                        previousWeekDay = outputDateString
                     }
-
                 ) { showCustomDialog = it }
                 swap.value = false
             })
@@ -289,7 +292,6 @@ fun ShiftRow(
                          */
                         var found = false
                         for (shift in shiftList) {
-                            println("############ SHIFT $shift - WD $weekDay")
                             if (shift.number == weekDay.number && shift.month == weekDay.month) {
                                 Toast
                                     .makeText(
