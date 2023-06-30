@@ -10,6 +10,11 @@ import java.io.IOException
 import kotlin.collections.ArrayList
 
 
+/**
+ * Stores the calendar draft in local to have it saved but not published
+ * @param context the context of the application
+ * @param newDraftCalendar a draft of the calendar still not saved in the server
+ */
 fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
     val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -21,24 +26,22 @@ fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
             file.createNewFile()
 
         // Retrieve file content if exists
-        val existingCalendar: Calendar = if (file.exists()) {
-            // If the file exists, read its content
-            val jsonContent = file.readText()
-            gson.fromJson(jsonContent, Calendar::class.java) ?: Calendar()
-        } else {
-            // If the file doesn't exist, create an empty list
-            Calendar()
-        }
+        val existingCalendar: Calendar =
+            if (file.exists()) {
+                // If the file exists, read its content
+                val jsonContent = file.readText()
+                gson.fromJson(jsonContent, Calendar::class.java) ?: Calendar()
+            } else {
+                // If the file doesn't exist, create an empty list
+                Calendar()
+            }
 
         // create a copy of actual drafted days (because is a List, so unmodifiable)
         val copyExistingCalendarDays = ArrayList(existingCalendar.days)
 
-        println(copyExistingCalendarDays)
-
-        // if new days are still drafted, updates it
+        // if new days are still drafted, update them
         newDraftCalendar.days.forEach { workDay ->
             val stillDraftedDate = workDay.date in existingCalendar.days.map { it.date }.distinct()
-            println("${workDay.date} -- ${existingCalendar.days.map { it.date }.distinct()}")
 
             if(stillDraftedDate) {
                 val prevDraftedDay = copyExistingCalendarDays.indexOfFirst { it.date == workDay.date }
@@ -48,17 +51,14 @@ fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
             }
         }
 
-//        existingCalendar.days = existingCalendar.days + draftCalendar.days
         // update old drafted days with the new ones
         existingCalendar.days = copyExistingCalendarDays
 
-        // Convert the updated list back to JSON
+        // convert the updated list back to JSON
         val updatedJson = gson.toJson(existingCalendar)
 
-        // Write the JSON back to the file
+        // write the JSON back to the file
         file.writeText(updatedJson)
-
-        println("Object added successfully.")
     } catch (e: IOException) {
         // Handle file I/O errors
         println("Error occurred while accessing the file: ${e.message}")
@@ -68,7 +68,11 @@ fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
     }
 }
 
-
+/**
+ * Parses the gson saved and retrieves the list of working day still in draft
+ * @param context: the context of the application
+ * @return the list of working day still in draft
+ */
 fun retrieveDraftCalendar(context: Context): List<WorkDay>? {
     val gson: Gson = GsonBuilder().create()
     try {
@@ -87,6 +91,12 @@ fun retrieveDraftCalendar(context: Context): List<WorkDay>? {
 }
 
 
+/**
+ * deletes the list of drafted days in the local file passed as argument
+ * @param context the context of the application
+ * @param datesToDelete
+ * @return if every working day passed has been deleted
+ */
 fun deleteDraftDays(context: Context, datesToDelete: List<WorkDay>): Boolean {
     val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -113,11 +123,8 @@ fun deleteDraftDays(context: Context, datesToDelete: List<WorkDay>): Boolean {
         // update object
         cal.days = list
 
-
         val updatedJson = gson.toJson(cal)
         file.writeText(updatedJson)
-
-        println("Objects deleted successfully.")
         return true
     } catch (e: IOException) {
         println("Error occurred while reading/writing the file: ${e.message}")

@@ -8,6 +8,9 @@ import android.widget.Toast
 
 class NetworkConnection {
     companion object{
+        /**
+         * Checks if the device is connected to the internet
+         */
         fun isUserOnline(context: Context, customErrorMessage : String = "NO NETWORK CONNECTION"): Boolean {
             val connectivityManager =
                 context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

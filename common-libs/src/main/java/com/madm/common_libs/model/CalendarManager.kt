@@ -9,6 +9,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+/**
+ * Manages the communication with the server about the calendar, to read and (over)write it
+ */
 data class CalendarManager(
     var context: Context
 ) {
@@ -32,23 +35,37 @@ data class CalendarManager(
     }
 }
 
+/**
+ * Contains every working day of the pizzeria saved inside the server
+ */
 data class Calendar(
     @IgnoredOnParcel var days: List<WorkDay> = listOf()
 )
 
-
+/**
+ * Contains every information about a rider working day
+ */
 @Parcelize
 class WorkDay(
     @IgnoredOnParcel var riders: List<String>? = null,
 ) : Parcelable {
 
+    /**
+     * Format the working day is saved to
+     */
     @Transient
     @IgnoredOnParcel
     private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
 
+    /**
+     * Date of the working day as a String
+     */
     @IgnoredOnParcel
     var date: String? = null
 
+    /**
+     * Date of the working day as a Date
+     */
     @Transient
     @IgnoredOnParcel
     var workDayDate: Date? = null
@@ -65,10 +82,4 @@ class WorkDay(
             else
                 field
         }
-
-    fun insertOrUpdate(context: Context): Boolean {
-        val s: Server = Server.getInstance(context)
-
-        return s.makePostRequest<WorkDay>(this, Server.RequestKind.CALENDAR)
-    }
 }
