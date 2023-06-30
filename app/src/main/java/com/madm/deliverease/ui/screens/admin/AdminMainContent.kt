@@ -60,7 +60,7 @@ fun AdminsMainContent(logoutCallback: () -> Unit) {
                 navController.navigate(context.getString(R.string.admin_riders))
         },
         CustomNavItem("Settings", Icons.Default.Settings, 4) {
-            if(navController.currentDestination?.route != context.getString(R.string.admin_home))
+            if(navController.currentDestination?.route != context.getString(R.string.admin_settings))
                 navController.navigate(context.getString(R.string.admin_settings))
         },
     )
