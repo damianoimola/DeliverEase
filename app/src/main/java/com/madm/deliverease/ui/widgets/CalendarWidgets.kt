@@ -15,15 +15,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.CustomTheme
-import com.madm.deliverease.ui.theme.gilroy
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.*
 import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
