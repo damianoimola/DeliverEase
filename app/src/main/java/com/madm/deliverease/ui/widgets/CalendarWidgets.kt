@@ -315,6 +315,14 @@ fun WeekContent(
 }
 
 
+/**
+ * Displays a list of weeks for the selected month and year, allowing the user to select a specific week.
+ *
+ * @param selectedMonth The selected month (0-11).
+ * @param selectedYear The selected year.
+ * @param selectedWeek The selected week.
+ * @param function The callback function to be invoked when a week is selected. It receives the selected week as an argument.
+ */
 @Composable
 fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function: (Int) -> Unit) {
 
