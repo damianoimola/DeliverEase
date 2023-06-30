@@ -2,19 +2,15 @@ package com.madm.deliverease.ui.widgets
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-import android.widget.Toast
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -52,7 +48,7 @@ fun SwipeToRevealRiderList(
 
                 // Button icons behind rider name
                 ActionsRow(
-                    actionIconSize = 56.dp, // TODO Ralisin: want we leave constant size here?
+                    actionIconSize = 56.dp,
                     onDelete = {
                         isRevealed = false
                         rider.unregister(context)
@@ -61,7 +57,7 @@ fun SwipeToRevealRiderList(
                     onEdit = {
                         isRevealed = false
                         editButtonClicked(rider)
-                    } // TODO Ralisin: la finestra di diagolo che compare alla modificica ha scritto "hire" invece di "save"
+                    }
                 )
 
                 DroppableListItemCard(
@@ -146,7 +142,7 @@ fun ActionsRow(
     actionIconSize: Dp,
     onDelete: () -> Unit,
     onEdit: () -> Unit,
-    iconColor: Color = Color.Gray /* TODO: Use theme */
+    iconColor: Color = Color.Gray
 ) {
     Row(
         Modifier
