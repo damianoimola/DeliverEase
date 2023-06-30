@@ -78,4 +78,13 @@
     <string name="haveATurn">Hai già un turno</string>
     <string name="hired">assunto</string>
     <string name="error_hiring_rider">Si è verificato un problema</string>
+    <string name="request_sent">Richiesta inviata</string>
+    <string name="request_cannot_be_sent">La richiesta non può essere inviata, per favore riprovare più tardi</string>
+    <string name="modified">modificato</string>
+    <string name="rider_contraints_not_respected">Vincoli dei rider non modificati</string>
+    <string name="days_without_riders">Giorni senza riders</string>
+    <string name="are_you_sure_to_continue">Sei sicuro di voler continuare?</string>
+    <string name="accept">Accetta</string>
+    <string name="email_already_exist">L\'email del rider esiste già</string>
+    <string name="deleted">cancellato</string>
 </resources>
