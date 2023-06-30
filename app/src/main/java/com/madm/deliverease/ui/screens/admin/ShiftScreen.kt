@@ -460,7 +460,6 @@ fun constraintsChecker(
     val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
-    // TODO: load just one time when composable starts up (Damiano)
     val minWeek = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
     val maxWeek = sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
