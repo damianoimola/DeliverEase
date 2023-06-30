@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  GENERAL  -->
+    <string name="general_login" translatable="false">login</string>
+    <string name="general_admin_home" translatable="false">admin_home</string>
+    <string name="general_rider_home" translatable="false">rider_home</string>
+
+    <!--  ADMIN  -->
+    <string name="admin_home" translatable="false">home</string>
+    <string name="admin_shift" translatable="false">shift</string>
+    <string name="admin_riders" translatable="false">riders</string>
+    <string name="admin_settings" translatable="false">settings</string>
+
+    <!--  RIDER  -->
+    <string name="rider_home" translatable="false">home</string>
+    <string name="rider_calendar" translatable="false">calendar</string>
+    <string name="rider_preferences" translatable="false">preferences</string>
+    <string name="rider_settings" translatable="false">settings</string>
+</resources>
