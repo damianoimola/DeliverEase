@@ -76,10 +76,10 @@ fun CalendarScreen() {
     val swap = remember { mutableStateOf(false) }
 
     //variable used to store the date of the day we would like to trade
-    var clickedWeekday: WeekDay? by remember { mutableStateOf(null) }
+    var clickedWeekday: String by remember { mutableStateOf("") }
 
     //variable used to store the date of the day we would like to change
-    var previousWeekDay: WeekDay? by remember { mutableStateOf(null) }
+    var previousWeekDay: String by remember { mutableStateOf("") }
 
     // getting API data
     var shiftList: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
@@ -95,7 +95,7 @@ fun CalendarScreen() {
     //where the dialog is actually shown
     if (showCustomDialog) ChangeShiftDialog(
         dayOfTheWeek = clickedWeekday,
-        previousWeekDay,
+        previousWeekDay = previousWeekDay,
         selectedMonth,
         selectedYear
     ) { showCustomDialog = false }
@@ -117,19 +117,17 @@ fun CalendarScreen() {
             }
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+                // create a date from selected day
+                val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                    LocalDate.of(selectedYear, (selectedMonth + 2) % 12, weekDay.number)
+                else
+                    LocalDate.of(selectedYear, (selectedMonth + 1) % 12, weekDay.number)
+
                 ShiftRow(
                     shiftList.any {
-
-                        // create a date from selected day
-                        val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                                LocalDate.of(selectedYear, (selectedMonth + 2) % 12, weekDay.number)
-                            else
-                                LocalDate.of(selectedYear, (selectedMonth + 1) % 12, weekDay.number)
-
                         // converting API date
                         val inputDateString = it.workDayDate.toString()
-                        val inputDateFormat =
-                            SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+                        val inputDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
                         val outputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         val date: Date = inputDateFormat.parse(inputDateString)!!
                         val outputDateString: String = outputDateFormat.format(date)
@@ -137,10 +135,20 @@ fun CalendarScreen() {
                         outputDateString == selectedDate.toString()
                     }, swap, offeredDay, weekDay, LocalContext.current,
                     {
-                        clickedWeekday = weekDay
+                        println("###### SELECTED DATE CLCK $selectedDate")
+                        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                        val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+                        val date: Date = inputDateFormat.parse(selectedDate.toString())!!
+                        val outputDateString: String = outputDateFormat.format(date)
+                        clickedWeekday = outputDateString
                     },
                     {
-                        previousWeekDay = weekDay
+                        println("###### SELECTED DATE PREV $selectedDate")
+                        val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                        val outputDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+                        val date: Date = inputDateFormat.parse(selectedDate.toString())!!
+                        val outputDateString: String = outputDateFormat.format(date)
+                        previousWeekDay = outputDateString
                     }
 
                 ) { showCustomDialog = it }
@@ -172,15 +180,14 @@ fun CalendarScreen() {
 
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+                // create a date from selected day
+                val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                    LocalDate.of(selectedYear, (selectedMonth + 2) % 11, weekDay.number)
+                else
+                    LocalDate.of(selectedYear, (selectedMonth + 1) % 11, weekDay.number)
+
                 ShiftRow(
                     shiftList.any {
-
-                        // create a date from selected day
-                        val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                                LocalDate.of(selectedYear, (selectedMonth + 2) % 11, weekDay.number)
-                            else
-                                LocalDate.of(selectedYear, (selectedMonth + 1) % 11, weekDay.number)
-
                         // converting API date
                         val inputDateString = it.workDayDate.toString()
                         val inputDateFormat =
@@ -192,10 +199,12 @@ fun CalendarScreen() {
                         outputDateString == selectedDate.toString()
                     }, swap, offeredDay, weekDay, LocalContext.current,
                     {
-                        clickedWeekday = weekDay
+                        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+                        clickedWeekday = dateFormat.format(selectedDate)
                     },
                     {
-                        previousWeekDay = weekDay
+                        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN)
+                        previousWeekDay = dateFormat.format(selectedDate)
                     }
 
                 ) { showCustomDialog = it }
@@ -280,6 +289,7 @@ fun ShiftRow(
                          */
                         var found = false
                         for (shift in shiftList) {
+                            println("############ SHIFT $shift - WD $weekDay")
                             if (shift.number == weekDay.number && shift.month == weekDay.month) {
                                 Toast
                                     .makeText(

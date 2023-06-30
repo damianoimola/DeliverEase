@@ -352,7 +352,7 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
 }
 
 @Composable
-fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: Int, year: Int,  onDismiss: () -> Unit) {
+fun ChangeShiftDialog(dayOfTheWeek: String, previousWeekDay: String, month: Int, year: Int, onDismiss: () -> Unit) {
     val context = LocalContext.current
 
     Dialog(onDismissRequest = { onDismiss()},
@@ -372,7 +372,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                 .wrapContentHeight(),
             verticalArrangement = Arrangement.spacedBy(25.dp)) {
 
-                Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek?.name+" ?",
+                Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek+" ?",
                     style = TextStyle(
                         fontFamily = gilroy,
                         fontWeight = FontWeight.Normal,
@@ -394,7 +394,8 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                         val msg = Message(
                             senderID = globalUser!!.id,
                             receiverID = "0",
-                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
+//                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
+                            body = "$previousWeekDay#$dayOfTheWeek",
                             type = Message.MessageType.REQUEST.displayName
                         )
 
