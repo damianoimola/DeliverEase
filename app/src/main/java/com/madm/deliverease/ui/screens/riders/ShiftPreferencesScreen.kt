@@ -49,10 +49,26 @@ fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
 
 @Composable
 fun ShiftPreferenceScreen(){
+    println("PREFERENCES")
     val configuration = LocalConfiguration.current
     var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
-    val currentMonth = Calendar.getInstance()[Calendar.MONTH]
-    val currentYear = Calendar.getInstance()[Calendar.YEAR]
+    var currentMonth = Calendar.getInstance()[Calendar.MONTH]
+    var currentYear = Calendar.getInstance()[Calendar.YEAR]
+
+    var nextMonth = false
+
+    //getCurrentWeekOfMonth ritorna 11 se la settimana successiva ricade nel prossimo mese
+    if(selectedWeek == 11)  nextMonth = true
+
+    if(nextMonth){
+        selectedWeek = 1
+        currentMonth = getNextMonth()
+    }
+
+    if(nextMonth && currentMonth == Calendar.getInstance()[Calendar.JANUARY]){
+        currentYear = Calendar.getInstance()[Calendar.YEAR+1]
+    }
+
 
     val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[2]) }

@@ -78,9 +78,25 @@ fun isWeekBeforeCurrentWeek(
     selectedMonth: Int,
     selectedWeekOfMonth: Int
 ): Boolean {
-    val currentWeek = LocalDate.now()[WeekFields.of(Locale.getDefault()).weekOfMonth()]
-    val currentMonth = LocalDate.now().monthValue
-    val currentYear = LocalDate.now().year
+    var nextMonth = false
+
+    var currentWeek = getCurrentWeekOfMonth()
+    var currentMonth = LocalDate.now().monthValue
+    var currentYear = LocalDate.now().year
+
+    if(currentWeek == 11) nextMonth = true
+
+    if(nextMonth){
+        currentWeek = 1
+        currentMonth = getNextMonth()+1
+    }
+
+    if(nextMonth && currentMonth == Calendar.getInstance()[Calendar.JANUARY]){
+        currentYear = Calendar.getInstance()[Calendar.YEAR+1]
+    }
+
+    println("CURRENT  "+currentWeek+"  "+currentMonth+"    "+currentYear)
+    println("SELECTED  "+selectedWeekOfMonth+"  "+selectedMonth+"    "+selectedYear)
 
     return (selectedYear < currentYear) || (selectedYear == currentYear && selectedMonth < currentMonth) || (selectedYear == currentYear && selectedMonth == currentMonth && selectedWeekOfMonth < currentWeek)
 }
@@ -113,8 +129,26 @@ fun getCurrentWeekOfMonth(): Int {
     val currentDate = LocalDate.now()
     val firstDayOfMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth())
     val firstMonday = firstDayOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
-    val currentMonday = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-    return (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
+    val currentMonday = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+    if(currentMonday.month > firstMonday.month){
+        return 11
+    }else {
+        return (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
+    }
+}
+
+fun getNextMonth(): Int{
+    val calendar = Calendar.getInstance()
+    val month: Int
+
+    if (calendar[Calendar.MONTH] == Calendar.DECEMBER) {
+        month =  calendar[Calendar.JANUARY]
+    } else {
+        calendar.roll(Calendar.MONTH, true);
+        month =  calendar[(Calendar.MONTH)]
+    }
+
+    return month
 }
 
 
