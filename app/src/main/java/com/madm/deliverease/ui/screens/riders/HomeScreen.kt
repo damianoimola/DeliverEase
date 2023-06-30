@@ -52,7 +52,6 @@ fun HomeScreen() {
                 val currentMonth = LocalDate.now().monthValue
                 val currentYear = LocalDate.now().year
                 val currentDay = LocalDate.now().dayOfMonth
-                println("CURRENT DATE  :"+currentDay+"   "+currentMonth+"    "+currentYear)
 
                 messagesManager.getReceivedMessages { list: List<Message> ->
                     shiftRequestList = ArrayList(list.filter {

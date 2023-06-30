@@ -79,26 +79,13 @@ fun ShiftsScreen() {
 
 
 
-
-
     // handling drafted working days
     val draftedWorkingDays: List<WorkDay> = retrieveDraftCalendar(context) ?: listOf()
     val thisWeekDays = getWeekDatesInFormat(selectedYear, selectedMonth + 1, selectedWeek + 1)
     val thisWeekDrafted = draftedWorkingDays.any { it.date in thisWeekDays }
     val thisWeekPublicized = workingDays.any { it.date in thisWeekDays }
-
-    draftedWorkingDays.forEach { println("DRAFTED ${it.date} ANY $thisWeekDrafted") }
     var updated by rememberSaveable { mutableStateOf(false) }
 
-//    workingDays = if((!thisWeekPublicized && !thisWeekDrafted) || thisWeekPublicized)
-//        workingDays
-//    else draftedWorkingDays
-
-//    weekWorkingDays = if((!thisWeekPublicized && !thisWeekDrafted) || thisWeekPublicized)
-//        ArrayList(workingDays)
-//    else ArrayList(draftedWorkingDays)
-
-//    weekWorkingDays = ArrayList(workingDays)
 
     // if the selected week has not been publicized
     // and there is a draft about this week, take it
@@ -112,8 +99,6 @@ fun ShiftsScreen() {
 
     if (!showDialog && weekWorkingDays.isEmpty()) {
         calendarManager.getDays { days ->
-            println("API CALL")
-
             runBlocking { delay(500) }
 
             workingDays = days
@@ -302,8 +287,6 @@ private fun ShiftItem(
                 ).atStartOfDay(ZoneId.systemDefault()).toInstant()
             )
 
-    println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
-
     // filter all users that are available
     val availableRidersList: List<User> = globalAllUsers.filter { user ->
         val permanent = user.permanentConstraints.firstOrNull {
@@ -460,7 +443,6 @@ fun constraintsChecker(
     val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
-    // TODO: load just one time when composable starts up (Damiano)
     val minWeek = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
     val maxWeek = sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
@@ -488,8 +470,6 @@ fun constraintsChecker(
     calendar[Calendar.SECOND] = 59
     calendar[Calendar.MILLISECOND] = 999
     val endDate = calendar.time
-
-    println("DATE ${startDate..endDate}")
 
     data class WeeklyRider(
         val id: String = "",
@@ -519,8 +499,6 @@ fun constraintsChecker(
                         1
                     )
                 )
-
-                println("RIDER $riderID COUNTER ${ridersThisWeek.first { it.id == riderID }.workingDays}")
             }
         }
 

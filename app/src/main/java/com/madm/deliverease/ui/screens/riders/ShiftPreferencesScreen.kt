@@ -85,7 +85,6 @@ fun ShiftPreferenceScreen(){
                     permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
                     nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
                     onComplete = { kind: Int, permanent: Boolean ->
-                        println("AFTER ON COMPLETE")
                         if(permanent) {
                             val tmpConstraint =
                                 permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) }
@@ -114,13 +113,6 @@ fun ShiftPreferenceScreen(){
                             }
                             else globalUser!!.nonPermanentConstraints.first { c -> c.constraintDate == selectedDateFormatted }.type = ReverseShiftOptionMap[kind]
                         }
-
-
-                        println("SELECTED YEAR $selectedYear")
-                        println("SELECTED MONTH $selectedMonth")
-                        println("SELECTED WEEK $selectedWeek")
-                        println("SELECTED DAY ${it.number}")
-                        println("SELECTED DATE FORMATTED $selectedDateFormatted")
                         globalUser!!.registerOrUpdate(context)
                     }
                 )
@@ -218,10 +210,6 @@ fun ShiftOptions(
 
     var actualOption = if(nonPermanentConstraint != null) nonPermanentPreferenceKind else permanentPreferenceKind
 
-    println("PERMANENT $permanentConstraint")
-    println("NON PERMANENT $nonPermanentConstraint")
-    println("ACTUAL $actualOption")
-
     var selectedOption by remember { mutableStateOf(radioOptions[actualOption]) }
 
     // TEST
@@ -290,7 +278,6 @@ fun ShiftOptions(
                     DefaultButton(text = stringResource(R.string.save_your_preference), modifier = Modifier
                         .clip(shape = CustomTheme.shapes.large)
                         .fillMaxWidth()) {
-                        println("BEFORE ON COMPLETE")
                         onComplete(
                             radioOptions.indexOf(selectedOption),
                             checkedState
