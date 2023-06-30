@@ -3,9 +3,9 @@ package com.madm.deliverease.ui.screens.admin
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Parcelable
-import androidx.compose.foundation.background
 import android.widget.Toast
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,29 +23,21 @@ import androidx.compose.ui.unit.dp
 import com.madm.common_libs.internal_storage_manager.deleteDraftDays
 import com.madm.common_libs.internal_storage_manager.retrieveDraftCalendar
 import com.madm.common_libs.internal_storage_manager.saveDraftCalendar
-import com.madm.common_libs.model.*
+import com.madm.common_libs.model.CalendarManager
+import com.madm.common_libs.model.Message
+import com.madm.common_libs.model.User
+import com.madm.common_libs.model.WorkDay
 import com.madm.deliverease.*
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.Shapes
-import com.madm.deliverease.ui.theme.mediumCardElevation
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.smallPadding
-import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 import java.util.*
-import java.util.Calendar
-import kotlin.collections.ArrayList
 
 
 @Parcelize

@@ -63,18 +63,6 @@ fun Int.integerToTwoDigit(): String {
 }
 
 
-fun getNumberOfWeeks(month: Int, year: Int): Int {
-    val yearMonth = YearMonth.of(year, month)
-    val weekFields = WeekFields.of(Locale.getDefault())
-    val firstOfMonth = yearMonth.atDay(1)
-    val firstWeekOfMonth = firstOfMonth[weekFields.weekOfWeekBasedYear()]
-    val lastOfMonth = yearMonth.atEndOfMonth()
-    val lastWeekOfMonth = lastOfMonth[weekFields.weekOfWeekBasedYear()]
-
-    return lastWeekOfMonth - firstWeekOfMonth + 1
-}
-
-
 fun getMondays(year: Int, month: Int): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
     val lastOfMonth = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth())
@@ -83,14 +71,7 @@ fun getMondays(year: Int, month: Int): List<Int> {
     var currentDate = firstOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
 
     while (currentDate.isBefore(lastOfMonth) || currentDate.isEqual(lastOfMonth)) {
-        /* if(afterCurrentDay && (currentDate > today)) {
-             mondays.add(currentDate.dayOfMonth)
-         } else if (!afterCurrentDay){
-
-         */
         mondays.add(currentDate.dayOfMonth)
-        //}
-
         currentDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
     }
 
@@ -138,8 +119,7 @@ fun getCurrentWeekOfMonth(): Int {
     val firstDayOfMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth())
     val firstMonday = firstDayOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
     val currentMonday = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-    val weekNumber = (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
-    return weekNumber
+    return (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
 }
 
 
@@ -235,24 +215,9 @@ fun WeekContent(
     content: @Composable (WeekDay) -> Unit,
     lastItem: @Composable () -> Unit = {},
 ) {
-    // list of all mondays (first day of week) of the selected month
-    val mondaysList =
-        getMondays(selectedYear, (selectedMonth % 12) + 1)
-            .toList()
-            .toIntArray()
-            .map { i -> i.integerToTwoDigit() }
-
     val days: List<WeekDay> = getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
-//    val days: List<WeekDay> = if (
-//        mondaysList.count() != getNumberOfWeeks( selectedMonth, selectedYear )
-//        && weekNumber !in 1..4
-//    )
-//        getWeekDays(selectedYear, selectedMonth + 1, weekNumber - 1)
-//    else getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
-
 
     println("SELECTED WEEK $weekNumber")
-
 
     val emptyScreen = isWeekBeforeCurrentWeek(selectedYear, selectedMonth + 1, weekNumber + 1)
 
@@ -333,24 +298,9 @@ fun WeeksList(selectedMonth: Int, selectedYear: Int, selectedWeek:Int, function:
             .map { i -> i.integerToTwoDigit() }
 
     // list of all days of the selected week
-    var daysList: List<WeekDay>
+    var daysList: List<WeekDay> = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
 
-    var selectedWeekString : String
-    // the selected week
-
-    // the problem is that the number of mondays is not the same as the number of weeks
-//    if (mondaysList.count() != getNumberOfWeeks(selectedMonth, selectedYear)
-//        && selectedWeek !in 1..4
-//    ) {
-//        selectedWeekString = mondaysList[selectedWeek - 2]
-//        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek - 1)
-//    } else {
-//        selectedWeekString = mondaysList[selectedWeek - 1]
-//        daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
-//    }
-
-    selectedWeekString = mondaysList[selectedWeek - 1]
-    daysList = getWeekDays(selectedYear, (selectedMonth % 12) + 1, selectedWeek)
+    var selectedWeekString : String = mondaysList[selectedWeek - 1]
 
     Row(
         modifier = Modifier

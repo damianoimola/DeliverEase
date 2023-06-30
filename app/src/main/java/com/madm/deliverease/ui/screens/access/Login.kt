@@ -25,12 +25,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.madm.common_libs.internal_storage_manager.deleteDraftDays
-import com.madm.common_libs.internal_storage_manager.retrieveDraftCalendar
-import com.madm.common_libs.internal_storage_manager.saveDraftCalendar
 import com.madm.common_libs.model.User
 import com.madm.common_libs.model.UserManager
-import com.madm.common_libs.model.WorkDay
 import com.madm.deliverease.*
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
@@ -40,7 +36,6 @@ import com.madm.deliverease.ui.widgets.LoginButton
 import com.madm.deliverease.ui.widgets.MyButton
 import com.madm.deliverease.ui.widgets.MyOutlinedTextField
 import com.madm.deliverease.ui.widgets.PizzaLoaderDialog
-import java.util.*
 
 
 @Composable
