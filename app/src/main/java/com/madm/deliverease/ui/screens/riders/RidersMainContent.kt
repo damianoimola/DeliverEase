@@ -86,7 +86,7 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                 // It can handle parameters.
                 AnimatedNavHost(
                     navController = navController,
-                    startDestination = "home",
+                    startDestination = context.getString(R.string.rider_home),
                     modifier = Modifier.padding(mediumPadding),
                     enterTransition = {
                         slideIntoContainer(
@@ -122,7 +122,7 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                         }
                         ShiftPreferenceScreen()
                     }
-                    composable(context.getString(R.string.setting)) {
+                    composable(context.getString(R.string.rider_settings)) {
                         CoroutineScope(Dispatchers.IO).launch {
                             if(selectedItem.position != 4)
                                 selectedItem = navItems[3]
