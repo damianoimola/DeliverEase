@@ -79,7 +79,7 @@
     <string name="haveATurn">You already have a turn</string>
     <string name="hired">hired</string>
     <string name="error_hiring_rider">Some error occurred</string>
-    <string name="request_sent">Request sent!</string>
+    <string name="request_sent">Request sent</string>
     <string name="request_cannot_be_sent">Request cannot be sent, please try later</string>
     <string name="modified">modified</string>
     <string name="rider_contraints_not_respected">Rider constraints not respected</string>
