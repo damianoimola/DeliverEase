@@ -352,8 +352,7 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
 }
 
 @Composable
-fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: Int, year: Int,  onDismiss: () -> Unit){
-
+fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: Int, year: Int,  onDismiss: () -> Unit) {
     val context = LocalContext.current
 
     Dialog(onDismissRequest = { onDismiss()},
@@ -481,7 +480,7 @@ fun ConstraintsDialog(
                     ) {
                         if(perWeekConstraint.isNotEmpty()) {
                             item { Text("Rider constraints not respected", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
-                            items(perWeekConstraint) {
+                            items(perWeekConstraint.sorted()) {
                                 Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
                             }
                         }
@@ -489,7 +488,7 @@ fun ConstraintsDialog(
 
                         if(perDayConstraint.isNotEmpty()) {
                             item { Text("Riders constraints not respected", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
-                            items(perDayConstraint) {
+                            items(perDayConstraint.sorted()) {
                                 Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
                             }
                         }
