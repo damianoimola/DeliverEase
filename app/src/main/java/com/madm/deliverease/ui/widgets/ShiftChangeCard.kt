@@ -3,6 +3,7 @@ package com.madm.deliverease.ui.widgets
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -192,16 +193,13 @@ fun ShimmerShiftChangeRequest() {
             Arrangement.End,
             Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = {},
-                enabled = false
-            ) {
-                Icon(
-                    ImageVector.vectorResource(id = R.drawable.accept),
-                    contentDescription = "accept",
-                    tint = CustomTheme.colors.primary
-                )
-            }
+            Box(
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(20.dp)
+                    .clip(CircleShape)
+                    .shimmerEffect()
+            )
         }
     }
 }

@@ -32,7 +32,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) {
+fun HireNewRiderDialog(
+    callbackFunction: (User) -> Unit,
+    onDismiss: () -> Unit,
+) {
     val context = LocalContext.current
     var riderName by rememberSaveable { mutableStateOf("") }
     var riderSurname by rememberSaveable { mutableStateOf("") }
@@ -44,6 +47,9 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
     var isEmailError by rememberSaveable { mutableStateOf(false) }
     var isPasswordError by rememberSaveable { mutableStateOf(false) }
 
+    val riderHired = stringResource(R.string.hired)
+    val messageErrorOccurred = stringResource(R.string.error_hiring_rider)
+    val messageErrorRiderExist = stringResource(R.string.email_already_exist)
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -62,7 +68,7 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 // DialogBox title
-                Row (modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(id = R.string.hire_new_rider),
                         style = CustomTheme.typography.h3
@@ -146,23 +152,27 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
                 )
 
                 // Buttons
-                Row (modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth()) {
 
-                    DefaultButton(text = stringResource(id = R.string.close), modifier = Modifier
-                        .weight(.5f)
-                        .padding(8.dp)) {
+                    DefaultButton(
+                        text = stringResource(id = R.string.close), modifier = Modifier
+                            .weight(.5f)
+                            .padding(8.dp)
+                    ) {
                         onDismiss()
                     }
 
-                    DefaultButton(text = stringResource(id = R.string.hire), modifier = Modifier
-                        .weight(.5f)
-                        .padding(8.dp) ) {
+                    DefaultButton(
+                        text = stringResource(id = R.string.hire), modifier = Modifier
+                            .weight(.5f)
+                            .padding(8.dp)
+                    ) {
                         isNameError = riderName.isEmpty()
                         isSurnameError = riderSurname.isEmpty()
                         isEmailError = riderEmail.isEmpty()
                         isPasswordError = riderPassword.isEmpty()
 
-                        if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
+                        if (!isNameError && !isSurnameError && !isEmailError && !isPasswordError && globalAllUsers.none { it.email == riderEmail }) {
                             val newUser = User(
                                 id = (globalAllUsers.maxOf { (it.id)!!.toInt() } + 1).toString(),
                                 name = riderName,
@@ -173,14 +183,21 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
                                 nonPermanentConstraints = ArrayList()
                             )
 
-                            newUser.registerOrUpdate(context)       // updating server info
+                            newUser.registerOrUpdate(context) // updating server info
                             onDismiss()
                             callbackFunction(newUser)
 
-                            Toast.makeText(context, "HIRED, HURRAY!!", Toast.LENGTH_SHORT).show()
-                        }
-                        else
-                            Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "$riderName $riderSurname $riderHired",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else
+                            if (!globalAllUsers.none { it.email == riderEmail })
+                                Toast.makeText(context, messageErrorRiderExist, Toast.LENGTH_SHORT)
+                                    .show()
+                            else Toast.makeText(context, messageErrorOccurred, Toast.LENGTH_SHORT)
+                                .show()
                     }
 
                 }
@@ -190,8 +207,13 @@ fun HireNewRiderDialog(callbackFunction: (User) -> Unit, onDismiss: () -> Unit) 
 }
 
 @Composable
-fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismiss: () -> Unit) {
+fun EditRiderDialog(
+    user: User,
+    callbackFunction: (User, User) -> Unit,
+    onDismiss: () -> Unit,
+) {
     val context = LocalContext.current
+
     var riderName by rememberSaveable { mutableStateOf(user.name!!) }
     var riderSurname by rememberSaveable { mutableStateOf(user.surname!!) }
     var riderEmail by rememberSaveable { mutableStateOf(user.email!!) }
@@ -202,6 +224,11 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
     var isEmailError by rememberSaveable { mutableStateOf(false) }
     var isPasswordError by rememberSaveable { mutableStateOf(false) }
 
+    val modifiedMessage = stringResource(R.string.modified)
+    //val errorMessageOccurred = stringResource(id = R.string.error_hiring_rider)
+
+    val messageErrorOccurred = stringResource(R.string.error_hiring_rider)
+    val messageErrorRiderExist = stringResource(R.string.email_already_exist)
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -220,7 +247,7 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 // DialogBox title
-                Row (modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = stringResource(R.string.edit_rider),
                         style = TextStyle(
@@ -254,7 +281,7 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                 TextField(
                     value = riderSurname,
                     onValueChange = { riderSurname = it },
-                    placeholder = { Text(text = stringResource(R.string.surname) +"*") },
+                    placeholder = { Text(text = stringResource(R.string.surname) + "*") },
                     modifier = Modifier.padding(smallPadding),
                     isError = isSurnameError,
                     textStyle = CustomTheme.typography.body1,
@@ -273,7 +300,7 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                 TextField(
                     value = riderEmail,
                     onValueChange = { riderEmail = it },
-                    placeholder = { Text(text = stringResource(R.string.username) +"*") },
+                    placeholder = { Text(text = stringResource(R.string.username) + "*") },
                     modifier = Modifier.padding(smallPadding),
                     isError = isEmailError,
                     textStyle = CustomTheme.typography.body1,
@@ -292,7 +319,7 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                 TextField(
                     value = riderPassword,
                     onValueChange = { riderPassword = it },
-                    placeholder = { Text(text = stringResource(id = R.string.password)+"*") },
+                    placeholder = { Text(text = stringResource(id = R.string.password) + "*") },
                     modifier = Modifier.padding(smallPadding),
                     isError = isPasswordError,
                     textStyle = CustomTheme.typography.body1,
@@ -309,22 +336,25 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                 )
 
                 // Buttons
-                Row (modifier = Modifier.fillMaxWidth()) {
-
-                    DefaultButton(text = stringResource(R.string.close), modifier = Modifier
-                        .weight(.5f)
-                        .padding(8.dp) ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    DefaultButton(
+                        text = stringResource(R.string.close), modifier = Modifier
+                            .weight(.5f)
+                            .padding(8.dp)
+                    ) {
                         onDismiss()
                     }
-                    DefaultButton(text = stringResource(R.string.save), modifier = Modifier
-                        .weight(.5f)
-                        .padding(8.dp)) {
+                    DefaultButton(
+                        text = stringResource(R.string.save), modifier = Modifier
+                            .weight(.5f)
+                            .padding(8.dp)
+                    ) {
                         isNameError = riderName.isEmpty()
                         isSurnameError = riderSurname.isEmpty()
                         isEmailError = riderEmail.isEmpty()
                         isPasswordError = riderPassword.isEmpty()
 
-                        if(!isNameError && !isSurnameError && !isEmailError && !isPasswordError){
+                        if (!isNameError && !isSurnameError && !isEmailError && !isPasswordError && (globalAllUsers.none { it.email == riderEmail } || riderEmail == user.email)) {
                             val newUser = User(
                                 id = user.id,
                                 name = riderName,
@@ -339,10 +369,17 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
                             onDismiss()
                             callbackFunction(user, newUser)
 
-                            Toast.makeText(context, "MODIFIED, HURRAY!!", Toast.LENGTH_SHORT).show()
-                        }
-                        else
-                            Toast.makeText(context, "SOME ERRORS OCCURRED", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "$riderName $riderSurname $modifiedMessage",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else
+                            if (!globalAllUsers.none { it.email == riderEmail })
+                                Toast.makeText(context, messageErrorRiderExist, Toast.LENGTH_SHORT)
+                                    .show()
+                            else Toast.makeText(context, messageErrorOccurred, Toast.LENGTH_SHORT)
+                                .show()
                     }
 
                 }
@@ -352,28 +389,36 @@ fun EditRiderDialog(user: User, callbackFunction: (User, User) -> Unit, onDismis
 }
 
 @Composable
-fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: Int, year: Int,  onDismiss: () -> Unit){
-
+fun ChangeShiftDialog(dayOfTheWeek: String, previousWeekDay: String, month: Int, year: Int, onDismiss: () -> Unit) {
     val context = LocalContext.current
 
-    Dialog(onDismissRequest = { onDismiss()},
+    val requestSent = stringResource(R.string.request_sent)
+    val requestCannotBeSent = stringResource(R.string.request_cannot_be_sent)
+
+    Dialog(
+        onDismissRequest = { onDismiss() },
         properties = DialogProperties(
             dismissOnBackPress = true,
             dismissOnClickOutside = true
-        )) {
-        Surface(modifier = Modifier
-            .wrapContentWidth()
-            .wrapContentHeight(),
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .wrapContentWidth()
+                .wrapContentHeight(),
             shape = CustomTheme.shapes.large,
             color = CustomTheme.colors.background,
-            contentColor = CustomTheme.colors.onBackground) {
-            Column(modifier = Modifier
-                .padding(20.dp)
-                .width(400.dp)
-                .wrapContentHeight(),
-            verticalArrangement = Arrangement.spacedBy(25.dp)) {
+            contentColor = CustomTheme.colors.onBackground
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .width(400.dp)
+                    .wrapContentHeight(),
+                verticalArrangement = Arrangement.spacedBy(25.dp)
+            ) {
 
-                Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek?.name+" ?",
+                Text(stringResource(id = R.string.confirmation_change)+" "+dayOfTheWeek+" ?",
                     style = TextStyle(
                         fontFamily = gilroy,
                         fontWeight = FontWeight.Normal,
@@ -386,16 +431,23 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                     modifier = Modifier.width(400.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    DefaultButton(text = stringResource(id = R.string.cancel), modifier = Modifier) {
+                    DefaultButton(
+                        text = stringResource(id = R.string.cancel),
+                        modifier = Modifier
+                    ) {
                         onDismiss()
                     }
 
-                    DefaultButton(text = stringResource(id = R.string._continue), modifier =Modifier ) {
+                    DefaultButton(
+                        text = stringResource(id = R.string._continue),
+                        modifier = Modifier
+                    ) {
                         // declaration of the message
                         val msg = Message(
                             senderID = globalUser!!.id,
                             receiverID = "0",
-                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
+//                            body = "${previousWeekDay?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-$year#${dayOfTheWeek?.number?.integerToTwoDigit()}-${((month+1)%12).integerToTwoDigit()}-${year}",
+                            body = "$previousWeekDay#$dayOfTheWeek",
                             type = Message.MessageType.REQUEST.displayName
                         )
 
@@ -406,7 +458,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                                 CoroutineScope(Dispatchers.Main).launch {
                                     Toast.makeText(
                                         context,
-                                        "Request sent!",
+                                        requestSent,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -414,7 +466,7 @@ fun ChangeShiftDialog(dayOfTheWeek: WeekDay?, previousWeekDay: WeekDay?, month: 
                                 CoroutineScope(Dispatchers.Main).launch {
                                     Toast.makeText(
                                         context,
-                                        "Request cannot be sent, please try later",
+                                        requestCannotBeSent,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -436,7 +488,7 @@ fun ConstraintsDialog(
     perDayConstraint: List<String> = listOf(),
     emptyDaysConstraint: List<String> = listOf(),
     onContinue: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -453,7 +505,6 @@ fun ConstraintsDialog(
             modifier = Modifier
                 .wrapContentWidth()
         ) {
-            println("############### EDC $emptyDaysConstraint")
             Column(
                 modifier = Modifier.padding(smallPadding, nonePadding),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -472,40 +523,68 @@ fun ConstraintsDialog(
                     )
                 }
 
-                if(perWeekConstraint.isNotEmpty() || perDayConstraint.isNotEmpty())
+                if (perWeekConstraint.isNotEmpty() || perDayConstraint.isNotEmpty())
                     LazyColumn(
                         Modifier
                             .height(200.dp)
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if(perWeekConstraint.isNotEmpty()) {
-                            item { Text("Rider constraints not respected", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
-                            items(perWeekConstraint) {
-                                Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
+                        if (perWeekConstraint.isNotEmpty()) {
+                            item {
+                                Text(
+                                    stringResource(R.string.rider_contraints_not_respected),
+                                    style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)
+                                )
+                            }
+                            items(perWeekConstraint.sorted()) {
+                                Text(
+                                    it,
+                                    style = CustomTheme.typography.body1
+                                )//, color = CustomTheme.colors.onSurface)
                             }
                         }
 
 
-                        if(perDayConstraint.isNotEmpty()) {
-                            item { Text("Riders constraints not respected", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
-                            items(perDayConstraint) {
-                                Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
+                        if (perDayConstraint.isNotEmpty()) {
+                            item {
+                                Text(
+                                    stringResource(R.string.rider_contraints_not_respected),
+                                    style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)
+                                )
+                            }
+                            items(perDayConstraint.sorted()) {
+                                Text(
+                                    it,
+                                    style = CustomTheme.typography.body1
+                                )//, color = CustomTheme.colors.onSurface)
                             }
                         }
                     }
-                else if(emptyDaysConstraint.isNotEmpty())
+                else if (emptyDaysConstraint.isNotEmpty())
                     LazyColumn(
                         Modifier
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        println("############### ECCOLO QUA")
-                        item { Text("Days without riders", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
-                        items(emptyDaysConstraint) {
-                            Text(it, style = CustomTheme.typography.body1)//, color = CustomTheme.colors.onSurface)
+                        item {
+                            Text(
+                                stringResource(R.string.days_without_riders),
+                                style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)
+                            )
                         }
-                        item { Text("Are you sure to continue?", style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)) }
+                        items(emptyDaysConstraint) {
+                            Text(
+                                it,
+                                style = CustomTheme.typography.body1
+                            )
+                        }
+                        item {
+                            Text(
+                                stringResource(R.string.are_you_sure_to_continue),
+                                style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)
+                            )
+                        }
                     }
 
                 Row(
@@ -514,8 +593,14 @@ fun ConstraintsDialog(
                         .padding(20.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    DefaultButton(text = "Cancel", modifier = Modifier) { onDismiss() }
-                    DefaultButton(text = "Accept", modifier = Modifier) { onContinue() }
+                    DefaultButton(
+                        text = stringResource(R.string.cancel),
+                        modifier = Modifier
+                    ) { onDismiss() }
+                    DefaultButton(
+                        text = stringResource(R.string.accept),
+                        modifier = Modifier
+                    ) { onContinue() }
                 }
             }
         }
