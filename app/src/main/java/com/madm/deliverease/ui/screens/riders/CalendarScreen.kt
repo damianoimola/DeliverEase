@@ -35,13 +35,13 @@ import java.util.Calendar
 @Preview
 @Composable
 fun CalendarScreen() {
-    println("CALENDAR")
     val configuration = LocalConfiguration.current
 
     var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
     var currentMonth = Calendar.getInstance()[Calendar.MONTH]
     var currentYear = Calendar.getInstance()[Calendar.YEAR]
     var nextMonth = false
+    var nextYear = false
 
     //getCurrentWeekOfMonth ritorna 11 se la settimana successiva ricade nel prossimo mese
     if(selectedWeek == 11)  nextMonth = true
@@ -51,13 +51,13 @@ fun CalendarScreen() {
         currentMonth = getNextMonth()
     }
 
-    if(nextMonth && currentMonth == Calendar.getInstance()[Calendar.JANUARY]){
-        currentYear = Calendar.getInstance()[Calendar.YEAR+1]
+    if(nextMonth && currentMonth == 0){
+        nextYear = true
+        currentYear = getNextYear()
     }
 
-    println("CURRENT  CALENDAR"+selectedWeek+"  "+currentMonth+"    "+currentYear)
-    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
-    var selectedMonth by remember { mutableStateOf(months[2]) }
+    val months = (currentMonth ..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
     //list of previous change requests done by user
@@ -121,7 +121,7 @@ fun CalendarScreen() {
 
         Column {
             //month selector
-            MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+            MonthSelector(months, selectedMonth, currentYear, nextYear) { month: Int, isNextYear: Boolean ->
                 selectedYear = if (isNextYear)
                     currentYear + 1
                 else currentYear
@@ -135,11 +135,23 @@ fun CalendarScreen() {
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
                 // create a date from selected day
-                val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                    LocalDate.of(selectedYear, (selectedMonth + 2) % 12, weekDay.number)
+                val selectedDate: LocalDate? = localDateFormat(weekDay, selectedWeek, selectedMonth)
+                    /*if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
+                    LocalDate.of(selectedYear, selectedMonth + 2, weekDay.number)
+                else if(weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1 && weekDay.month ==11)
+                    LocalDate.of(selectedYear+1, 1, weekDay.number)
+                else if(weekDay.month == 11)
+                    LocalDate.of(selectedYear, 1, weekDay.number)
                 else
                     LocalDate.of(selectedYear, (selectedMonth + 1) % 12, weekDay.number)
 
+                val year
+
+                if()
+
+                LocalDate.of(year, month, weekNumber)*/
+
+                println("SELECTED DATE  "+selectedDate)
                 ShiftRow(
                     shiftList.any {
                         // converting API date
@@ -177,7 +189,8 @@ fun CalendarScreen() {
                 MonthSelector(
                     months,
                     selectedMonth,
-                    currentYear
+                    currentYear,
+                    nextYear
                 ) { month: Int, isNextYear: Boolean ->
                     selectedYear = if (isNextYear)
                         currentYear + 1
@@ -196,10 +209,7 @@ fun CalendarScreen() {
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
                 // create a date from selected day
-                val selectedDate: LocalDate? = if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                    LocalDate.of(selectedYear, (selectedMonth + 2) % 11, weekDay.number)
-                else
-                    LocalDate.of(selectedYear, (selectedMonth + 1) % 11, weekDay.number)
+                val selectedDate: LocalDate? = localDateFormat(weekDay, selectedWeek, selectedMonth)
 
                 ShiftRow(
                     shiftList.any {

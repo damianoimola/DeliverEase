@@ -21,7 +21,6 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
-import java.time.temporal.WeekFields
 import java.util.*
 
 
@@ -87,16 +86,16 @@ fun isWeekBeforeCurrentWeek(
     if(currentWeek == 11) nextMonth = true
 
     if(nextMonth){
-        currentWeek = 1
+        currentWeek = 2
         currentMonth = getNextMonth()+1
+    }else{
+        currentWeek += 1
     }
 
     if(nextMonth && currentMonth == Calendar.getInstance()[Calendar.JANUARY]){
-        currentYear = Calendar.getInstance()[Calendar.YEAR+1]
+        currentYear = getNextYear()
     }
 
-    println("CURRENT  "+currentWeek+"  "+currentMonth+"    "+currentYear)
-    println("SELECTED  "+selectedWeekOfMonth+"  "+selectedMonth+"    "+selectedYear)
 
     return (selectedYear < currentYear) || (selectedYear == currentYear && selectedMonth < currentMonth) || (selectedYear == currentYear && selectedMonth == currentMonth && selectedWeekOfMonth < currentWeek)
 }
@@ -130,7 +129,8 @@ fun getCurrentWeekOfMonth(): Int {
     val firstDayOfMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth())
     val firstMonday = firstDayOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
     val currentMonday = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-    if(currentMonday.month > firstMonday.month){
+    if((currentMonday.month > firstMonday.month && currentMonday.year == firstMonday.year)
+        ||  currentMonday.year > firstMonday.year){
         return 11
     }else {
         return (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
@@ -142,13 +142,24 @@ fun getNextMonth(): Int{
     val month: Int
 
     if (calendar[Calendar.MONTH] == Calendar.DECEMBER) {
-        month =  calendar[Calendar.JANUARY]
+        month =  0
     } else {
-        calendar.roll(Calendar.MONTH, true);
+        calendar.roll(Calendar.MONTH, true)
         month =  calendar[(Calendar.MONTH)]
     }
 
     return month
+}
+
+fun getNextYear(): Int{
+    val calendar = Calendar.getInstance()
+    val year: Int
+
+    calendar.roll(Calendar.YEAR, true)
+    year=  calendar[(Calendar.YEAR)]
+
+
+    return year
 }
 
 
@@ -159,6 +170,7 @@ fun MonthSelector(
     months: IntArray,
     selectedMonth: Int,
     currentYear: Int,
+    nextYear: Boolean,
     function: (Int, Boolean) -> Unit
 ){
     val monthMap = mapOf(
@@ -176,7 +188,7 @@ fun MonthSelector(
         11 to stringResource(R.string.december)
     )
     var expanded by remember { mutableStateOf(false) }
-    var isNextYearSelected by remember { mutableStateOf(false) }
+    var isNextYearSelected by remember { mutableStateOf(nextYear) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,

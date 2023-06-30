@@ -49,12 +49,11 @@ fun getDayOfWeekNumber(month: Int, year: Int, day: Int): Int {
 
 @Composable
 fun ShiftPreferenceScreen(){
-    println("PREFERENCES")
     val configuration = LocalConfiguration.current
     var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
     var currentMonth = Calendar.getInstance()[Calendar.MONTH]
     var currentYear = Calendar.getInstance()[Calendar.YEAR]
-
+    var nextYear = false
     var nextMonth = false
 
     //getCurrentWeekOfMonth ritorna 11 se la settimana successiva ricade nel prossimo mese
@@ -65,13 +64,14 @@ fun ShiftPreferenceScreen(){
         currentMonth = getNextMonth()
     }
 
-    if(nextMonth && currentMonth == Calendar.getInstance()[Calendar.JANUARY]){
-        currentYear = Calendar.getInstance()[Calendar.YEAR+1]
+    if(nextMonth && currentMonth == 0){
+        nextYear = true
+        currentYear = getNextYear()
     }
 
 
-    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
-    var selectedMonth by remember { mutableStateOf(months[2]) }
+    val months = (currentMonth ..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
     val permanentConstraints = globalUser!!.permanentConstraints.sortedByDescending { x -> x.dayOfWeek }
@@ -82,7 +82,7 @@ fun ShiftPreferenceScreen(){
 
     if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
         Column {
-            MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+            MonthSelector(months, selectedMonth, currentYear, nextYear) { month: Int, isNextYear: Boolean ->
                 selectedYear = if (isNextYear)
                     currentYear + 1
                 else currentYear
@@ -92,11 +92,13 @@ fun ShiftPreferenceScreen(){
             WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int -> selectedWeek = weekNumber }
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
+                val selectedDateFormatted = Date.from(localDateFormat(it, selectedWeek, selectedMonth).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                /*
                 val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
                 else
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
-
+*/
                 ShiftOptions(
                     permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
                     nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
@@ -137,7 +139,7 @@ fun ShiftPreferenceScreen(){
     } else {
         Row(modifier = Modifier.fillMaxSize()) {
             Column (modifier = Modifier.width(IntrinsicSize.Min)) {
-                MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+                MonthSelector(months, selectedMonth, currentYear, nextYear) { month: Int, isNextYear: Boolean ->
                     selectedYear = if (isNextYear)
                         currentYear + 1
                     else currentYear
@@ -150,10 +152,7 @@ fun ShiftPreferenceScreen(){
 
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
-                val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
-                    Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
-                else
-                    Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                val selectedDateFormatted = Date.from(localDateFormat(it, selectedWeek, selectedMonth).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
 
                 ShiftOptions(

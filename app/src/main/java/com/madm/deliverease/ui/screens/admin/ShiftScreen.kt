@@ -60,6 +60,7 @@ fun ShiftsScreen() {
     var currentMonth = Calendar.getInstance()[Calendar.MONTH]
     var currentYear = Calendar.getInstance()[Calendar.YEAR]
     var nextMonth = false
+    var nextYear = false
 
     //getCurrentWeekOfMonth ritorna 11 se la settimana successiva ricade nel prossimo mese
     if(selectedWeek == 11)  nextMonth = true
@@ -69,12 +70,13 @@ fun ShiftsScreen() {
         currentMonth = getNextMonth()
     }
 
-    if(nextMonth && currentMonth == Calendar.getInstance()[Calendar.JANUARY]){
-        currentYear = Calendar.getInstance()[Calendar.YEAR+1]
+    if(nextMonth && currentMonth == 0){
+        nextYear = true
+        currentYear = getNextYear()
     }
 
-    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
-    var selectedMonth by remember { mutableStateOf(months[2]) }
+    val months = (currentMonth ..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
 
@@ -148,7 +150,7 @@ fun ShiftsScreen() {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.Start
         ) {
-            MonthSelector(months, selectedMonth, currentYear) { month: Int, isNextYear: Boolean ->
+            MonthSelector(months, selectedMonth, currentYear, nextYear) { month: Int, isNextYear: Boolean ->
                 selectedYear = if (isNextYear)
                     currentYear + 1
                 else currentYear
@@ -212,7 +214,8 @@ fun ShiftsScreen() {
                 MonthSelector(
                     months,
                     selectedMonth,
-                    currentYear
+                    currentYear,
+                    nextYear
                 ) { month: Int, isNextYear: Boolean ->
                     selectedYear = if (isNextYear)
                         currentYear + 1
