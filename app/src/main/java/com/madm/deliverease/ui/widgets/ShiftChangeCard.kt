@@ -76,8 +76,7 @@ fun ShiftChangeCard(
                                 if(isLoading)
                                     ShimmerShiftChangeRequest()
                                 else {
-                                    shift as Message
-                                    ShiftChangeRequest(shift) {
+                                    ShiftChangeRequest(shift as Message) {
                                         Message(
                                             senderID = globalUser!!.id,
                                             receiverID = shift.senderID,
