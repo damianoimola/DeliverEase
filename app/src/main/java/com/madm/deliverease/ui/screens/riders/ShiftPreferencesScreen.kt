@@ -65,7 +65,6 @@ fun ShiftPreferenceScreen(){
     }
 
     if(nextMonth && currentMonth == 0){
-        nextYear = true
         currentYear = getNextYear()
     }
 
@@ -92,7 +91,7 @@ fun ShiftPreferenceScreen(){
             WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int -> selectedWeek = weekNumber }
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
-                val selectedDateFormatted = Date.from(localDateFormat(it, selectedWeek, selectedMonth).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                val selectedDateFormatted = Date.from(localDateFormat(it, selectedWeek, selectedYear).atStartOfDay(ZoneId.systemDefault()).toInstant())
                 /*
                 val selectedDateFormatted = if (it.number < 7 && (selectedWeek != 0 && selectedWeek != 1))
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+2)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
@@ -152,7 +151,7 @@ fun ShiftPreferenceScreen(){
 
             WeekContent(selectedWeek, selectedMonth, selectedYear, {
                 // retrieve the selected date in a full format
-                val selectedDateFormatted = Date.from(localDateFormat(it, selectedWeek, selectedMonth).atStartOfDay(ZoneId.systemDefault()).toInstant())
+                val selectedDateFormatted = Date.from(localDateFormat(it, selectedWeek, selectedYear).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
 
                 ShiftOptions(
