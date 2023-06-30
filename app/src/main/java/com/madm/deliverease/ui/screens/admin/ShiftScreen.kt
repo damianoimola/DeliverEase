@@ -1,5 +1,6 @@
 package com.madm.deliverease.ui.screens.admin
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Parcelable
@@ -46,29 +47,27 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
     var isChecked: Boolean by mutableStateOf(isAllocated)
 }
 
-
-
+/**
+ * Displays the admin screen to manage the shift assignments
+ */
+@SuppressLint("MutableCollectionMutableState")
 @Preview
 @Composable
 fun ShiftsScreen() {
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
 
-    val defaultMessage: String = stringResource(R.string.default_message_send_shift)
-    val context = LocalContext.current
-    var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
     val currentMonth = Calendar.getInstance()[Calendar.MONTH]
+    // List of months: it contains from 2 months ago until 2 months in the future, and these are the
+    // months when the admin could manage shifts
+    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
     val currentYear = Calendar.getInstance()[Calendar.YEAR]
 
-    val months = ((currentMonth - 2)..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    // By default is the current week, otherwise is the one selected by the user
+    var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
+    // By default is the third month in the months list because that is the current one
     var selectedMonth by remember { mutableStateOf(months[2]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
-
-
-    var showDialog by rememberSaveable { mutableStateOf(false) }
-    var perWeekConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
-    var perDayConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
-    var emptyDaysConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
-
 
     // retrieving all working days in server
     var workingDays: List<WorkDay> by rememberSaveable { mutableStateOf(listOf()) }
@@ -76,16 +75,20 @@ fun ShiftsScreen() {
     val updatedWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
     // EVERY working day both server and newly added
     var weekWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
-
-
-
     // handling drafted working days
     val draftedWorkingDays: List<WorkDay> = retrieveDraftCalendar(context) ?: listOf()
+
     val thisWeekDays = getWeekDatesInFormat(selectedYear, selectedMonth + 1, selectedWeek + 1)
     val thisWeekDrafted = draftedWorkingDays.any { it.date in thisWeekDays }
     val thisWeekPublicized = workingDays.any { it.date in thisWeekDays }
     var updated by rememberSaveable { mutableStateOf(false) }
 
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var perWeekConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
+    var perDayConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
+    var emptyDaysConstraint: List<String> by rememberSaveable { mutableStateOf(listOf()) }
+
+    val defaultMessage: String = stringResource(R.string.default_message_send_shift)
 
     // if the selected week has not been publicized
     // and there is a draft about this week, take it
@@ -97,6 +100,8 @@ fun ShiftsScreen() {
 
     val calendarManager = CalendarManager(context)
 
+    // If the sending working day confirm dialog is not showing and the weekWorkingDays are empty
+    // it means that it has been emptied and the working days have to be stored in the server
     if (!showDialog && weekWorkingDays.isEmpty()) {
         calendarManager.getDays { days ->
             runBlocking { delay(500) }
@@ -104,7 +109,9 @@ fun ShiftsScreen() {
             workingDays = days
             weekWorkingDays = ArrayList(days)
         }
-    } else if (showDialog && weekWorkingDays.isNotEmpty()) {
+    }
+    // if dialog has to be shown, it doesn't do it if there aren't new working day to update
+    else if (showDialog && weekWorkingDays.isNotEmpty()) {
         val toastMessage = stringResource(R.string.shift_not_changed)
         ConstraintsDialog(
             title = stringResource(R.string.constraints_not_respected),
@@ -258,6 +265,7 @@ fun ShiftsScreen() {
     }
 }
 
+
 @Composable
 private fun ShiftItem(
     weekDay: WeekDay,
@@ -269,37 +277,25 @@ private fun ShiftItem(
     workingDays: List<WorkDay>
 ) {
     // retrieve the selected date in a full format
-    val selectedDateFormatted =
-        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-            Date.from(
-                LocalDate.of(
-                    selectedYear,
-                    (selectedMonth + 2) % 12,
-                    weekDay.number
-                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-            )
-        else
-            Date.from(
-                LocalDate.of(
-                    selectedYear,
-                    (selectedMonth + 1) % 12,
-                    weekDay.number
-                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-            )
+    val selectedDateFormatted = Date.from(
+        LocalDate.of(
+            selectedYear,
+            (selectedMonth + if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1) 2 else 1) % 12,
+            weekDay.number
+        ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+    )
 
     // filter all users that are available
     val availableRidersList: List<User> = globalAllUsers.filter { user ->
         val permanent = user.permanentConstraints.firstOrNull {
-            it.dayOfWeek == selectedDateFormatted.toInstant()
+            val dayOfTheWeek = selectedDateFormatted.toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                    &&
-                    it.type!!.lowercase() != "open"
+
+            it.dayOfWeek == dayOfTheWeek && it.type!!.lowercase() != "open"
         } == null
 
         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
-            it.constraintDate == selectedDateFormatted
-                    &&
-                    it.type!!.lowercase() != "open"
+            it.constraintDate == selectedDateFormatted && it.type!!.lowercase() != "open"
         } == null
 
         permanent && nonPermanent && user.id != "0"
@@ -307,10 +303,10 @@ private fun ShiftItem(
 
     val ifNeededRidersList: List<User> = globalAllUsers.filter { user ->
         val permanent = user.permanentConstraints.firstOrNull {
-            it.dayOfWeek == selectedDateFormatted.toInstant()
+            val dayOfTheWeek = selectedDateFormatted.toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate().dayOfWeek.value
-                    &&
-                    it.type == "light"
+
+            it.dayOfWeek == dayOfTheWeek && it.type == "light"
         } != null
 
         val nonPermanent = user.nonPermanentConstraints.firstOrNull {
