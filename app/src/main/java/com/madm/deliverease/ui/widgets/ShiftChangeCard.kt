@@ -24,6 +24,14 @@ import com.madm.deliverease.globalAllUsers
 import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 
+/**
+ * Card containing the requests of shift changes
+ * @param shiftsList list of shift changes filtered for the user
+ * @param modifier card base modifier
+ * @param updateList lambda to remove the shift change from the list
+ * @param isPortrait checks the orientation of the device
+ * @param isLoading manages the placeholder when data isn't still loaded
+ */
 @Composable
 fun ShiftChangeCard(
     shiftsList: List<Message>,
@@ -65,14 +73,14 @@ fun ShiftChangeCard(
             LazyColumn(
                 content = {
                     items(if(isLoading) listOf(1,2,3,4) else shiftsList) {shift ->
-                        val isVisibile = remember { mutableStateOf(true) }
+                        val isVisible = remember { mutableStateOf(true) }
                         Card(
                             Modifier.padding(nonePadding, smallPadding),
                             backgroundColor = CustomTheme.colors.surface,
                             contentColor = CustomTheme.colors.onSurface,
                             elevation = extraSmallCardElevation
                         ) {
-                            if (isVisibile.value) {
+                            if (isVisible.value) {
                                 if(isLoading)
                                     ShimmerShiftChangeRequest()
                                 else {
@@ -84,7 +92,7 @@ fun ShiftChangeCard(
                                             body = shift.id,
                                             type = Message.MessageType.ACCEPTANCE.displayName
                                         ).send(context) { if (it) updateList(shift) }
-                                        isVisibile.value = false
+                                        isVisible.value = false
                                     }
                                 }
                             }
@@ -96,6 +104,11 @@ fun ShiftChangeCard(
     }
 }
 
+/**
+ * Element of the shift change card in the rider home page
+ * @param shiftRequest message of shift request
+ * @param onAccept lambda to run when shift change is accepted
+ */
 @Composable
 fun ShiftChangeRequest(
     shiftRequest: Message,
@@ -146,6 +159,9 @@ fun ShiftChangeRequest(
     }
 }
 
+/**
+ * Placeholder effect when data is still not loaded
+ */
 @Composable
 fun ShimmerShiftChangeRequest() {
     Row(

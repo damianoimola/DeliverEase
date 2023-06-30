@@ -43,6 +43,11 @@ import com.madm.deliverease.ui.widgets.PizzaLoaderDialog
 import java.util.*
 
 
+/**
+ * The screen appearing at the start of application to allow user to log in
+ * @param goToAdminHome lambda to login as an admin and go to their homepage
+ * @param goToRiderHome lambda to login as a rider and go to their homepage
+ */
 @Composable
 fun LoginScreen(
     goToRiderHome: () -> Unit,
@@ -50,7 +55,6 @@ fun LoginScreen(
 ){
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-
 
     Column(
         modifier = Modifier
@@ -73,7 +77,7 @@ fun LoginScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
+            Icon( // deliverease icon
                 imageVector = ImageVector.vectorResource(id = R.drawable.deliverease_icon),
                 contentDescription = "logo",
                 modifier = Modifier
@@ -81,7 +85,7 @@ fun LoginScreen(
                     .size(70.dp),
                 tint = CustomTheme.colors.onBackground
             )
-            Text(
+            Text( // deliverease title
                 text = "DeliverEase",
                 style = CustomTheme.typography.h1,
                 color = CustomTheme.colors.onBackground
@@ -100,19 +104,25 @@ fun LoginScreen(
     }
 }
 
+/**
+ * To login via email and password
+ * @param goToAdminHome lambda to login as an admin and go to their homepage
+ * @param goToRiderHome lambda to login as a rider and go to their homepage
+ */
 @Composable
 fun ClassicLogin(
     goToRiderHome: () -> Unit,
     goToAdminHome: () -> Unit
 ) {
-    val isPlaying = rememberSaveable { mutableStateOf (false) }
-    val username = rememberSaveable { mutableStateOf("") }
-    val password = rememberSaveable { mutableStateOf("") }
-    var isError by rememberSaveable { mutableStateOf(false) }
+    val isPlaying = rememberSaveable { mutableStateOf (false) } // to manage pizza loader
+    val username = rememberSaveable { mutableStateOf("") } // username of the user
+    val password = rememberSaveable { mutableStateOf("") } // password of the user
+    var isError by rememberSaveable { mutableStateOf(false) } // to show if login went wrong
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val user: MutableState<User?> = rememberSaveable { mutableStateOf(null) }
 
+    // when reconstructing the Classic login if the user is set goes to their homepage
     if(user.value != null){
         globalUser = user.value
         when (globalUser!!.id) {
@@ -121,19 +131,21 @@ fun ClassicLogin(
         }
     }
 
+    // if a user has previously logged in without logging out, they will access their profile directly
     directAccess(context, user, focusManager, isPlaying)
 
+    // shows the pizza loader during the log in process
     if (isPlaying.value && !(isError)) {
         PizzaLoaderDialog(isPlaying = isPlaying)
     }
 
     Column(Modifier.padding(mediumPadding), horizontalAlignment = Alignment.CenterHorizontally) {
-        MyOutlinedTextField(
+        MyOutlinedTextField( // to insert the username
             field = username,
             isError = isError,
             label = stringResource(R.string.username),
             onDone = { focusManager.clearFocus() })
-        MyOutlinedTextField(
+        MyOutlinedTextField( // to insert the password
             field = password,
             isError = isError,
             label = stringResource(R.string.password),
@@ -155,7 +167,7 @@ fun ClassicLogin(
             )
         }
 
-        LoginButton(
+        LoginButton( // to run the login
             username = username,
             password = password,
             onClick = {
@@ -181,7 +193,9 @@ fun ClassicLogin(
     }
 }
 
-
+/**
+ * To login with google or via apple
+ */
 @Preview
 @Composable
 fun ThirdPartyLogin(){
@@ -199,6 +213,13 @@ fun ThirdPartyLogin(){
     }
 }
 
+/**
+ * Automatically logs in the user saved in the shared preferences
+ * @param context the context of the application
+ * @param user the user to log in
+ * @param focusManager the focusManager for clearing the focus
+ * @param isPlaying to manage the pizza loader
+ */
 fun directAccess(
     context: Context,
     user: MutableState<User?>,
@@ -225,6 +246,11 @@ fun directAccess(
     }
 }
 
+/**
+ * Remembers the email and password of the user to allow login to be automatic the next time
+ * @param context the context of the application
+ * @param user the user whose email and password want to be saved
+ */
 fun saveAccess(
     context: Context,
     user: User?

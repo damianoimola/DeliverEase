@@ -33,8 +33,18 @@ import java.util.*
 @Parcelize
 data class WeekDay(val number: Int, val month: Int, val name: String) : Parcelable
 
+/**
+ * Returns a list of the week days for a specific week in the specified year and month.
+ *
+ * @param year The year.
+ * @param month The month (1-12).
+ * @param week The week number (1 and onwards).
+ * @return A list of [WeekDay] objects representing the week days for the specified week in the specified year and month.
+ */
 fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
     val firstDayOfMonth = LocalDate.of(year, month, 1)
+
+    // Get the first day of the specified week in the specified month and year
     val firstDayOfWeek = firstDayOfMonth.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY))
         .plusWeeks(week.toLong() - 1)
 
@@ -74,7 +84,13 @@ fun getNumberOfWeeks(month: Int, year: Int): Int {
     return lastWeekOfMonth - firstWeekOfMonth + 1
 }
 
-
+/**
+ * Returns a list of all the Mondays in the specified year and month.
+ *
+ * @param year The year.
+ * @param month The month (1-12).
+ * @return A list of integers representing the day of the month for all the Mondays in the specified year and month.
+ */
 fun getMondays(year: Int, month: Int): List<Int> {
     val firstOfMonth = LocalDate.of(year, month, 1)
     val lastOfMonth = LocalDate.of(year, month, 1).with(TemporalAdjusters.lastDayOfMonth())
@@ -97,6 +113,14 @@ fun getMondays(year: Int, month: Int): List<Int> {
     return mondays
 }
 
+/**
+ * Checks if the selected week is before the current week.
+ *
+ * @param selectedYear The year of the selected week.
+ * @param selectedMonth The month of the selected week (1-12).
+ * @param selectedWeekOfMonth The week of the month of the selected week.
+ * @return `true` if the selected week is before the current week, `false` otherwise.
+ */
 fun isWeekBeforeCurrentWeek(
     selectedYear: Int,
     selectedMonth: Int,
@@ -109,8 +133,14 @@ fun isWeekBeforeCurrentWeek(
     return (selectedYear < currentYear) || (selectedYear == currentYear && selectedMonth < currentMonth) || (selectedYear == currentYear && selectedMonth == currentMonth && selectedWeekOfMonth < currentWeek)
 }
 
-
-
+/**
+ * Returns a list of week dates in the specified format for a given year, month, and week of the month.
+ *
+ * @param year The year.
+ * @param month The month (1-12).
+ * @param weekOfMonth The week number of the month (1 and onwards).
+ * @return A list of strings representing the week dates in the specified format.
+ */
 fun getWeekDatesInFormat(
     year: Int,
     month: Int,
@@ -132,18 +162,27 @@ fun getWeekDatesInFormat(
     return dates
 }
 
-
+/**
+ * Returns the current week number of the month.
+ *
+ * @return The week number of the month (1 and onwards).
+ */
 fun getCurrentWeekOfMonth(): Int {
     val currentDate = LocalDate.now()
     val firstDayOfMonth = currentDate.with(TemporalAdjusters.firstDayOfMonth())
     val firstMonday = firstDayOfMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
     val currentMonday = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-    val weekNumber = (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
-    return weekNumber
+    return (currentMonday.dayOfMonth - firstMonday.dayOfMonth) / 7 + 1
 }
 
-
-
+/**
+ * A composable function that displays a dropdown menu for selecting a month in the calendar
+ *
+ * @param months An array of integers representing the months (0-11) of the monthMap to consider.
+ * @param selectedMonth The currently selected month.
+ * @param currentYear The current year.
+ * @param function A function that will be called when a month is selected.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MonthSelector(
@@ -227,6 +266,15 @@ fun MonthSelector(
     }
 }
 
+/**
+ * Renders the content of a week based on the selected month, year, and week number.
+ *
+ * @param weekNumber The week number to render.
+ * @param selectedMonth The selected month.
+ * @param selectedYear The selected year.
+ * @param content The composable function that renders the content of each weekday.
+ * @param lastItem An optional composable function that renders an additional item at the end of the week's content.
+ */
 @Composable
 fun WeekContent(
     weekNumber: Int,
