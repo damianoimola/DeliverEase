@@ -34,12 +34,12 @@ fun RidersScreen() {
     var selectedRider : User? by rememberSaveable { mutableStateOf(null) }
 
     if (showHireDialog) HireNewRiderDialog (
-        {
+        callbackFunction = {
             globalAllUsers.add(it)
             riderList = ArrayList(globalAllUsers)
-        }
-    ) { showHireDialog = !showHireDialog }
-
+        },
+        onDismiss = { showHireDialog = !showHireDialog }
+    )
     if (showEditDialog && selectedRider != null)
         EditRiderDialog(selectedRider!!,
             { oldUser, newUser ->
