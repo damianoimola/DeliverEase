@@ -2,7 +2,6 @@ package com.madm.deliverease.ui.screens.admin
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -45,7 +44,7 @@ fun HomeScreen() {
                 messagesManager.getAllMessages { list: List<Message>? ->
                     if (list != null)
                         communicationList = list
-                            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                            .filter { it.messageType == Message.MessageType.NOTIFICATION }.take(15)
                             .sortedByDescending { it.date }.toMutableList()
                 }
             }
@@ -63,7 +62,6 @@ fun HomeScreen() {
         }
 
         delay(500)
-
         loadingData = false
     }
 

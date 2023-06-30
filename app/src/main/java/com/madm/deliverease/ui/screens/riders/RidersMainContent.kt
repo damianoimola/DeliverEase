@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -38,6 +39,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun RidersMainContent(logoutCallback : () -> Unit){
+    val context = LocalContext.current
     // manages the navigation between different destinations
     val navController = rememberAnimatedNavController()
 
@@ -46,20 +48,20 @@ fun RidersMainContent(logoutCallback : () -> Unit){
     // bottom navigation bar icons
     val navItems = listOf(
         CustomNavItem("Home", Icons.Default.Home, 1) {
-            if(navController.currentDestination?.route != "home")
-                navController.navigate("home")
+            if(navController.currentDestination?.route != context.getString(R.string.rider_home))
+                navController.navigate(context.getString(R.string.rider_home))
         },
         CustomNavItem("Calendar", Icons.Default.DateRange, 2) {
-            if(navController.currentDestination?.route != "calendar")
-                navController.navigate("calendar")
+            if(navController.currentDestination?.route != context.getString(R.string.rider_calendar))
+                navController.navigate(context.getString(R.string.rider_calendar))
         },
         CustomNavItem("Set shift", ImageVector.vectorResource(id = R.drawable.preference_icon), 3) {
-            if(navController.currentDestination?.route != "preferences")
-                navController.navigate("preferences")
+            if(navController.currentDestination?.route != context.getString(R.string.rider_preferences))
+                navController.navigate(context.getString(R.string.rider_preferences))
         },
         CustomNavItem("Settings", Icons.Default.Settings, 4) {
-            if(navController.currentDestination?.route != "settings")
-                navController.navigate("settings")
+            if(navController.currentDestination?.route != context.getString(R.string.rider_settings))
+                navController.navigate(context.getString(R.string.rider_settings))
         }
     )
 
@@ -84,7 +86,7 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                 // It can handle parameters.
                 AnimatedNavHost(
                     navController = navController,
-                    startDestination = "home",
+                    startDestination = context.getString(R.string.rider_home),
                     modifier = Modifier.padding(mediumPadding),
                     enterTransition = {
                         slideIntoContainer(
@@ -99,28 +101,28 @@ fun RidersMainContent(logoutCallback : () -> Unit){
                         )
                     }
                 ) {
-                    composable("home") {
+                    composable(context.getString(R.string.rider_home)) {
                         CoroutineScope(Dispatchers.IO).launch {
                             if(selectedItem.position != 1)
                                 selectedItem = navItems[0]
                         }
                         HomeScreen()
                     }
-                    composable("calendar") {
+                    composable(context.getString(R.string.rider_calendar)) {
                         CoroutineScope(Dispatchers.IO).launch {
                             if(selectedItem.position != 2)
                                 selectedItem = navItems[1]
                         }
                         CalendarScreen()
                     }
-                    composable("preferences") {
+                    composable(context.getString(R.string.rider_preferences)) {
                         CoroutineScope(Dispatchers.IO).launch {
                             if(selectedItem.position != 3)
                                 selectedItem = navItems[2]
                         }
                         ShiftPreferenceScreen()
                     }
-                    composable("settings") {
+                    composable(context.getString(R.string.rider_settings)) {
                         CoroutineScope(Dispatchers.IO).launch {
                             if(selectedItem.position != 4)
                                 selectedItem = navItems[3]
@@ -152,7 +154,7 @@ fun RidersMainContent(logoutCallback : () -> Unit){
         previousSelectedItem = selectedItem
         if(selectedItem.position != 1) {
             selectedItem = navItems[0]
-            navController.navigate("home")
+            navController.navigate(context.getString(R.string.rider_home))
         }
         else{
             showExitingDialog = true

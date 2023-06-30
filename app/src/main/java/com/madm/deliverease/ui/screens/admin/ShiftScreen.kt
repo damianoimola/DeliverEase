@@ -3,9 +3,9 @@ package com.madm.deliverease.ui.screens.admin
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Parcelable
-import androidx.compose.foundation.background
 import android.widget.Toast
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,29 +23,21 @@ import androidx.compose.ui.unit.dp
 import com.madm.common_libs.internal_storage_manager.deleteDraftDays
 import com.madm.common_libs.internal_storage_manager.retrieveDraftCalendar
 import com.madm.common_libs.internal_storage_manager.saveDraftCalendar
-import com.madm.common_libs.model.*
+import com.madm.common_libs.model.CalendarManager
+import com.madm.common_libs.model.Message
+import com.madm.common_libs.model.User
+import com.madm.common_libs.model.WorkDay
 import com.madm.deliverease.*
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.Shapes
-import com.madm.deliverease.ui.theme.mediumCardElevation
-import com.madm.deliverease.ui.theme.nonePadding
-import com.madm.deliverease.ui.theme.smallPadding
-import com.madm.deliverease.globalAllUsers
-import com.madm.deliverease.globalUser
 import com.madm.deliverease.ui.theme.*
 import com.madm.deliverease.ui.widgets.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 import java.util.*
-import java.util.Calendar
-import kotlin.collections.ArrayList
 
 
 @Parcelize
@@ -87,26 +79,13 @@ fun ShiftsScreen() {
 
 
 
-
-
     // handling drafted working days
     val draftedWorkingDays: List<WorkDay> = retrieveDraftCalendar(context) ?: listOf()
     val thisWeekDays = getWeekDatesInFormat(selectedYear, selectedMonth + 1, selectedWeek + 1)
     val thisWeekDrafted = draftedWorkingDays.any { it.date in thisWeekDays }
     val thisWeekPublicized = workingDays.any { it.date in thisWeekDays }
-
-    draftedWorkingDays.forEach { println("DRAFTED ${it.date} ANY $thisWeekDrafted") }
     var updated by rememberSaveable { mutableStateOf(false) }
 
-//    workingDays = if((!thisWeekPublicized && !thisWeekDrafted) || thisWeekPublicized)
-//        workingDays
-//    else draftedWorkingDays
-
-//    weekWorkingDays = if((!thisWeekPublicized && !thisWeekDrafted) || thisWeekPublicized)
-//        ArrayList(workingDays)
-//    else ArrayList(draftedWorkingDays)
-
-//    weekWorkingDays = ArrayList(workingDays)
 
     // if the selected week has not been publicized
     // and there is a draft about this week, take it
@@ -120,8 +99,6 @@ fun ShiftsScreen() {
 
     if (!showDialog && weekWorkingDays.isEmpty()) {
         calendarManager.getDays { days ->
-            println("API CALL")
-
             runBlocking { delay(500) }
 
             workingDays = days
@@ -310,8 +287,6 @@ private fun ShiftItem(
                 ).atStartOfDay(ZoneId.systemDefault()).toInstant()
             )
 
-    println("WEEK CONTENT - $selectedWeek - $selectedDateFormatted")
-
     // filter all users that are available
     val availableRidersList: List<User> = globalAllUsers.filter { user ->
         val permanent = user.permanentConstraints.firstOrNull {
@@ -468,7 +443,6 @@ fun constraintsChecker(
     val sharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
 
-    // TODO: load just one time when composable starts up (Damiano)
     val minWeek = sharedPreferences.getInt(ADMIN_MIN_WEEK, 0)
     val maxWeek = sharedPreferences.getInt(ADMIN_MAX_WEEK, 0)
     val minDay = sharedPreferences.getInt(ADMIN_MIN_DAY, 0)
@@ -496,8 +470,6 @@ fun constraintsChecker(
     calendar[Calendar.SECOND] = 59
     calendar[Calendar.MILLISECOND] = 999
     val endDate = calendar.time
-
-    println("DATE ${startDate..endDate}")
 
     data class WeeklyRider(
         val id: String = "",
@@ -527,8 +499,6 @@ fun constraintsChecker(
                         1
                     )
                 )
-
-                println("RIDER $riderID COUNTER ${ridersThisWeek.first { it.id == riderID }.workingDays}")
             }
         }
 

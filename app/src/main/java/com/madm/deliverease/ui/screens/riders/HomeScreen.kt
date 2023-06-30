@@ -16,6 +16,7 @@ import com.madm.deliverease.ui.widgets.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @SuppressLint("MutableCollectionMutableState")
 @Preview
@@ -42,11 +43,16 @@ fun HomeScreen() {
                 messagesManager.getReceivedMessages { list: List<Message> ->
                     communicationList = list
                         .filter { it.messageType == Message.MessageType.NOTIFICATION }
-                        .sortedByDescending { it.messageDate }
+                        .sortedByDescending { it.messageDate }.take(15)
                         .toMutableList()
                 }
             }
             launch {
+
+                val currentMonth = LocalDate.now().monthValue
+                val currentYear = LocalDate.now().year
+                val currentDay = LocalDate.now().dayOfMonth
+
                 messagesManager.getReceivedMessages { list: List<Message> ->
                     shiftRequestList = ArrayList(list.filter {
                         it.messageType == Message.MessageType.REQUEST
@@ -63,6 +69,33 @@ fun HomeScreen() {
                                                                 &&
                                                                 it.body!!.split("#")[1] in workDayList.filter { d -> globalUser!!.id in d.riders!! }
                                                             .map { d -> d.date }.toList()
+                                                                &&
+                                                                //controlla che la data di richiesta sia successiva alla data attuale
+                                                                (((it.body!!.split("#")[0].split("-")[0].toInt() > currentDay
+                                                                        &&
+                                                                        it.body!!.split("#")[0].split("-")[1].toInt() == currentMonth
+                                                                        )
+                                                                        ||
+                                                                        it.body!!.split("#")[0].split("-")[1].toInt() > currentMonth
+                                                                        )
+                                                                        &&
+                                                                        it.body!!.split("#")[0].split("-")[2].toInt() >= currentYear
+                                                                        )
+                                                                &&
+                                                                //controlla che la data richiesta sia successiva alla data attuale
+                                                                (((it.body!!.split("#")[1].split("-")[0].toInt() > currentDay
+                                                                        &&
+                                                                        it.body!!.split("#")[1].split("-")[1].toInt() == currentMonth
+                                                                        )
+                                                                        ||
+                                                                        it.body!!.split("#")[1].split("-")[1].toInt() > currentMonth
+                                                                        )
+                                                                        &&
+                                                                        it.body!!.split("#")[1].split("-")[2].toInt() >= currentYear
+                                                                        )
+
+
+
                                                         )
                                         )
                     })

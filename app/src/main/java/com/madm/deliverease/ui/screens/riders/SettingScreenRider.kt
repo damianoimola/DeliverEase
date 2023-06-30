@@ -19,6 +19,5 @@ fun SettingScreenRider(logoutCallback: () -> Unit){
             .verticalScroll(rememberScrollState()),
     ) {
         PreferencesSetting(logoutCallback)
-
     }
 }

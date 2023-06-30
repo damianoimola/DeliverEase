@@ -77,4 +77,15 @@
     <string name="yesShift">You have a shift!</string>
     <string name="swapText">Click here to swap day</string>
     <string name="haveATurn">You already have a turn</string>
+    <string name="hired">hired</string>
+    <string name="error_hiring_rider">Some error occurred</string>
+    <string name="request_sent">Request sent</string>
+    <string name="request_cannot_be_sent">Request cannot be sent, please try later</string>
+    <string name="modified">modified</string>
+    <string name="rider_contraints_not_respected">Rider constraints not respected</string>
+    <string name="days_without_riders">Days without riders</string>
+    <string name="are_you_sure_to_continue">Are you sure to continue?</string>
+    <string name="accept">Accept</string>
+    <string name="email_already_exist">Rider\'s email already exist</string>
+    <string name="deleted">deleted</string>
 </resources>

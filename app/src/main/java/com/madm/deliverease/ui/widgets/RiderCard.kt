@@ -69,8 +69,7 @@ fun TodayRidersCard(
                             if (isLoading)
                                 ShimmerRiderRow()
                             else {
-                                rider as User
-                                RiderRow(rider)
+                                RiderRow(rider as User)
                             }
                         }
                     }

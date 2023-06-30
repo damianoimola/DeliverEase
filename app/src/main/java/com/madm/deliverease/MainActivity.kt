@@ -71,37 +71,37 @@ class MainActivity : ComponentActivity() {
 
         AnimatedNavHost(
             navController = navController,
-            startDestination = "login",
+            startDestination = context.getString(R.string.general_login),
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentScope.SlideDirection.Left,
                     animationSpec = tween(700))
             }
         ) {
-            composable("login") {
+            composable(context.getString(R.string.general_login)) {
                 LoginScreen(
                     goToRiderHome = {
-                        if (navController.currentDestination?.route != "rider-home") {
-                            navController.navigate("rider-home") {
-                                popUpTo("login") { inclusive = true }
+                        if (navController.currentDestination?.route != context.getString(R.string.general_rider_home)) {
+                            navController.navigate(context.getString(R.string.general_rider_home)) {
+                                popUpTo(context.getString(R.string.general_login)) { inclusive = true }
                             }
                         }
                     },
                     goToAdminHome = {
-                        if (navController.currentDestination?.route != "admin-home") {
-                            navController.navigate("admin-home") {
-                                popUpTo("login") { inclusive = true }
+                        if (navController.currentDestination?.route != context.getString(R.string.general_admin_home)) {
+                            navController.navigate(context.getString(R.string.general_admin_home)) {
+                                popUpTo(context.getString(R.string.general_login)) { inclusive = true }
                             }
                         }
                     }
                 )
             }
-            composable("rider-home") {
+            composable(context.getString(R.string.general_rider_home)) {
                 RidersMainContent {
-                    if (navController.currentDestination?.route != "login") {
-                        navController.navigate("login") {
-                            popUpTo("rider-home") { inclusive = true }
-                            popUpTo("admin-home") { inclusive = true }
+                    if (navController.currentDestination?.route != context.getString(R.string.general_login)) {
+                        navController.navigate(context.getString(R.string.general_login)) {
+                            popUpTo(context.getString(R.string.general_rider_home)) { inclusive = true }
+                            popUpTo(context.getString(R.string.general_admin_home)) { inclusive = true }
                         }
 
                         cleanGlobalAppData()
@@ -109,12 +109,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-            composable("admin-home") {
+            composable(context.getString(R.string.general_admin_home)) {
                 AdminsMainContent {
-                    if (navController.currentDestination?.route != "login") {
-                        navController.navigate("login") {
-                            popUpTo("rider-home") { inclusive = true }
-                            popUpTo("admin-home") { inclusive = true }
+                    if (navController.currentDestination?.route != context.getString(R.string.general_login)) {
+                        navController.navigate(context.getString(R.string.general_login)) {
+                            popUpTo(context.getString(R.string.general_rider_home)) { inclusive = true }
+                            popUpTo(context.getString(R.string.general_admin_home)) { inclusive = true }
                         }
 
                         cleanGlobalAppData()

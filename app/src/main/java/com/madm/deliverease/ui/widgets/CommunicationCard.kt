@@ -219,8 +219,7 @@ fun CommunicationCard(
                             if(isLoading)
                                 ShimmerCustomCommunication()
                             else {
-                                item as Message
-                                CustomCommunication(item.body!!, item.date)
+                                CustomCommunication((item as Message).body!!, (item as Message).date)
                             }
                         }
                     }

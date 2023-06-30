@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.CustomTheme
-import com.madm.deliverease.ui.theme.smallPadding
+import com.madm.deliverease.ui.theme.mediumPadding
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -26,7 +26,7 @@ class CustomNavItem(
     @IgnoredOnParcel val title: String = "",
     @IgnoredOnParcel val icon: ImageVector? = null,
     @IgnoredOnParcel val position: Int = -1,
-    @IgnoredOnParcel val function: () -> Unit = {}
+    @IgnoredOnParcel val function: () -> Unit = {},
 ) : Parcelable
 
 @Composable
@@ -34,14 +34,14 @@ fun CustomBottomAppBar(
     navItems: List<CustomNavItem>,
     selectedItem: CustomNavItem,
     onItemSelected: (CustomNavItem) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     BottomAppBar(
         modifier = modifier,
         backgroundColor = CustomTheme.colors.primary,
         contentColor = CustomTheme.colors.onPrimary
     ) {
-        navItems.forEach { navItem : CustomNavItem ->
+        navItems.forEach { navItem: CustomNavItem ->
             BottomNavigationItem(
                 icon = { Icon(navItem.icon!!, contentDescription = navItem.title) },
                 label = { Text(text = navItem.title, color = Color.White, maxLines = 1) },
@@ -60,35 +60,16 @@ fun CustomBottomAppBar(
 }
 
 
-
-
 @Composable
-fun CustomTopAppBar(){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(smallPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.deliverease_icon),
-            contentDescription = "logo",
-            modifier = Modifier
-                .padding(smallPadding)
-                .size(50.dp),
-            tint = CustomTheme.colors.onBackground
-        )
-    }
+fun CustomTopAppBar() {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(smallPadding),
+            .padding(mediumPadding)
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(smallPadding),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

@@ -3,6 +3,7 @@ package com.madm.common_libs.internal_storage_manager
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.madm.common_libs.R
 import com.madm.common_libs.model.Calendar
 import com.madm.common_libs.model.WorkDay
 import java.io.File
@@ -19,7 +20,7 @@ fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
     val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     try {
-        val file: File = File(context.filesDir, "draft_calendar.json")
+        val file = File(context.filesDir, context.getString(R.string.draft_calendar_file_name))
 
         // Create the directory if it doesn't exist
         if (!file.exists())
@@ -76,7 +77,7 @@ fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
 fun retrieveDraftCalendar(context: Context): List<WorkDay>? {
     val gson: Gson = GsonBuilder().create()
     try {
-        val file = File(context.filesDir, "draft_calendar.json")
+        val file = File(context.filesDir, context.getString(R.string.draft_calendar_file_name))
         if (!file.exists()) {
             return null
         }
@@ -101,7 +102,7 @@ fun deleteDraftDays(context: Context, datesToDelete: List<WorkDay>): Boolean {
     val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     try {
-        val file = File(context.filesDir, "draft_calendar.json")
+        val file = File(context.filesDir, context.getString(R.string.draft_calendar_file_name))
         if (!file.exists()) {
             return false
         }
