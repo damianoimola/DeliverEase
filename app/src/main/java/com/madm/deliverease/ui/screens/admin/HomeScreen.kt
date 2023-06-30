@@ -44,7 +44,7 @@ fun HomeScreen() {
                 messagesManager.getAllMessages { list: List<Message>? ->
                     if (list != null)
                         communicationList = list
-                            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                            .filter { it.messageType == Message.MessageType.NOTIFICATION }.take(15)
                             .sortedByDescending { it.date }.toMutableList()
                 }
             }
