@@ -99,7 +99,8 @@ fun ShiftPreferenceScreen(){
                     Date.from(LocalDate.of(selectedYear, (selectedMonth+1)%12, it.number).atStartOfDay(ZoneId.systemDefault()).toInstant())
 */
                 ShiftOptions(
-                    permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
+
+                    permanentConstraint = if(selectedMonth == 11) permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber(12, selectedYear, it.number) } else permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) } ,
                     nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
                     onComplete = { kind: Int, permanent: Boolean ->
                         if(permanent) {
@@ -155,7 +156,7 @@ fun ShiftPreferenceScreen(){
 
 
                 ShiftOptions(
-                    permanentConstraint = permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) },
+                    permanentConstraint = if(selectedMonth == 11) permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber(12, selectedYear, it.number) } else permanentConstraints.firstOrNull { c -> c.dayOfWeek == getDayOfWeekNumber((selectedMonth+1)%12, selectedYear, it.number) } ,
                     nonPermanentConstraint = nonPermanentConstraints.firstOrNull{ c -> c.constraintDate == selectedDateFormatted },
                     onComplete = { kind: Int, permanent: Boolean ->
                         if(permanent) {

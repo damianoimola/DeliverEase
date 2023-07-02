@@ -35,7 +35,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 
@@ -51,7 +50,6 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
 @Preview
 @Composable
 fun ShiftsScreen() {
-    println("SHIFT SCREEN")
     val configuration = LocalConfiguration.current
 
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
@@ -170,7 +168,6 @@ fun ShiftsScreen() {
                         weekDay,
                         selectedWeek,
                         selectedYear,
-                        selectedMonth,
                         weekWorkingDays,
                         updatedWorkingDays,
                         workingDays
@@ -237,7 +234,6 @@ fun ShiftsScreen() {
                         weekDay,
                         selectedWeek,
                         selectedYear,
-                        selectedMonth,
                         weekWorkingDays,
                         updatedWorkingDays,
                         workingDays
@@ -280,29 +276,12 @@ private fun ShiftItem(
     weekDay: WeekDay,
     selectedWeek: Int,
     selectedYear: Int,
-    selectedMonth: Int,
     weekWorkingDays: ArrayList<WorkDay>,
     updatedWorkingDays: ArrayList<WorkDay>,
     workingDays: List<WorkDay>
 ) {
     // retrieve the selected date in a full format
-    val selectedDateFormatted =
-        if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-            Date.from(
-                LocalDate.of(
-                    selectedYear,
-                    (selectedMonth + 2) % 12,
-                    weekDay.number
-                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-            )
-        else
-            Date.from(
-                LocalDate.of(
-                    selectedYear,
-                    (selectedMonth + 1) % 12,
-                    weekDay.number
-                ).atStartOfDay(ZoneId.systemDefault()).toInstant()
-            )
+    val selectedDateFormatted = Date.from(localDateFormat(weekDay, selectedWeek, selectedYear).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
     // filter all users that are available
     val availableRidersList: List<User> = globalAllUsers.filter { user ->
