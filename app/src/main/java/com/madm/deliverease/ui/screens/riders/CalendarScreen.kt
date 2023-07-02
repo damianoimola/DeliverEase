@@ -136,24 +136,10 @@ fun CalendarScreen() {
             }
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+                println("ARGUMENTS $selectedYear-$selectedMonth/${weekDay.month}-${weekDay.number} ($selectedWeek)")
                 // create a date from selected day
                 val selectedDate: LocalDate? = localDateFormat(weekDay, selectedWeek, selectedYear)
-                    /*if (weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1)
-                    LocalDate.of(selectedYear, selectedMonth + 2, weekDay.number)
-                else if(weekDay.number < 7 && selectedWeek != 0 && selectedWeek != 1 && weekDay.month ==11)
-                    LocalDate.of(selectedYear+1, 1, weekDay.number)
-                else if(weekDay.month == 11)
-                    LocalDate.of(selectedYear, 1, weekDay.number)
-                else
-                    LocalDate.of(selectedYear, (selectedMonth + 1) % 12, weekDay.number)
 
-                val year
-
-                if()
-
-                LocalDate.of(year, month, weekNumber)*/
-
-                println("SELECTED DATE  "+selectedDate)
                 ShiftRow(
                     shiftList.any {
                         // converting API date
@@ -171,6 +157,7 @@ fun CalendarScreen() {
                         val date: Date = inputDateFormat.parse(selectedDate.toString())!!
                         val outputDateString: String = outputDateFormat.format(date)
                         clickedWeekday = outputDateString
+                        println("CLICKED $clickedWeekday SELECTED $selectedDate")
                     },
                     {
                         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
@@ -178,6 +165,7 @@ fun CalendarScreen() {
                         val date: Date = inputDateFormat.parse(selectedDate.toString())!!
                         val outputDateString: String = outputDateFormat.format(date)
                         previousWeekDay = outputDateString
+                        println("PREVIOUS $previousWeekDay SELECTED $selectedDate")
                     }
 
                 ) { showCustomDialog = it }
