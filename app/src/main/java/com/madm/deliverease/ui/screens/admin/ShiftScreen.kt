@@ -130,6 +130,14 @@ fun ShiftsScreen() {
                     weekWorkingDays.clear()
                     calendarManager.insertDays(updatedWorkingDays)
                     deleteDraftDays(context, updatedWorkingDays)
+
+                    // send notification
+                    Message(
+                        senderID = globalUser!!.id,
+                        receiverID = "0",
+                        body = defaultMessage,
+                        type = Message.MessageType.NOTIFICATION.displayName
+                    ).send(context)
                 } else
                     Toast.makeText(
                         context,
@@ -179,7 +187,7 @@ fun ShiftsScreen() {
                         val cal = com.madm.common_libs.model.Calendar(updatedWorkingDays.toList())
                         saveDraftCalendar(context, cal)
                     },
-                    updateServer = {
+                    checkConstraints = {
                         val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
                             context = context,
                             weekWorkingDays = ArrayList(weekWorkingDays),
@@ -193,14 +201,6 @@ fun ShiftsScreen() {
                         emptyDaysConstraint = emptyDaysList
 
                         showDialog = true
-                    },
-                    notifyRiders = {
-                        Message(
-                            senderID = globalUser!!.id,
-                            receiverID = "0",
-                            body = defaultMessage,
-                            type = Message.MessageType.NOTIFICATION.displayName
-                        ).send(context)
                     }
                 )
             }
@@ -241,8 +241,11 @@ fun ShiftsScreen() {
                 }
             ) {
                 ButtonDraftAndSubmit(
-                    saveDraft = {},
-                    updateServer = {
+                    saveDraft = {
+                        val cal = com.madm.common_libs.model.Calendar(updatedWorkingDays.toList())
+                        saveDraftCalendar(context, cal)
+                    },
+                    checkConstraints = {
                         val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
                             context = context,
                             weekWorkingDays = ArrayList(weekWorkingDays),
@@ -256,14 +259,6 @@ fun ShiftsScreen() {
                         emptyDaysConstraint = emptyDaysList
 
                         showDialog = true
-                    },
-                    notifyRiders = {
-                        Message(
-                            senderID = globalUser!!.id,
-                            receiverID = "0",
-                            body = defaultMessage,
-                            type = Message.MessageType.NOTIFICATION.displayName
-                        ).send(context)
                     }
                 )
             }
@@ -635,8 +630,7 @@ fun RidersCheckboxCard(
 @Composable
 fun ButtonDraftAndSubmit(
     saveDraft: () -> Unit,
-    updateServer: () -> Unit,
-    notifyRiders: () -> Unit
+    checkConstraints: () -> Unit
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
 
@@ -653,10 +647,8 @@ fun ButtonDraftAndSubmit(
                 .weight(1f)
                 .padding(10.dp)
         ) {
-            updateServer()
-            notifyRiders()
+            checkConstraints()
         }
-
     }
 }
 
