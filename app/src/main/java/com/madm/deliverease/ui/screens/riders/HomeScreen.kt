@@ -43,7 +43,8 @@ fun HomeScreen() {
                 messagesManager.getReceivedMessages { list: List<Message> ->
                     communicationList = list
                         .filter { it.messageType == Message.MessageType.NOTIFICATION }
-                        .sortedByDescending { it.messageDate }.take(15)
+                        .sortedByDescending { it.messageDate }
+                        .takeLast(15)
                         .toMutableList()
                 }
             }
