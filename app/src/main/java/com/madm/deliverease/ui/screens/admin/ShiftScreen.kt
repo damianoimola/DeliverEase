@@ -448,7 +448,7 @@ fun constraintsChecker(
     val calendar = Calendar.getInstance()
     calendar[Calendar.YEAR] = selectedYear
     calendar[Calendar.MONTH] = selectedMonth
-    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek
+    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 1
     calendar[Calendar.HOUR] = 0
 
     // Set the start and end dates of the selected week
@@ -459,13 +459,15 @@ fun constraintsChecker(
     calendar[Calendar.MILLISECOND] = 0
     val startDate = calendar.time
 
-    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 1
+    calendar[Calendar.WEEK_OF_MONTH] = selectedWeek + 2
     calendar[Calendar.DAY_OF_WEEK] = Calendar.SUNDAY
     calendar[Calendar.HOUR_OF_DAY] = 23
     calendar[Calendar.MINUTE] = 59
     calendar[Calendar.SECOND] = 59
     calendar[Calendar.MILLISECOND] = 999
     val endDate = calendar.time
+
+    println("DATES ${startDate..endDate}")
 
     data class WeeklyRider(
         val id: String = "",
@@ -509,6 +511,14 @@ fun constraintsChecker(
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isEmpty() }
         .forEach { emptyDays += it.date.toString() }
+
+
+    // TO DEBUG
+    weekWorkingDays
+        .filter { it.workDayDate in startDate..endDate }
+        .forEach { println("WWD ${it.date} ${it.riders}}") }
+
+    println("EMPTY DAYS $emptyDays")
 
     return Triple(perWeekList, perDayList, emptyDays)
 }
