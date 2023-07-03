@@ -53,6 +53,7 @@ fun ShiftsScreen() {
     val configuration = LocalConfiguration.current
 
     val defaultMessage: String = stringResource(R.string.default_message_send_shift)
+    val draftSavedStringMessage: String = stringResource(R.string.draft_saved)
     val context = LocalContext.current
     var selectedWeek: Int by remember { mutableStateOf(getCurrentWeekOfMonth()) }
     var currentMonth = Calendar.getInstance()[Calendar.MONTH]
@@ -104,7 +105,8 @@ fun ShiftsScreen() {
     // if the selected week has not been publicized
     // and there is a draft about this week, take it
     if(!thisWeekPublicized && thisWeekDrafted && !updated) {
-        weekWorkingDays = ArrayList(draftedWorkingDays)
+        weekWorkingDays = ArrayList(fillEmptyDaysOfNextMonth(selectedYear, selectedMonth, draftedWorkingDays))
+//        weekWorkingDays = ArrayList(draftedWorkingDays)
         updatedWorkingDays.addAll(draftedWorkingDays)
         updated = true
     }
@@ -116,12 +118,15 @@ fun ShiftsScreen() {
             runBlocking { delay(500) }
 
             workingDays = days
-            weekWorkingDays = ArrayList(days)
+            weekWorkingDays = ArrayList(fillEmptyDaysOfNextMonth(selectedYear, selectedMonth, days))
+//            weekWorkingDays = ArrayList(days)
         }
     } else if (showDialog && weekWorkingDays.isNotEmpty()) {
         val toastMessage = stringResource(R.string.shift_not_changed)
         ConstraintsDialog(
-            title = stringResource(R.string.constraints_not_respected),
+            title = if(perWeekConstraint.isEmpty() && perDayConstraint.isEmpty() && emptyDaysConstraint.isEmpty())
+                stringResource(R.string.are_you_sure_to_continue)
+            else stringResource(R.string.constraints_not_respected),
             perWeekConstraint = perWeekConstraint,
             perDayConstraint = perDayConstraint,
             emptyDaysConstraint = emptyDaysConstraint,
@@ -186,6 +191,7 @@ fun ShiftsScreen() {
                     saveDraft = {
                         val cal = com.madm.common_libs.model.Calendar(updatedWorkingDays.toList())
                         saveDraftCalendar(context, cal)
+                        Toast.makeText(context, draftSavedStringMessage, Toast.LENGTH_SHORT).show()
                     },
                     checkConstraints = {
                         val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
@@ -244,6 +250,7 @@ fun ShiftsScreen() {
                     saveDraft = {
                         val cal = com.madm.common_libs.model.Calendar(updatedWorkingDays.toList())
                         saveDraftCalendar(context, cal)
+                        Toast.makeText(context, draftSavedStringMessage, Toast.LENGTH_SHORT).show()
                     },
                     checkConstraints = {
                         val (perWeekList, perDayList, emptyDaysList) = constraintsChecker(
@@ -513,10 +520,18 @@ fun constraintsChecker(
         .filter { it.workDayDate in startDate..endDate }
         .forEach { println("WWD ${it.date} ${it.riders}}") }
 
+    fillEmptyDaysOfNextMonth(selectedYear, selectedMonth, weekWorkingDays)
+        .filter { it.workDayDate in startDate..endDate }
+        .forEach { println("FILLED ${it.date} ${it.riders}}") }
+
     println("EMPTY DAYS $emptyDays")
 
     return Triple(perWeekList, perDayList, emptyDays)
 }
+
+
+
+
 
 
 @Composable

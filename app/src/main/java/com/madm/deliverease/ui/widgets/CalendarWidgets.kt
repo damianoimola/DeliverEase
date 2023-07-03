@@ -14,11 +14,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.madm.common_libs.model.WorkDay
 import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.util.*
@@ -49,6 +51,31 @@ fun getWeekDays(year: Int, month: Int, week: Int): List<WeekDay> {
 
     return weekDays
 }
+
+
+
+
+fun fillEmptyDaysOfNextMonth(year: Int, month: Int, workDaysToFill : List<WorkDay>): List<WorkDay> {
+    val firstDayOfMonth = LocalDate.of(year, month, 1)
+
+    val allWorkDays = mutableListOf<WorkDay>()
+    var currentDate = firstDayOfMonth
+
+    for (i in 0 until 90) {
+        val wd = WorkDay(listOf())
+        wd.workDayDate = Date.from(currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+        if(!workDaysToFill.any{it.date == wd.date})
+            allWorkDays.add(wd)
+        else allWorkDays.add(workDaysToFill.first { it.date == wd.date })
+        currentDate = currentDate.plusDays(1)
+    }
+
+    return allWorkDays
+}
+
+
+
 
 fun Int.integerToTwoDigit(): String {
     return if (this < 10)

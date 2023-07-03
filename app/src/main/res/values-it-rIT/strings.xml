@@ -87,4 +87,7 @@
     <string name="accept">Accetta</string>
     <string name="email_already_exist">L\'email del rider esiste già</string>
     <string name="deleted">cancellato</string>
+    <string name="draft_saved">Bozza salvata con successo.</string>
+    <string name="daily_constraints_not_respected">Vincoli giornalieri non rispettati</string>
+    <string name="weekly_constraints_not_respected">Vincoli settimanali non rispettati</string>
 </resources>

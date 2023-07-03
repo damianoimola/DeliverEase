@@ -88,4 +88,7 @@
     <string name="accept">Accept</string>
     <string name="email_already_exist">Rider\'s email already exist</string>
     <string name="deleted">deleted</string>
+    <string name="draft_saved">Draft saved successfully.</string>
+    <string name="daily_constraints_not_respected">Daily constraints not respected</string>
+    <string name="weekly_constraints_not_respected">Weekly constraints not respected</string>
 </resources>

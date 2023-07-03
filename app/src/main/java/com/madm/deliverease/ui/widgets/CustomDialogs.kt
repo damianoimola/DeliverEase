@@ -505,6 +505,7 @@ fun ConstraintsDialog(
             modifier = Modifier
                 .wrapContentWidth()
         ) {
+            println("SONO VUOTE? ${perWeekConstraint.isEmpty()} && ${perDayConstraint.isEmpty()} && ${emptyDaysConstraint.isEmpty()}")
             Column(
                 modifier = Modifier.padding(smallPadding, nonePadding),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -533,7 +534,7 @@ fun ConstraintsDialog(
                         if (perWeekConstraint.isNotEmpty()) {
                             item {
                                 Text(
-                                    stringResource(R.string.rider_contraints_not_respected),
+                                    stringResource(R.string.weekly_constraints_not_respected),//stringResource(R.string.rider_contraints_not_respected),
                                     style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)
                                 )
                             }
@@ -549,7 +550,7 @@ fun ConstraintsDialog(
                         if (perDayConstraint.isNotEmpty()) {
                             item {
                                 Text(
-                                    stringResource(R.string.rider_contraints_not_respected),
+                                    stringResource(R.string.daily_constraints_not_respected),//stringResource(R.string.rider_contraints_not_respected),
                                     style = CustomTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold)
                                 )
                             }
