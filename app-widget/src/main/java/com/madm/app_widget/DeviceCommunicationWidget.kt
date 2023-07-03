@@ -1,11 +1,7 @@
-package com.madm.deliverease.ui
+package com.madm.app_widget
 
 import android.content.Context
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,11 +21,6 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.madm.common_libs.model.Message
 import com.madm.common_libs.model.MessagesManager
-import com.madm.deliverease.globalUser
-import com.madm.deliverease.ui.theme.CustomTheme
-import com.madm.deliverease.ui.theme.largePadding
-import com.madm.deliverease.ui.theme.mediumPadding
-import com.madm.deliverease.ui.theme.smallPadding
 import kotlinx.coroutines.*
 
 object DeviceCommunicationWidget: GlanceAppWidget() {
@@ -44,7 +35,7 @@ object DeviceCommunicationWidget: GlanceAppWidget() {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(CustomTheme.colors.background),
+                .background(Color(0xFFF4F4F4)),
             verticalAlignment = Alignment.Vertical.CenterVertically,
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally
         ) {
@@ -52,11 +43,11 @@ object DeviceCommunicationWidget: GlanceAppWidget() {
                 text = communication,
                 style = TextStyle(
                     fontWeight = FontWeight.Medium,
-                    color = ColorProvider(CustomTheme.colors.onBackground),
+                    color = ColorProvider(Color(0xFF263330)),
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center
                 ),
-                modifier = GlanceModifier.padding(smallPadding),
+                modifier = GlanceModifier.padding(4.dp),
                 
             )
             Row(horizontalAlignment = Alignment.End) {
@@ -64,17 +55,17 @@ object DeviceCommunicationWidget: GlanceAppWidget() {
                     text = date,
                     style = TextStyle(
                         fontWeight = FontWeight.Medium,
-                        color = ColorProvider(CustomTheme.colors.onBackground),
+                        color = ColorProvider(Color(0xFF263330)),
                         fontSize = 10.sp,
                         textAlign = TextAlign.End
                     ),
-                    modifier = GlanceModifier.padding(bottom = largePadding)
+                    modifier = GlanceModifier.padding(10.dp)
                 )
             }
             Button(
                 text = "Reload",
                 onClick = actionRunCallback(ReloadActionCallback::class.java),
-                colors = ButtonColors(ColorProvider(CustomTheme.colors.primary), ColorProvider(CustomTheme.colors.onPrimary))
+                colors = ButtonColors(ColorProvider(Color(0xFFB94434)), ColorProvider(Color(0xFFFFF7F7)))
             )
         }
     }
@@ -94,7 +85,7 @@ class ReloadActionCallback: ActionCallback {
         var communicationList: MutableList<Message> = mutableListOf()
 
         updateAppWidgetState(context, glanceId) { prefs ->
-            val messagesManager = MessagesManager(globalUser!!.id!!, context)
+            val messagesManager = MessagesManager("0", context)
 
             messagesManager.getReceivedMessages { list: List<Message> ->
                 communicationList = list
@@ -104,7 +95,7 @@ class ReloadActionCallback: ActionCallback {
                     .toMutableList()
             }
 
-            delay(1000)
+            delay(2000)
 
             val currentCommunication = communicationList[0].body
             val currentDate = communicationList[0].date
