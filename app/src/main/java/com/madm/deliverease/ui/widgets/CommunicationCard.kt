@@ -6,10 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -165,10 +167,12 @@ fun CommunicationCard(
                             msg.send(context) { messageSent ->          // sending message to server
 
                                 if (messageSent) {
+                                    println("COMM NUMBER BEFORE ${communicationList.count()}")
                                     communicationList.add(              // updating ui with new communication
                                         0,
                                         msg
                                     )
+                                    println("COMM NUMBER AFTER ${communicationList.count()}")
 
                                     CoroutineScope(Dispatchers.Main).launch {
                                         Toast.makeText(
@@ -207,24 +211,38 @@ fun CommunicationCard(
             )
 
             // CommunicationList
-            LazyColumn(
-                content = {
-                    items(if(isLoading) listOf(1,2,3,4,5,6,7,8) else communicationList) { item ->
-                        Card(
-                            Modifier.padding(smallPadding),
-                            backgroundColor = CustomTheme.colors.surface,
-                            contentColor = CustomTheme.colors.onSurface,
-                            elevation = extraSmallCardElevation
-                        ) {
-                            if(isLoading)
-                                ShimmerCustomCommunication()
-                            else {
-                                CustomCommunication((item as Message).body!!, (item as Message).date)
-                            }
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())){
+                (if(isLoading) listOf(1,2,3,4,5,6,7,8) else communicationList).forEach {
+                    Card(
+                        Modifier.padding(smallPadding),
+                        backgroundColor = CustomTheme.colors.surface,
+                        contentColor = CustomTheme.colors.onSurface,
+                        elevation = extraSmallCardElevation
+                    ) {
+                        if(isLoading)
+                            ShimmerCustomCommunication()
+                        else {
+                            CustomCommunication((it as Message).body!!, (it as Message).date)
                         }
                     }
                 }
-            )
+//                content = {
+//                    items(if(isLoading) listOf(1,2,3,4,5,6,7,8) else communicationList) { item ->
+//                        Card(
+//                            Modifier.padding(smallPadding),
+//                            backgroundColor = CustomTheme.colors.surface,
+//                            contentColor = CustomTheme.colors.onSurface,
+//                            elevation = extraSmallCardElevation
+//                        ) {
+//                            if(isLoading)
+//                                ShimmerCustomCommunication()
+//                            else {
+//                                CustomCommunication((item as Message).body!!, (item as Message).date)
+//                            }
+//                        }
+//                    }
+//                }
+        }
         }
     }
 }

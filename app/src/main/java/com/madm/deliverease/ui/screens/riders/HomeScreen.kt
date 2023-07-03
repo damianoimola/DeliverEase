@@ -26,11 +26,13 @@ fun HomeScreen() {
     var workDayList: List<WorkDay> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var communicationList: MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
     var shiftRequestList: ArrayList<Message> by rememberSaveable { mutableStateOf(arrayListOf()) }
-    var loadingData by rememberSaveable { mutableStateOf(true) }
+    var loadingData by rememberSaveable { mutableStateOf(false) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     val calendarManager = CalendarManager(LocalContext.current)
+
+
 
     LaunchedEffect(key1 = rememberCoroutineScope()) {
         coroutineScope {
@@ -43,8 +45,8 @@ fun HomeScreen() {
                 messagesManager.getReceivedMessages { list: List<Message> ->
                     communicationList = list
                         .filter { it.messageType == Message.MessageType.NOTIFICATION }
-                        .sortedByDescending { it.messageDate }
-                        .takeLast(15)
+                        .reversed()
+                        .take(15)
                         .toMutableList()
                 }
             }

@@ -31,12 +31,12 @@ fun HomeScreen() {
     var riderList : List<User> by rememberSaveable { mutableStateOf(listOf()) }
     var todayWorkDay : WorkDay by rememberSaveable { mutableStateOf(WorkDay()) }
     var communicationList : MutableList<Message> by rememberSaveable { mutableStateOf(mutableListOf()) }
-    val isPlaying = rememberSaveable { mutableStateOf (false) }
     var loadingData by rememberSaveable { mutableStateOf(true) }
 
     val messagesManager = MessagesManager(globalUser!!.id!!, LocalContext.current)
 
     val calendarManager = CalendarManager(LocalContext.current)
+
 
     LaunchedEffect(key1 = rememberCoroutineScope()) {
         coroutineScope {
@@ -44,8 +44,10 @@ fun HomeScreen() {
                 messagesManager.getAllMessages { list: List<Message>? ->
                     if (list != null)
                         communicationList = list
-                            .filter { it.messageType == Message.MessageType.NOTIFICATION }.take(15)
-                            .sortedByDescending { it.date }.toMutableList()
+                            .filter { it.messageType == Message.MessageType.NOTIFICATION }
+                            .reversed()
+                            .take(15)
+                            .toMutableList()
                 }
             }
 
@@ -64,9 +66,6 @@ fun HomeScreen() {
         delay(500)
         loadingData = false
     }
-
-    if(isPlaying.value)
-        PizzaLoaderDialog(isPlaying = isPlaying)
 
     if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
         Column(
