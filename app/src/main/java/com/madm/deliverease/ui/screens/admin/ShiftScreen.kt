@@ -180,7 +180,7 @@ fun ShiftsScreen() {
                 selectedWeek
             ) { weekNumber: Int -> selectedWeek = weekNumber }
 
-            WeekContent(selectedWeek, selectedMonth, selectedYear,
+            WeekContent(selectedWeek, selectedMonth, selectedYear, false,
                 { weekDay ->
                     ShiftItem(
                         weekDay,
@@ -239,7 +239,7 @@ fun ShiftsScreen() {
                 ) { weekNumber: Int -> selectedWeek = weekNumber }
             }
 
-            WeekContent(selectedWeek, selectedMonth, selectedYear,
+            WeekContent(selectedWeek, selectedMonth, selectedYear, false,
                 { weekDay ->
                     ShiftItem(
                         weekDay,

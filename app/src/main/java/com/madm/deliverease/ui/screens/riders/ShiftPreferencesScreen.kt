@@ -99,7 +99,7 @@ fun ShiftPreferenceScreen() {
             WeeksList(selectedMonth, selectedYear, selectedWeek) { weekNumber: Int ->
                 selectedWeek = weekNumber
             }
-            WeekContent(selectedWeek, selectedMonth, selectedYear, {
+            WeekContent(selectedWeek, selectedMonth, selectedYear,false, {
                 // retrieve the selected date in a full format
                 val selectedDateFormatted = Date.from(
                     localDateFormat(
@@ -196,7 +196,7 @@ fun ShiftPreferenceScreen() {
             }
 
 
-            WeekContent(selectedWeek, selectedMonth, selectedYear, {
+            WeekContent(selectedWeek, selectedMonth, selectedYear, false, {
                 // retrieve the selected date in a full format
                 val selectedDateFormatted = Date.from(
                     localDateFormat(

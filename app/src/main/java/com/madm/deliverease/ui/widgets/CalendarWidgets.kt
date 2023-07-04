@@ -329,12 +329,16 @@ fun WeekContent(
     weekNumber: Int,
     selectedMonth: Int,
     selectedYear: Int,
+    alsoCurrentWeek: Boolean,
     content: @Composable (WeekDay) -> Unit,
-    lastItem: @Composable () -> Unit = {},
+    lastItem: @Composable () -> Unit = {}
 ) {
     val days: List<WeekDay> = getWeekDays(selectedYear, selectedMonth + 1, weekNumber)
 
-    val emptyScreen = isWeekBeforeCurrentWeek(selectedYear, selectedMonth + 1, weekNumber + 1)
+    val emptyScreen = isWeekBeforeCurrentWeek(
+        selectedYear,
+        selectedMonth + 1,
+        weekNumber + if(alsoCurrentWeek) 2 else 1)
 
     if (emptyScreen) {
         Row(
