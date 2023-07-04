@@ -129,7 +129,7 @@ fun ClassicLogin(
     }
 
     // if a user has previously logged in without logging out, they will access their profile directly
-    directAccess(context, user, focusManager, isPlaying)
+    directAccess(context, user, focusManager, isPlaying) { isError = it }
 
     // shows the pizza loader during the log in process
     if (isPlaying.value && !(isError)) {
@@ -234,7 +234,8 @@ fun directAccess(
     context: Context,
     user: MutableState<User?>,
     focusManager: FocusManager,
-    isPlaying: MutableState<Boolean>
+    isPlaying: MutableState<Boolean>,
+    setError: (Boolean) -> Unit
 ){
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
     val usernameSaved = sharedPreferences.getString(EMAIL_FIELD, "")
@@ -249,6 +250,7 @@ fun directAccess(
                 (user.email == usernameSaved) && (user.password == passwordSaved)
             }
             globalAllUsers = list
+            setError(user.value == null)
 
             // to show login animation
             Thread.sleep(2500)
