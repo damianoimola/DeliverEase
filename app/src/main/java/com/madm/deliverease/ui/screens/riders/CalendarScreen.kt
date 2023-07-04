@@ -56,7 +56,6 @@ fun CalendarScreen() {
         currentYear = getNextYear()
     }
 
-
     val months = (currentMonth ..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
 
     var selectedMonth by remember { mutableStateOf(months[0]) }
@@ -135,7 +134,7 @@ fun CalendarScreen() {
                 selectedWeek = weekNumber
             }
             //divider
-            WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+            WeekContent(selectedWeek, selectedMonth, selectedYear, true, { weekDay ->
                 // create a date from selected day
                 val selectedDate: LocalDate? = localDateFormat(weekDay, selectedWeek, selectedYear)
 
@@ -194,7 +193,7 @@ fun CalendarScreen() {
             }
 
             //divider
-            WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
+            WeekContent(selectedWeek, selectedMonth, selectedYear, true, { weekDay ->
                 // create a date from selected day
                 val selectedDate: LocalDate? = localDateFormat(weekDay, selectedWeek, selectedYear)
 
