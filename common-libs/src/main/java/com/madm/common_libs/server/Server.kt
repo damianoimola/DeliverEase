@@ -37,7 +37,9 @@ class Server private constructor (context : Context) {
     }
 
 
-    // MANAGE REQUEST'S KIND
+    /**
+     * MANAGE REQUEST'S KIND
+     */
     enum class RequestKind { MESSAGES, USERS, CALENDAR }
 
     val requestsMap = mapOf<RequestKind, String>(
@@ -46,16 +48,18 @@ class Server private constructor (context : Context) {
         RequestKind.USERS to "/users",
     )
 
-    // CONSTRUCTOR
+    /**
+     * CONSTRUCTOR
+     */
     init {
-//        this.serverBaseUrl = getResources().getString(R.string.base_url);
-//        this.serverBaseUrl = Resources.getSystem().getText(R.string.base_server_url).toString()
         this.serverBaseUrl = context.getString(R.string.base_server_url)
         this.context = context
     }
 
 
-    // BUILD POST REQUESTS
+    /**
+     * BUILD POST REQUESTS
+     */
     inline fun <T> makePostRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }): Boolean {
 
         if(!NetworkConnection.isUserOnline(context))
@@ -77,7 +81,9 @@ class Server private constructor (context : Context) {
     }
 
 
-    // BUILD DELETE REQUESTS
+    /**
+     * BUILD DELETE REQUESTS
+     */
     inline fun <T> makeDeleteRequest(objectToSend : T, kind : RequestKind, crossinline callbackFunction: (Boolean) -> Unit = { }) : Boolean {
 
         if(!NetworkConnection.isUserOnline(context))
@@ -97,7 +103,9 @@ class Server private constructor (context : Context) {
     }
 
 
-    // BUILD GET REQUESTS
+    /**
+     * BUILDS GET REQUESTS
+     */
     inline fun <reified T> makeGetRequest(kind : RequestKind, crossinline callbackFunction: (T) -> Unit) : Boolean {
 
         if(!NetworkConnection.isUserOnline(context))
@@ -119,7 +127,9 @@ class Server private constructor (context : Context) {
 
 
 
-    // BUILD GET REQUESTS FOR LISTS
+    /**
+     * BUILD GET REQUESTS FOR LISTS
+     */
     inline fun <reified T> makeListsGetRequest(
         kind : RequestKind,
         crossinline callbackFunction: (List<T>) -> Unit

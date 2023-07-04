@@ -24,6 +24,9 @@ import com.madm.deliverease.R
 import com.madm.deliverease.ui.theme.*
 
 
+/**
+ * Settings page for the rider page
+ */
 @Composable
 fun PreferencesSetting(logoutCallback: () -> Unit){
     Column(
@@ -46,6 +49,10 @@ fun PreferencesSetting(logoutCallback: () -> Unit){
     }
 }
 
+/**
+ * Divider for the different sections of the setting page
+ * @param text the name of the following section
+ */
 @Composable
 fun CustomDivider(text: String ){
     Row(
@@ -63,15 +70,21 @@ fun CustomDivider(text: String ){
     }
 }
 
+/**
+ * Application language selector
+ */
 @Preview
 @Composable
 fun Language(){
     val context: Context = LocalContext.current
 
+    // Retrieves the file of the shared preferences
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
+    // Retrieves from the shared preferences the language set last time
     val startupLanguage = sharedPreferences.getString(STARTUP_LANGUAGE_FIELD, "")!!
-
+    // Checks if every application language must be visible in order to select the wanted one
     var expanded by remember { mutableStateOf(false) }
+    // List of the application languages
     val items = listOf(stringResource(R.string.english), stringResource(R.string.italian))
     var selectedIndex by remember {
         mutableStateOf(
@@ -117,7 +130,7 @@ fun Language(){
                 color = CustomTheme.colors.onBackgroundVariant
             )
 
-            DropdownMenu(
+            DropdownMenu( // menu with every language of the application
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.background(CustomTheme.colors.backgroundVariant)
@@ -139,7 +152,11 @@ fun Language(){
 }
 
 
-
+/**
+ * Switches the application language to the one specified in languageCode parameter
+ * @param languageCode it for italian, en of english
+ * @param context the context of application
+ */
 fun switchLanguage(languageCode: String, context: Context) {
     val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
@@ -154,9 +171,9 @@ fun switchLanguage(languageCode: String, context: Context) {
     context.startActivity(intent)
 }
 
-
-
-
+/**
+ * Application scheme color selector (for light/dark mode)
+ */
 @Composable
 fun DarkMode(){
     val context : Context = LocalContext.current
@@ -216,6 +233,11 @@ fun DarkMode(){
     }
 }
 
+/**
+ * @param title name of the setting
+ * @param icon icon representing the setting
+ * @param onClick lambda to run setting clicked
+ */
 @Composable
 fun SettingRow(
     title: String,
@@ -267,7 +289,10 @@ fun SettingRow(
     }
 }
 
-
+/**
+ * Button for logging out the application at the end of settings
+ * @param logoutCallback lambda to logout the user and return the home page
+ */
 @Composable
 fun LogOut(logoutCallback: () -> Unit) {
     Row(
