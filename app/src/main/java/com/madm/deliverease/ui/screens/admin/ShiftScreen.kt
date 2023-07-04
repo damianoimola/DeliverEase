@@ -46,7 +46,6 @@ class CheckBoxItem(val user: User, val isAllocated: Boolean) : Parcelable {
 }
 
 
-
 @Preview
 @Composable
 fun ShiftsScreen() {
@@ -62,19 +61,20 @@ fun ShiftsScreen() {
     var nextYear = false
 
     //getCurrentWeekOfMonth ritorna 11 se la settimana successiva ricade nel prossimo mese
-    if(selectedWeek == 11)  nextMonth = true
+    if (selectedWeek == 11) nextMonth = true
 
-    if(nextMonth){
+    if (nextMonth) {
         selectedWeek = 1
         currentMonth = getNextMonth()
     }
 
-    if(nextMonth && currentMonth == 0){
+    if (nextMonth && currentMonth == 0) {
         nextYear = true
         currentYear = getNextYear()
     }
 
-    val months = (currentMonth ..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
+    val months =
+        (currentMonth..currentMonth + 2).toList().map { i -> Math.floorMod(i, 12) }.toIntArray()
     var selectedMonth by remember { mutableStateOf(months[0]) }
     var selectedYear by remember { mutableStateOf(currentYear) }
 
@@ -93,7 +93,6 @@ fun ShiftsScreen() {
     var weekWorkingDays: ArrayList<WorkDay> by rememberSaveable { mutableStateOf(arrayListOf()) }
 
 
-
     // handling drafted working days
     val draftedWorkingDays: List<WorkDay> = retrieveDraftCalendar(context) ?: listOf()
     val thisWeekDays = getWeekDatesInFormat(selectedYear, selectedMonth + 1, selectedWeek + 1)
@@ -104,8 +103,9 @@ fun ShiftsScreen() {
 
     // if the selected week has not been publicized
     // and there is a draft about this week, take it
-    if(!thisWeekPublicized && thisWeekDrafted && !updated) {
-        weekWorkingDays = ArrayList(fillEmptyDaysOfNextMonth(selectedYear, selectedMonth, draftedWorkingDays))
+    if (!thisWeekPublicized && thisWeekDrafted && !updated) {
+        weekWorkingDays =
+            ArrayList(fillEmptyDaysOfNextMonth(selectedYear, selectedMonth, draftedWorkingDays))
 //        weekWorkingDays = ArrayList(draftedWorkingDays)
         updatedWorkingDays.addAll(draftedWorkingDays)
         updated = true
@@ -124,7 +124,7 @@ fun ShiftsScreen() {
     } else if (showDialog && weekWorkingDays.isNotEmpty()) {
         val toastMessage = stringResource(R.string.shift_not_changed)
         ConstraintsDialog(
-            title = if(perWeekConstraint.isEmpty() && perDayConstraint.isEmpty() && emptyDaysConstraint.isEmpty())
+            title = if (perWeekConstraint.isEmpty() && perDayConstraint.isEmpty() && emptyDaysConstraint.isEmpty())
                 stringResource(R.string.are_you_sure_to_continue)
             else stringResource(R.string.constraints_not_respected),
             perWeekConstraint = perWeekConstraint,
@@ -161,7 +161,12 @@ fun ShiftsScreen() {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.Start
         ) {
-            MonthSelector(months, selectedMonth, currentYear, nextYear) { month: Int, isNextYear: Boolean ->
+            MonthSelector(
+                months,
+                selectedMonth,
+                currentYear,
+                nextYear
+            ) { month: Int, isNextYear: Boolean ->
                 selectedYear = if (isNextYear)
                     currentYear + 1
                 else currentYear
@@ -283,7 +288,13 @@ private fun ShiftItem(
     workingDays: List<WorkDay>
 ) {
     // retrieve the selected date in a full format
-    val selectedDateFormatted = Date.from(localDateFormat(weekDay, selectedWeek, selectedYear).atStartOfDay(ZoneId.systemDefault()).toInstant())
+    val selectedDateFormatted = Date.from(
+        localDateFormat(
+            weekDay,
+            selectedWeek,
+            selectedYear
+        ).atStartOfDay(ZoneId.systemDefault()).toInstant()
+    )
 
     // filter all users that are available
     val availableRidersList: List<User> = globalAllUsers.filter { user ->
@@ -424,9 +435,6 @@ private fun ShiftItem(
 }
 
 
-
-
-
 /**
  * @return a Pair object, in first place there is perWeekConstraints, in second place there is perDayConstraints
  */
@@ -515,10 +523,6 @@ fun constraintsChecker(
 
     return Triple(perWeekList, perDayList, emptyDays)
 }
-
-
-
-
 
 
 @Composable
