@@ -25,6 +25,7 @@ import kotlinx.coroutines.*
 
 object DeviceCommunicationWidget: GlanceAppWidget() {
 
+    // the key
     val communicationKey = stringPreferencesKey("communication")
     val dateKey = stringPreferencesKey("date")
 
