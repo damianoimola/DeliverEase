@@ -136,7 +136,6 @@ fun CalendarScreen() {
             }
             //divider
             WeekContent(selectedWeek, selectedMonth, selectedYear, { weekDay ->
-                println("ARGUMENTS $selectedYear-$selectedMonth/${weekDay.month}-${weekDay.number} ($selectedWeek)")
                 // create a date from selected day
                 val selectedDate: LocalDate? = localDateFormat(weekDay, selectedWeek, selectedYear)
 
@@ -157,7 +156,6 @@ fun CalendarScreen() {
                         val date: Date = inputDateFormat.parse(selectedDate.toString())!!
                         val outputDateString: String = outputDateFormat.format(date)
                         clickedWeekday = outputDateString
-                        println("CLICKED $clickedWeekday SELECTED $selectedDate")
                     },
                     {
                         val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
@@ -165,7 +163,6 @@ fun CalendarScreen() {
                         val date: Date = inputDateFormat.parse(selectedDate.toString())!!
                         val outputDateString: String = outputDateFormat.format(date)
                         previousWeekDay = outputDateString
-                        println("PREVIOUS $previousWeekDay SELECTED $selectedDate")
                     }
 
                 ) { showCustomDialog = it }

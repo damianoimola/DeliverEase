@@ -513,7 +513,6 @@ fun ConstraintsDialog(
             modifier = Modifier
                 .wrapContentWidth()
         ) {
-            println("SONO VUOTE? ${perWeekConstraint.isEmpty()} && ${perDayConstraint.isEmpty()} && ${emptyDaysConstraint.isEmpty()}")
             Column(
                 modifier = Modifier.padding(smallPadding, nonePadding),
                 horizontalAlignment = Alignment.CenterHorizontally

@@ -167,12 +167,10 @@ fun CommunicationCard(
                             msg.send(context) { messageSent ->          // sending message to server
 
                                 if (messageSent) {
-                                    println("COMM NUMBER BEFORE ${communicationList.count()}")
                                     communicationList.add(              // updating ui with new communication
                                         0,
                                         msg
                                     )
-                                    println("COMM NUMBER AFTER ${communicationList.count()}")
 
                                     CoroutineScope(Dispatchers.Main).launch {
                                         Toast.makeText(

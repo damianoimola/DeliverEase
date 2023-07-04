@@ -288,7 +288,6 @@ fun MonthSelector(
                 .background(CustomTheme.colors.backgroundVariant)
         ) {
             months.forEach { option ->
-                println("MESE  "+option)
                 // menu item
                 DropdownMenuItem(
                     onClick = {

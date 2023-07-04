@@ -1,6 +1,7 @@
 package com.madm.common_libs.internal_storage_manager
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.madm.common_libs.R
@@ -62,10 +63,10 @@ fun saveDraftCalendar(context: Context, newDraftCalendar: Calendar) {
         file.writeText(updatedJson)
     } catch (e: IOException) {
         // Handle file I/O errors
-        println("Error occurred while accessing the file: ${e.message}")
+        Log.e("ERROR", "Error occurred while accessing the file: ${e.message}")
     } catch (e: Exception) {
         // Handle other exceptions
-        println("An error occurred: ${e.message}")
+        Log.e("ERROR", "An error occurred: ${e.message}")
     }
 }
 
@@ -84,9 +85,9 @@ fun retrieveDraftCalendar(context: Context): List<WorkDay>? {
         val jsonContent = file.readText()
         return gson.fromJson(jsonContent, Calendar::class.java)?.days?.toList()
     } catch (e: IOException) {
-        println("Error occurred while reading the file: ${e.message}")
+        Log.e("ERROR", "Error occurred while reading the file: ${e.message}")
     } catch (e: Exception) {
-        println("An error occurred: ${e.message}")
+        Log.e("ERROR", "An error occurred: ${e.message}")
     }
     return null
 }
@@ -128,9 +129,9 @@ fun deleteDraftDays(context: Context, datesToDelete: List<WorkDay>): Boolean {
         file.writeText(updatedJson)
         return true
     } catch (e: IOException) {
-        println("Error occurred while reading/writing the file: ${e.message}")
+        Log.e("ERROR", "Error occurred while reading/writing the file: ${e.message}")
     } catch (e: Exception) {
-        println("An error occurred: ${e.message}")
+        Log.e("ERROR", "An error occurred: ${e.message}")
     }
     return false
 }

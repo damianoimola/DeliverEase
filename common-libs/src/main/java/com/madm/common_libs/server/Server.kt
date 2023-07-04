@@ -67,7 +67,6 @@ class Server private constructor (context : Context) {
 
         val requestBody = Gson().toJson(objectToSend)
 
-        println("BODY REQUEST: $requestBody")
         val serverCompleteUrl = serverBaseUrl + requestsMap[kind]
 
         serverCompleteUrl.httpPost().body(requestBody).responseString { _, response, result ->

@@ -469,7 +469,6 @@ fun constraintsChecker(
     calendar[Calendar.MILLISECOND] = 999
     val endDate = calendar.time
 
-    println("DATES ${startDate..endDate}")
 
     data class WeeklyRider(
         val id: String = "",
@@ -513,18 +512,6 @@ fun constraintsChecker(
     weekWorkingDays
         .filter { it.workDayDate in startDate..endDate && it.riders!!.isEmpty() }
         .forEach { emptyDays += it.date.toString() }
-
-
-    // TO DEBUG
-    weekWorkingDays
-        .filter { it.workDayDate in startDate..endDate }
-        .forEach { println("WWD ${it.date} ${it.riders}}") }
-
-    fillEmptyDaysOfNextMonth(selectedYear, selectedMonth, weekWorkingDays)
-        .filter { it.workDayDate in startDate..endDate }
-        .forEach { println("FILLED ${it.date} ${it.riders}}") }
-
-    println("EMPTY DAYS $emptyDays")
 
     return Triple(perWeekList, perDayList, emptyDays)
 }
