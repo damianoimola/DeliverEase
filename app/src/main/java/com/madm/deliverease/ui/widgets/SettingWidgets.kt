@@ -2,6 +2,7 @@ package com.madm.deliverease.ui.widgets
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -29,6 +30,7 @@ import com.madm.deliverease.ui.theme.*
  */
 @Composable
 fun PreferencesSetting(logoutCallback: () -> Unit){
+    val context = LocalContext.current
     Column(
         Modifier.padding(nonePadding, smallPadding),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -40,11 +42,25 @@ fun PreferencesSetting(logoutCallback: () -> Unit){
         SettingRow(
             stringResource(R.string.report_bug),
             painterResource(id = R.drawable.bug)
-        )
+        ) {
+            val urlIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://bughunters.google.com/report")
+            )
+
+            context.startActivity(urlIntent)
+        }
         SettingRow(
             stringResource(R.string.terms_conditions),
             painterResource(id = R.drawable.terms_and_conditions)
-        )
+        ) {
+            val urlIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://policies.google.com/terms?hl=it")
+            )
+
+            context.startActivity(urlIntent)
+        }
         LogOut(logoutCallback)
     }
 }
