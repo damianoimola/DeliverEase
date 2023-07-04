@@ -17,20 +17,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.madm.deliverease.R
-import com.madm.deliverease.ui.theme.*
-import kotlin.system.exitProcess
+import com.madm.deliverease.ui.theme.CustomTheme
+import com.madm.deliverease.ui.theme.mediumPadding
+import com.madm.deliverease.ui.theme.smallPadding
 
 @Composable
 fun MyOutlinedTextField(
@@ -155,66 +150,6 @@ fun LoginButton(
         ) {
             Text(text = "Login", modifier = Modifier.padding(6.dp))
             Icon(Icons.Default.ArrowForward, contentDescription = stringResource(R.string._continue))
-        }
-    }
-}
-
-@Composable
-fun ConfirmExitingApp(onDismiss: () -> Unit){
-    Dialog(onDismissRequest = { onDismiss()},
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
-        )
-    ) {
-        Surface(modifier = Modifier
-            .wrapContentWidth()
-            .wrapContentHeight(),
-            shape = MaterialTheme.shapes.large) {
-            Column(modifier = Modifier
-                .padding(20.dp)
-                .width(400.dp)
-                .wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(25.dp)) {
-
-                Text(text = stringResource(R.string.exiting_question),
-                    style = TextStyle(
-                        fontFamily = gilroy,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
-                )
-
-                Row(
-                    modifier = Modifier.width(400.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = { onDismiss() }) {
-                        Text(text = stringResource(id = R.string.cancel),
-                            style = TextStyle(
-                                fontFamily = gilroy,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 15.sp,
-                                textAlign = TextAlign.Center
-                            ))
-                    }
-                    Button(onClick = {
-                        //closing dialog
-                        onDismiss()
-                        exitProcess(0)
-
-                    }) {
-                        Text(text = stringResource(R.string.exit),
-                            style = TextStyle(
-                                fontFamily = gilroy,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 15.sp,
-                                textAlign = TextAlign.Center
-                            ))
-                    }
-                }
-            }
         }
     }
 }

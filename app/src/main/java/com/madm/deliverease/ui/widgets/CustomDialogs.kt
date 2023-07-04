@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -30,6 +31,7 @@ import com.madm.deliverease.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 @Composable
 fun HireNewRiderDialog(
@@ -389,7 +391,13 @@ fun EditRiderDialog(
 }
 
 @Composable
-fun ChangeShiftDialog(dayOfTheWeek: String, previousWeekDay: String, month: Int, year: Int, onDismiss: () -> Unit) {
+fun ChangeShiftDialog(
+    dayOfTheWeek: String,
+    previousWeekDay: String,
+    month: Int,
+    year: Int,
+    onDismiss: () -> Unit,
+) {
     val context = LocalContext.current
 
     val requestSent = stringResource(R.string.request_sent)
@@ -608,3 +616,55 @@ fun ConstraintsDialog(
     }
 }
 
+@Composable
+fun ConfirmExitingApp(onDismiss: () -> Unit) {
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+        )
+    ) {
+        Card(
+            elevation = mediumCardElevation,
+            shape = CustomTheme.shapes.medium,
+            backgroundColor = CustomTheme.colors.surface,
+            contentColor = CustomTheme.colors.onSurface,
+            modifier = Modifier
+                .wrapContentSize()
+        ) {
+            Column(
+                modifier = Modifier.padding(smallPadding, largePadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Text(
+                    stringResource(R.string.exiting_question),
+                    style = CustomTheme.typography.h3.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.padding(nonePadding, nonePadding, smallPadding, nonePadding)
+                )
+
+                Divider(Modifier.height(16.dp), Color.Transparent)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f),
+//                        .padding(20.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    DefaultButton(
+                        text = stringResource(R.string.cancel),
+                        modifier = Modifier
+                    ) { onDismiss() }
+                    DefaultButton(
+                        text = stringResource(R.string.exit),
+                        modifier = Modifier
+                    ) {
+                        onDismiss()
+                        exitProcess(0)
+                    }
+                }
+            }
+        }
+    }
+}
